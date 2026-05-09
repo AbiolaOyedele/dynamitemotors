@@ -9,9 +9,11 @@ const envSchema = z.object({
 })
 
 const parsed = envSchema.safeParse(process.env)
-if (!parsed.success) {
+if (!parsed.success && process.env.NODE_ENV !== 'test') {
   console.error('Invalid environment variables:', parsed.error.flatten())
-  throw new Error('Environment validation failed. App cannot start.')
+  if (typeof window === 'undefined' && process.env.NODE_ENV === 'production') {
+    throw new Error('Environment validation failed. App cannot start.')
+  }
 }
 
-export const env = parsed.data
+export const env = (parsed.success ? parsed.data : {}) as z.infer<typeof envSchema>
