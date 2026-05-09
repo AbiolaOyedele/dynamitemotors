@@ -5,8 +5,8 @@ import Image from 'next/image'
 
 type Props = {
   context: string
-  currentImage?: string
-  customFilename?: string
+  currentImage?: string | undefined
+  customFilename?: string | undefined
   onUpload: (path: string) => void
   label?: string
   className?: string
