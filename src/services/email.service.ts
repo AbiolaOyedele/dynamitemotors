@@ -6,7 +6,7 @@ import type { QuoteFormData } from '@/types/quote.types'
 export async function sendQuoteEmail(data: QuoteFormData): Promise<void> {
   const { error } = await resendClient.emails.send({
     from: 'Dynamite Motors Website <onboarding@resend.dev>',
-    to: env.QUOTE_RECIPIENT_EMAIL,
+    to: 'dynamitemotors@gmail.com',
     replyTo: data.email,
     subject: `New Quote Request — ${data.service}`,
     html: buildEmailHtml(data),
