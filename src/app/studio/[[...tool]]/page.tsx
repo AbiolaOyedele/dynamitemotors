@@ -1,16 +1,17 @@
-import dynamic from 'next/dynamic'
-import { notFound } from 'next/navigation'
+'use client'
+
+import { useEffect, useState } from 'react'
 import config from '../../../../sanity.config'
-
-export const dynamic_ = 'force-dynamic'
-
-const NextStudio = dynamic(() => import('next-sanity/studio').then((m) => m.NextStudio), {
-  ssr: false,
-})
 
 export { metadata, viewport } from 'next-sanity/studio'
 
 export default function StudioPage() {
-  if (process.env.NODE_ENV === 'production') return notFound()
-  return <NextStudio config={config} />
+  const [Studio, setStudio] = useState<React.ComponentType<{ config: typeof config }> | null>(null)
+
+  useEffect(() => {
+    import('next-sanity/studio').then((m) => setStudio(() => m.NextStudio))
+  }, [])
+
+  if (!Studio) return null
+  return <Studio config={config} />
 }
