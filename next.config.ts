@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { hostname: 'assets.basehub.com' },
       { hostname: 'res.cloudinary.com' },
+      { hostname: 'cdn.sanity.io' },
     ],
   },
 };
