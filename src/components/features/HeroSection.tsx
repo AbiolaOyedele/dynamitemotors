@@ -3,7 +3,7 @@ import { HeroQuoteForm } from './HeroQuoteForm'
 
 export function HeroSection() {
   return (
-    <section aria-label="Welcome to Dynamite Motors" className="relative min-h-[700px] md:min-h-[760px] overflow-hidden flex flex-col">
+    <section aria-label="Welcome to Dynamite Motors" className="relative min-h-[560px] overflow-hidden flex flex-col">
 
       {/* Background image */}
       <Image
@@ -23,14 +23,14 @@ export function HeroSection() {
 
       {/* Content — aligned to bottom */}
       <div className="relative z-10 flex-1 flex items-center">
-        <div className="w-full pl-9 md:pl-12 pr-9 md:pr-12 pb-12 md:pb-16 pt-16">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-24">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-end">
 
             {/* Left — text */}
             <div>
               <div className="flex items-center gap-3 mb-5">
-                <span className="block w-8 h-[3px] bg-[#1ED760] rounded-full" aria-hidden="true" />
-                <span className="text-[#1ED760] text-[12px] font-bold tracking-widest uppercase">
+                <span className="block w-8 h-[3px] bg-primary rounded-full" aria-hidden="true" />
+                <span className="text-primary text-[12px] font-bold tracking-widest uppercase">
                   Dynamite Motors&apos; Services
                 </span>
               </div>
@@ -38,7 +38,7 @@ export function HeroSection() {
               <h1 className="text-[40px] sm:text-[52px] md:text-[62px] font-bold text-white leading-[1.05] tracking-tight mb-5">
                 Your Trusted<br />
                 Local Garage<br />
-                <span className="text-[#1ED760]">in Gravesend</span>
+                <span className="text-primary">in Gravesend</span>
               </h1>
 
               <p className="text-[17px] md:text-[18px] text-white/65 leading-relaxed mb-8 max-w-md">

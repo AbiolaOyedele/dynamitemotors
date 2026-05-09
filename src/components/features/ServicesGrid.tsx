@@ -1,5 +1,9 @@
-import { ButtonLink } from '@/components/ui/Button'
+'use client'
+
+import { useState } from 'react'
+import { Button } from '@/components/ui/Button'
 import { SectionHeader } from '@/components/ui/SectionHeader'
+import { ServiceQuoteModal } from './ServiceQuoteModal'
 import type { Service } from '@/types/service.types'
 
 type Props = {
@@ -63,6 +67,7 @@ const FALLBACK_SERVICES: Service[] = [
 export function ServicesGrid({ services, showViewAll = false, limit }: Props) {
   const all = services.length > 0 ? services : FALLBACK_SERVICES
   const displayServices = limit ? all.slice(0, limit) : all
+  const [activeService, setActiveService] = useState<string | null>(null)
 
   return (
     <section aria-labelledby="services-heading" className="bg-white py-20 md:py-24">
@@ -78,7 +83,7 @@ export function ServicesGrid({ services, showViewAll = false, limit }: Props) {
         {/* Grid */}
         <ul className="space-y-8" role="list">
           {displayServices.map((service) => (
-            <li key={service._id} className="bg-white rounded-3xl border border-[#E8E8E8] hover:shadow-xl transition-all duration-300">
+            <li key={service._id} className="bg-white rounded-3xl border border-border hover:shadow-xl transition-all duration-300">
 
               {/* Card — horizontal layout */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center p-8 md:p-12">
@@ -86,20 +91,20 @@ export function ServicesGrid({ services, showViewAll = false, limit }: Props) {
                 {/* Left — content */}
                 <div className="flex flex-col gap-6">
                   {/* Icon box */}
-                  <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-[#1a1a1a] text-[#1ED760] shrink-0">
+                  <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-dark text-primary shrink-0">
                     <ServiceIcon name={service.icon} />
                   </div>
 
                   {/* Title */}
                   <div>
-                    <h3 className="text-[28px] md:text-[32px] font-bold text-[#1a1a1a] leading-snug">
+                    <h3 className="text-[28px] md:text-[32px] font-bold text-dark leading-snug">
                       {service.title}
                     </h3>
                   </div>
 
                   {/* Description */}
                   {service.description && (
-                    <p className="text-[17px] text-[#666666] leading-relaxed">
+                    <p className="text-[17px] text-muted leading-relaxed">
                       {service.description}
                     </p>
                   )}
@@ -108,8 +113,8 @@ export function ServicesGrid({ services, showViewAll = false, limit }: Props) {
                   {service.features && service.features.length > 0 && (
                     <ul className="flex flex-col gap-3" aria-label={`${service.title} features`}>
                       {service.features.map((feat) => (
-                        <li key={feat} className="flex items-start gap-3 text-[16px] text-[#333333]">
-                          <svg className="shrink-0 mt-[3px] text-[#1ED760]" width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                        <li key={feat} className="flex items-start gap-3 text-[16px] text-body">
+                          <svg className="shrink-0 mt-[3px] text-primary" width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
                             <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 1 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z" />
                           </svg>
                           {feat}
@@ -120,22 +125,22 @@ export function ServicesGrid({ services, showViewAll = false, limit }: Props) {
 
                   {/* CTA */}
                   <div className="pt-4">
-                    <ButtonLink
-                      href="/contact"
+                    <Button
                       variant="primary"
                       size="lg"
                       aria-label={`Get a quote for ${service.title}`}
+                      onClick={() => setActiveService(service.title)}
                     >
                       Get a Quote
-                    </ButtonLink>
+                    </Button>
                   </div>
                 </div>
 
                 {/* Right — image placeholder */}
                 <div className="relative hidden lg:flex items-center justify-center">
-                  <div className="w-full aspect-square rounded-3xl bg-gradient-to-br from-[#f0fff4] to-[#e8fdf0] border border-[#1ED760]/20 flex items-center justify-center">
+                  <div className="w-full aspect-square rounded-3xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 flex items-center justify-center">
                     <div className="text-center">
-                      <p className="text-[#999999] text-[16px] font-medium">Image coming soon</p>
+                      <p className="text-muted/70 text-[16px] font-medium">Image coming soon</p>
                     </div>
                   </div>
                 </div>
@@ -144,12 +149,14 @@ export function ServicesGrid({ services, showViewAll = false, limit }: Props) {
           ))}
         </ul>
 
+        <ServiceQuoteModal service={activeService} onClose={() => setActiveService(null)} />
+
         {/* View all link */}
         {showViewAll && (
           <div className="mt-12 text-center">
             <a
               href="/services"
-              className="inline-flex items-center gap-2 text-[#1ED760] text-[17px] font-semibold hover:text-[#19b852] transition-colors underline-offset-4 hover:underline"
+              className="inline-flex items-center gap-2 text-primary text-[17px] font-semibold hover:text-primary-dark transition-colors underline-offset-4 hover:underline"
             >
               View All Services
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

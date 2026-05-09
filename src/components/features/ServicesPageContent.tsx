@@ -1,186 +1,315 @@
-import Image from 'next/image'
-import { ButtonLink } from '@/components/ui/Button'
-import type { Service } from '@/types/service.types'
+'use client'
 
-/** Full-page services layout — only used on /services. Never import on home page. */
+import { useState } from 'react'
+import type { LucideIcon } from 'lucide-react'
+import {
+  Check,
+  CircleDot,
+  ClipboardCheck,
+  Clock3,
+  Fan,
+  ShieldCheck,
+  Wrench,
+} from 'lucide-react'
+import { Button } from '@/components/ui/Button'
+import { ServiceQuoteModal } from './ServiceQuoteModal'
+import type { Service } from '@/types/service.types'
 
 type Props = {
   services: Service[]
 }
 
-const STATIC_SERVICES = [
+type ServiceDetail = {
+  id: string
+  aliases: string[]
+  title: string
+  description: string
+  features: string[]
+  goodFor: string[]
+  Icon: LucideIcon
+}
+
+type DisplayService = {
+  id: string
+  title: string
+  description: string | null
+  features: string[]
+  goodFor: string[]
+  Icon: LucideIcon
+}
+
+const SERVICE_DETAILS: ServiceDetail[] = [
   {
     id: 'servicing',
+    aliases: ['servicing', 'service', 'oil'],
     title: 'Servicing',
-    description: 'Dependable servicing and honest advice from a team that truly knows your car. Oil & oil filter change, air filter change.',
-    features: ['Oil & oil filter change', 'Air filter change', 'All makes & models', 'Honest, transparent advice'],
-    image: '/images/servicing.jpg',
+    description:
+      'Routine maintenance that keeps your car healthy, efficient and ready for daily use.',
+    features: [
+      'Oil and oil filter change',
+      'Air filter change',
+      'Fluid level checks',
+      'General safety inspection',
+    ],
+    goodFor: ['Annual maintenance', 'High mileage cars', 'Pre-trip checks'],
+    Icon: Wrench,
   },
   {
     id: 'aircon',
+    aliases: ['aircon', 'air con', 'air conditioning', 'ac'],
     title: 'Air Con Gas & Repair',
-    description: 'Breathe cleaner air and beat the heat with our comprehensive air con service. From simple regassing to complex system repairs, we ensure your comfort all year round.',
-    features: ['AC regas', 'Leak detection & repair', 'Compressor inspection', 'Full system diagnosis'],
-    image: '/images/aircon.jpg',
+    description:
+      'Regassing, leak checks and repairs for cleaner, cooler air through every season.',
+    features: [
+      'Air con regas',
+      'Leak detection',
+      'Compressor inspection',
+      'System diagnosis',
+    ],
+    goodFor: ['Weak cooling', 'Bad smells', 'Noisy AC systems'],
+    Icon: Fan,
+  },
+  {
+    id: 'brakes',
+    aliases: ['brake', 'brakes'],
+    title: 'Brake Repairs',
+    description:
+      'Brake checks, pads, discs and repair advice for confident stopping power.',
+    features: [
+      'Brake pad checks',
+      'Disc inspection',
+      'Fluid checks',
+      'Repair advice',
+    ],
+    goodFor: ['Squeaking brakes', 'Brake warning lights', 'Soft pedals'],
+    Icon: ShieldCheck,
   },
   {
     id: 'tyres',
-    title: 'Tyres Repair & Replacement',
-    description: 'We supply and fit a wide range of tyres at competitive prices. Whether you need a puncture repair or a full set of new tyres, we have you covered.',
-    features: ['Puncture repairs', 'Supply & fit all sizes', 'Wheel balancing', 'TPMS reset'],
-    image: '/images/tyres.jpg',
+    aliases: ['tyres', 'tyre', 'tires', 'tire', 'wheel'],
+    title: 'Tyre Repair & Replacement',
+    description:
+      'Puncture repairs, fitting and balancing for safer grip and smoother journeys.',
+    features: [
+      'Puncture repairs',
+      'Supply and fit all sizes',
+      'Wheel balancing',
+      'TPMS reset',
+    ],
+    goodFor: ['Slow punctures', 'Uneven wear', 'Replacement tyres'],
+    Icon: CircleDot,
   },
   {
     id: 'mot',
+    aliases: ['mot', 'test'],
     title: 'MOT Checks & Repairs',
-    description: 'MOT checks and repairs to ensure your vehicle is in the best condition possible. We are an authorised test station — same-day certificates issued.',
-    features: ['Authorised test station', 'Same-day certificate', 'Free advisory retest', 'Repair & retest available'],
-    image: '/images/mot-bay.jpg',
+    description:
+      'Straightforward MOT preparation and repairs to help keep your vehicle road legal.',
+    features: [
+      'MOT checks',
+      'Repair advice',
+      'Same-day support where possible',
+      'Clear pass or fail guidance',
+    ],
+    goodFor: ['MOT due soon', 'Warning lights', 'Roadworthiness checks'],
+    Icon: ClipboardCheck,
   },
 ]
 
-const FACILITIES = [
+const EXPECTATIONS = [
   {
-    image: '/images/reception.jpg',
-    label: 'A clean & tidy reception room to ensure your comfort while your car gets attended to.',
+    title: 'Clear diagnosis',
+    text: 'We explain what we find before any work starts.',
+    Icon: ClipboardCheck,
   },
   {
-    image: '/images/parking.jpg',
-    label: 'On site parking for queries & appointments.',
+    title: 'Practical timing',
+    text: 'Book ahead or call us if the issue is urgent.',
+    Icon: Clock3,
+  },
+  {
+    title: 'Trusted local team',
+    text: 'Experienced mechanics working on all makes and models.',
+    Icon: ShieldCheck,
   },
 ]
 
-function ServiceIcon({ id }: { id: string }) {
-  if (id === 'mot')
-    return (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-      </svg>
-    )
-  if (id === 'servicing')
-    return (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <ellipse cx="12" cy="5" rx="9" ry="3" /><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" /><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
-      </svg>
-    )
-  if (id === 'tyres')
-    return (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="3" /><path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
-      </svg>
-    )
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M17.7 7.7a2.5 2.5 0 0 1 1.8 4.3H2" /><path d="M9.6 4.6A2 2 0 0 1 11 8H2" /><path d="M12.6 19.4A2 2 0 0 0 14 16H2" />
-    </svg>
-  )
+function findServiceDetail(service: Service) {
+  return SERVICE_DETAILS.find((detail) => {
+    const slug = service.slug.current.toLowerCase()
+    const title = service.title.toLowerCase()
+
+    return detail.aliases.some((alias) => slug.includes(alias) || title.includes(alias))
+  })
+}
+
+function getDisplayServices(services: Service[]): DisplayService[] {
+  if (services.length === 0) {
+    return SERVICE_DETAILS.map(({ id, title, description, features, goodFor, Icon }) => ({
+      id,
+      title,
+      description,
+      features,
+      goodFor,
+      Icon,
+    }))
+  }
+
+  return services.map((service) => {
+    const detail = findServiceDetail(service)
+
+    return {
+      id: service.slug.current,
+      title: service.title,
+      description: service.description ?? detail?.description ?? null,
+      features: service.features?.length ? service.features : detail?.features ?? [],
+      goodFor: detail?.goodFor ?? [],
+      Icon: detail?.Icon ?? Wrench,
+    }
+  })
 }
 
 export function ServicesPageContent({ services }: Props) {
-  // Prefer Sanity data if available, otherwise fall back to static content
-  const hasSanityData = services.length > 0
+  const displayServices = getDisplayServices(services)
+  const [activeService, setActiveService] = useState<string | null>(null)
 
   return (
     <>
-      {/* Service cards */}
-      <section aria-labelledby="services-heading">
-        <h2 id="services-heading" className="sr-only">Our Services</h2>
-        <ul role="list">
-          {STATIC_SERVICES.map((svc, index) => {
-            const imageRight = index % 2 === 0
-            // Use Sanity description if we have it and it matches
-            const sanityMatch = hasSanityData
-              ? services.find((s) => s.slug.current === svc.id || s.title.toLowerCase().includes(svc.id))
-              : null
-            const description = sanityMatch?.description ?? svc.description
-            const features = (sanityMatch?.features ?? svc.features) ?? []
+      <section aria-labelledby="services-heading" className="bg-white py-14 md:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-10 lg:grid-cols-[0.72fr_1fr] lg:items-end">
+            <div>
+              <span className="text-primary text-[12px] font-bold tracking-widest uppercase">
+                What we handle
+              </span>
+              <h2
+                id="services-heading"
+                className="mt-3 text-[32px] md:text-[44px] font-bold leading-tight text-dark"
+              >
+                Choose the job your car needs.
+              </h2>
+            </div>
+            <p className="text-[17px] md:text-[18px] leading-relaxed text-muted max-w-2xl lg:ml-auto">
+              From routine servicing to MOT-related repairs, each visit starts with a straightforward conversation about the issue, the likely fix and the next best step.
+            </p>
+          </div>
 
-            return (
-              <li key={svc.id} className="border-b border-[#E8E8E8] last:border-b-0">
-                <div className={`grid grid-cols-1 lg:grid-cols-2`}>
-
-                  {/* Image */}
-                  <div className={`relative min-h-[280px] lg:min-h-[420px] bg-[#ebebeb] ${imageRight ? 'lg:order-2' : 'lg:order-1'}`}>
-                    <Image
-                      src={svc.image}
-                      alt={svc.title}
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                      className="object-cover"
-                    />
-                  </div>
-
-                  {/* Content */}
-                  <div className={`flex flex-col justify-center gap-6 px-8 py-12 md:px-14 md:py-16 bg-white ${imageRight ? 'lg:order-1' : 'lg:order-2'}`}>
-
-                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-[#1a1a1a] text-[#1ED760] shrink-0">
-                      <ServiceIcon id={svc.id} />
-                    </div>
-
-                    <h3 className="text-[28px] md:text-[36px] font-bold text-[#1a1a1a] leading-tight">
-                      {svc.title}
-                    </h3>
-
-                    <p className="text-[16px] md:text-[17px] text-[#555555] leading-relaxed">
-                      {description}
-                    </p>
-
-                    <ul className="flex flex-col gap-2.5" aria-label={`${svc.title} includes`}>
-                      {features.map((feat) => (
-                        <li key={feat} className="flex items-center gap-3 text-[15px] text-[#333333]">
-                          <svg className="shrink-0 text-[#1ED760]" width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                            <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 1 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z" />
-                          </svg>
-                          {feat}
-                        </li>
-                      ))}
-                    </ul>
-
-                    <div className="pt-2">
-                      <ButtonLink
-                        href="/contact"
-                        variant="primary"
-                        size="lg"
-                        aria-label={`Book ${svc.title}`}
-                      >
-                        Book Now
-                      </ButtonLink>
-                    </div>
-                  </div>
-
-                </div>
-              </li>
-            )
-          })}
-        </ul>
+          <nav aria-label="Jump to service" className="mt-9 flex gap-3 overflow-x-auto pb-2">
+            {displayServices.map((service) => (
+              <a
+                key={service.id}
+                href={`#${service.id}`}
+                className="shrink-0 rounded-full border border-border px-4 py-2 text-[14px] font-semibold text-body hover:border-primary hover:text-dark transition-colors"
+              >
+                {service.title}
+              </a>
+            ))}
+          </nav>
+        </div>
       </section>
 
-      {/* Facilities */}
-      <section className="bg-[#F5F5F5] py-16 md:py-20">
+      <section className="bg-light-bg py-8 md:py-12" aria-label="Service details">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-[22px] md:text-[26px] font-bold text-[#1a1a1a] mb-8 text-center">
-            Our Facilities
-          </h2>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto" role="list">
-            {FACILITIES.map(({ image, label }) => (
-              <li key={label} className="overflow-hidden rounded-2xl bg-white border border-[#E8E8E8]">
-                <div className="relative h-[220px] bg-[#ebebeb]">
-                  <Image
-                    src={image}
-                    alt={label}
-                    fill
-                    sizes="(max-width: 640px) 100vw, 50vw"
-                    className="object-cover"
-                  />
-                </div>
-                <p className="px-6 py-5 text-[15px] text-[#444444] leading-snug font-medium text-center">
-                  {label}
-                </p>
-              </li>
-            ))}
+          <ul role="list" className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {displayServices.map(({ id, title, description, features, goodFor, Icon }) => {
+
+              return (
+                <li
+                  key={id}
+                  id={id}
+                  className="scroll-mt-28 bg-white border border-border rounded-lg p-6 md:p-8"
+                >
+                  <div className="flex items-start justify-between gap-5">
+                    <div className="flex items-center justify-center w-[52px] h-[52px] rounded-lg bg-dark text-primary shrink-0">
+                      <Icon size={26} strokeWidth={2.2} aria-hidden="true" />
+                    </div>
+                    <span className="rounded-full bg-primary/10 border border-primary/40 px-3 py-1 text-[12px] font-bold uppercase tracking-wide text-dark">
+                      Available
+                    </span>
+                  </div>
+
+                  <h3 className="mt-7 text-[25px] md:text-[30px] font-bold leading-tight text-dark">
+                    {title}
+                  </h3>
+
+                  {description && (
+                    <p className="mt-4 text-[16px] leading-relaxed text-muted">
+                      {description}
+                    </p>
+                  )}
+
+                  <ul className="mt-6 grid gap-3" aria-label={`${title} includes`}>
+                    {features.map((feature) => (
+                      <li key={feature} className="flex items-start gap-3 text-[15px] text-body">
+                        <Check
+                          className="mt-[2px] shrink-0 text-primary"
+                          size={18}
+                          strokeWidth={3}
+                          aria-hidden="true"
+                        />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="mt-7 flex flex-wrap gap-2" aria-label={`${title} is good for`}>
+                    {goodFor.map((item) => (
+                      <span
+                        key={item}
+                        className="rounded-full bg-light-bg px-3 py-1.5 text-[13px] font-medium text-muted"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="mt-8">
+                    <Button
+                      variant="primary"
+                      size="md"
+                      aria-label={`Book ${title}`}
+                      onClick={() => setActiveService(title)}
+                    >
+                      Book This Service
+                    </Button>
+                  </div>
+                </li>
+              )
+            })}
           </ul>
         </div>
       </section>
+
+      <section className="bg-white py-16 md:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-8 lg:grid-cols-[0.85fr_1fr] lg:items-start">
+            <div>
+              <span className="text-primary text-[12px] font-bold tracking-widest uppercase">
+                What to expect
+              </span>
+              <h2 className="mt-3 text-[30px] md:text-[40px] font-bold leading-tight text-dark">
+                A simple garage visit, handled properly.
+              </h2>
+            </div>
+
+            <ul role="list" className="grid gap-4">
+              {EXPECTATIONS.map(({ title, text, Icon }) => (
+                <li key={title} className="flex gap-4 border-b border-border pb-5 last:border-b-0">
+                  <div className="flex items-center justify-center w-11 h-11 rounded-lg bg-primary/10 text-dark shrink-0">
+                    <Icon size={22} aria-hidden="true" />
+                  </div>
+                  <div>
+                    <h3 className="text-[18px] font-bold text-dark">{title}</h3>
+                    <p className="mt-1 text-[15px] leading-relaxed text-muted">{text}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <ServiceQuoteModal service={activeService} onClose={() => setActiveService(null)} />
     </>
   )
 }

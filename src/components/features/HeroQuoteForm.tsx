@@ -17,6 +17,10 @@ type FormFields = {
 
 const EMPTY: FormFields = { name: '', email: '', phone: '', service: '', message: '' }
 
+type Props = {
+  initialService?: string
+}
+
 const SERVICES = [
   'MOT Testing',
   'Full Service',
@@ -30,22 +34,25 @@ const SERVICES = [
 
 const inputCls =
   'w-full h-[52px] rounded-xl bg-white/5 border border-white/30 text-white text-[16px] px-4 ' +
-  'placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#1ED760] focus:border-[#1ED760] focus:bg-white/10 ' +
+  'placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:bg-white/10 ' +
   'hover:border-white/50 transition-all duration-200'
 
 const selectCls =
   'w-full h-[52px] rounded-xl bg-white/5 border border-white/30 text-white text-[16px] px-4 ' +
-  'focus:outline-none focus:ring-2 focus:ring-[#1ED760] focus:border-[#1ED760] focus:bg-white/10 ' +
+  'focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:bg-white/10 ' +
   'hover:border-white/50 transition-all duration-200 appearance-none cursor-pointer ' +
-  '[&>option]:bg-[#1a1a1a] [&>option]:text-white'
+  '[&>option]:bg-dark [&>option]:text-white'
 
 const textareaCls =
   'w-full rounded-xl bg-white/5 border border-white/30 text-white text-[16px] px-4 py-3 ' +
-  'placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#1ED760] focus:border-[#1ED760] focus:bg-white/10 ' +
+  'placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:bg-white/10 ' +
   'hover:border-white/50 transition-all duration-200 resize-none'
 
-export function HeroQuoteForm() {
-  const [fields, setFields] = useState<FormFields>(EMPTY)
+export function HeroQuoteForm({ initialService }: Props) {
+  const options = initialService && !SERVICES.includes(initialService)
+    ? [initialService, ...SERVICES]
+    : SERVICES
+  const [fields, setFields] = useState<FormFields>({ ...EMPTY, service: initialService ?? '' })
   const [status, setStatus] = useState<Status>('idle')
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -95,7 +102,7 @@ export function HeroQuoteForm() {
     return (
       <div role="status" aria-live="polite" className="text-center py-12">
         <div
-          className="flex items-center justify-center w-16 h-16 rounded-full bg-[#1a1a1a] mx-auto mb-5"
+          className="flex items-center justify-center w-16 h-16 rounded-full bg-dark mx-auto mb-5"
           aria-hidden="true"
         >
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -108,7 +115,7 @@ export function HeroQuoteForm() {
         </p>
         <a
           href={BUSINESS.phoneTel}
-          className="inline-flex items-center gap-2 text-[#1ED760] text-[17px] font-semibold hover:text-white transition-colors"
+          className="inline-flex items-center gap-2 text-primary text-[17px] font-semibold hover:text-white transition-colors"
         >
           Call {BUSINESS.phone}
         </a>
@@ -175,7 +182,7 @@ export function HeroQuoteForm() {
             aria-label="Service required"
           >
             <option value="" disabled>Select Service</option>
-            {SERVICES.map((s) => (
+            {options.map((s) => (
               <option key={s} value={s}>{s}</option>
             ))}
           </select>
