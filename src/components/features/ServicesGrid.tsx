@@ -77,7 +77,7 @@ export function ServicesGrid({ services, showViewAll = false, limit }: Props) {
 
         {/* Grid */}
         <ul className="space-y-8" role="list">
-          {displayServices.map((service, index) => (
+          {displayServices.map((service) => (
             <li key={service._id} className="bg-white rounded-3xl border border-[#E8E8E8] hover:shadow-xl transition-all duration-300">
 
               {/* Card — horizontal layout */}

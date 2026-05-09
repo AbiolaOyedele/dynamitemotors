@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import { BUSINESS } from '@/config/constants'
 import { HeroQuoteForm } from './HeroQuoteForm'
 
 export function HeroSection() {
