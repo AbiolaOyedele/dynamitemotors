@@ -1,5 +1,4 @@
 import { resendClient } from '@/lib/resend'
-import { env } from '@/config/env'
 import { AppError } from '@/lib/errors'
 import type { QuoteFormData } from '@/types/quote.types'
 
