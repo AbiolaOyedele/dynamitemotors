@@ -1,0 +1,37 @@
+[
+  {
+    "id": "t1",
+    "customerName": "de artz",
+    "review": "They did my auxiliary timing belt and serviced my car, along with changing the tires and ever since then, my car has been running perfectly. I had been dealing with frustrating battery drainage issues for a long time, but they managed to sort it out.",
+    "rating": 5,
+    "vehicleType": ""
+  },
+  {
+    "id": "t2",
+    "customerName": "Conall Morgan",
+    "review": "Went in and got checked and fixed quickly!",
+    "rating": 5,
+    "vehicleType": ""
+  },
+  {
+    "id": "t3",
+    "customerName": "Taiwo Pereira",
+    "review": "Quick and very professional service, various options provided to me also. Would highly recommend.",
+    "rating": 5,
+    "vehicleType": ""
+  },
+  {
+    "id": "t4",
+    "customerName": "Daniel Ajanaku",
+    "review": "Very consistent and reliable service. I was beyond impressed with the work and attention to detail on my car repair.",
+    "rating": 5,
+    "vehicleType": ""
+  },
+  {
+    "id": "t5",
+    "customerName": "Ifeoluwa Adeyemi",
+    "review": "I've been using them for the past 8 years, and they always provide excellent service. Very friendly, helpful and experienced mechanics!",
+    "rating": 5,
+    "vehicleType": ""
+  }
+]

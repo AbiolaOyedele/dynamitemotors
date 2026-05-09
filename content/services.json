@@ -1,0 +1,34 @@
+[
+  {
+    "id": "mot-testing",
+    "title": "MOT Testing",
+    "description": "Fast, reliable MOT testing with same-day certificates.",
+    "icon": "mot",
+    "features": ["Pass or fail advice", "Retest available", "All vehicle classes"],
+    "image": ""
+  },
+  {
+    "id": "car-servicing",
+    "title": "Car Servicing",
+    "description": "Full and interim services to keep your car running safely.",
+    "icon": "service",
+    "features": ["Oil & filter change", "Safety inspection", "All makes & models"],
+    "image": ""
+  },
+  {
+    "id": "brake-repairs",
+    "title": "Brake Repairs",
+    "description": "Pads, discs and fluid checks for total stopping confidence.",
+    "icon": "brake",
+    "features": ["Free brake check", "Genuine parts", "Same-day fitting"],
+    "image": ""
+  },
+  {
+    "id": "tyres-wheels",
+    "title": "Tyres & Wheels",
+    "description": "Supply and fitting of all major tyre brands, any size.",
+    "icon": "tyre",
+    "features": ["Competitive prices", "Wheel balancing", "TPMS reset"],
+    "image": ""
+  }
+]
