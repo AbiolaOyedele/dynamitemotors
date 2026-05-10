@@ -100,21 +100,21 @@ export function HeroSection() {
             </div>
 
             {/* Mobile: logo left + hamburger right */}
-            <div className="md:hidden flex items-center justify-between w-full bg-white rounded-[50px] px-3 py-2" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.12)' }}>
-              <Link href="/" onClick={close} className="flex items-center px-3">
-                <span className="text-dark text-[15px] font-bold tracking-tight">{BUSINESS.name.toUpperCase()}</span>
+            <div className="md:hidden flex items-center justify-between w-full">
+              <Link href="/" onClick={close}>
+                <span className="text-white text-[15px] font-bold tracking-tight">{BUSINESS.name.toUpperCase()}</span>
               </Link>
               <button
                 type="button"
                 onClick={() => setMenuOpen(true)}
-                className="flex flex-col justify-center items-center w-[44px] h-[44px] gap-[5px] rounded-full hover:bg-light-bg transition-colors"
+                className="flex flex-col justify-center items-center w-[44px] h-[44px] gap-[5px] rounded-lg hover:bg-white/10 transition-colors"
                 aria-label="Open navigation menu"
                 aria-expanded={menuOpen}
                 aria-controls="mobile-menu"
               >
-                <span className="block w-[22px] h-[2px] bg-dark rounded-full" />
-                <span className="block w-[22px] h-[2px] bg-dark rounded-full" />
-                <span className="block w-[22px] h-[2px] bg-dark rounded-full" />
+                <span className="block w-[22px] h-[2px] bg-white rounded-full" />
+                <span className="block w-[22px] h-[2px] bg-white rounded-full" />
+                <span className="block w-[22px] h-[2px] bg-white rounded-full" />
               </button>
             </div>
           </div>
