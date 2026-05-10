@@ -303,7 +303,7 @@ export function ServicesPageContent({ services }: Props) {
             <ul role="list" className="grid gap-4">
               {EXPECTATIONS.map(({ title, text, Icon }) => (
                 <li key={title} className="flex gap-4 border-b border-border pb-5 last:border-b-0">
-                  <div className="flex items-center justify-center w-11 h-11 rounded-lg bg-primary/10 text-dark shrink-0">
+                  <div className="flex items-center justify-center w-11 h-11 rounded-lg bg-dark text-primary shrink-0">
                     <Icon size={22} aria-hidden="true" />
                   </div>
                   <div>
