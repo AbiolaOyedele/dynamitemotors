@@ -4,6 +4,18 @@ import path from 'path'
 import { isAuthenticated } from '@/lib/admin-auth'
 import { getUploadDir, getPublicPath } from '@/lib/content'
 
+const EXTENSIONS_BY_TYPE: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/avif': 'avif',
+}
+
+function sanitizeFilename(value: string): string {
+  const normalized = value.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9-_]/g, '-')
+  return normalized.replace(/-+/g, '-').replace(/^-|-$/g, '') || 'upload'
+}
+
 /** POST /api/admin/upload — Upload an image */
 export async function POST(request: NextRequest) {
   const authed = await isAuthenticated()
@@ -22,7 +34,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/avif']
+    const allowedTypes = Object.keys(EXTENSIONS_BY_TYPE)
     if (!allowedTypes.includes(file.type)) {
       return NextResponse.json(
         { error: 'Invalid file type. Allowed: JPEG, PNG, WebP, AVIF' },
@@ -37,22 +49,20 @@ export async function POST(request: NextRequest) {
     }
 
     // Determine filename
-    const ext = file.name.split('.').pop() ?? 'jpg'
-    const baseName = customName
-      ? customName.replace(/\.[^.]+$/, '')
-      : file.name.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9-_]/g, '-')
+    const ext = EXTENSIONS_BY_TYPE[file.type]
+    const baseName = sanitizeFilename(customName ?? file.name)
     const filename = `${baseName}.${ext}`
 
     // Ensure directory exists
     const uploadDir = getUploadDir(context)
-    if (!existsSync(uploadDir)) {
-      mkdirSync(uploadDir, { recursive: true })
+    if (!existsSync(/* turbopackIgnore: true */ uploadDir)) {
+      mkdirSync(/* turbopackIgnore: true */ uploadDir, { recursive: true })
     }
 
     // Write file
     const buffer = Buffer.from(await file.arrayBuffer())
-    const filePath = path.join(uploadDir, filename)
-    writeFileSync(filePath, buffer)
+    const filePath = path.join(/* turbopackIgnore: true */ uploadDir, filename)
+    writeFileSync(/* turbopackIgnore: true */ filePath, buffer)
 
     // Return the public URL path
     const publicPath = getPublicPath(context, filename)

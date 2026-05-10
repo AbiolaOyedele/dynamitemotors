@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import { MapPin, Phone } from 'lucide-react'
 import { ServicesPageContent } from '@/components/features/ServicesPageContent'
 import { ButtonLink } from '@/components/ui/Button'
@@ -16,8 +17,18 @@ export default async function ServicesPage() {
 
   return (
     <>
-      <section className="bg-dark pt-28 md:pt-32 pb-16 md:pb-20" aria-label="Services hero">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="relative overflow-hidden pt-28 md:pt-32 pb-16 md:pb-20" aria-label="Services hero">
+        <Image
+          src="/services-hero.jpg"
+          alt="Mechanic working on a car at Dynamite Motors"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        <div aria-hidden="true" className="absolute inset-0 bg-black/60" />
+        <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-[36px] md:text-[52px] font-bold text-white leading-tight mb-4">
             Our Services
           </h1>

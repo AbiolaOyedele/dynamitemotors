@@ -21,10 +21,10 @@ type SelectProps = React.SelectHTMLAttributes<HTMLSelectElement> & {
 }
 
 const fieldBase =
-  'w-full rounded-lg border bg-white text-[#1a1a1a] text-[17px] px-4 transition-colors placeholder:text-[#999999] focus:outline-none focus:ring-2 focus:ring-[#1ED760] focus:border-[#1ED760] disabled:cursor-not-allowed disabled:bg-[#F5F5F5] disabled:text-[#666666]'
+  'w-full rounded-lg border bg-white text-dark text-[17px] px-4 transition-colors placeholder:text-muted/70 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary disabled:cursor-not-allowed disabled:bg-light-bg disabled:text-muted'
 
-const fieldNormal = 'border-[#E8E8E8] hover:border-[#1ED760]'
-const fieldError = 'border-[#FF4444] focus:ring-[#FF4444] focus:border-[#FF4444]'
+const fieldNormal = 'border-border hover:border-primary'
+const fieldError = 'border-error focus:ring-error focus:border-error'
 
 export function Input({ label, error, hint, className, id, ...props }: InputProps) {
   const fieldId = id ?? label.toLowerCase().replace(/\s+/g, '-')
@@ -35,16 +35,16 @@ export function Input({ label, error, hint, className, id, ...props }: InputProp
     <div className="flex flex-col gap-2">
       <label
         htmlFor={fieldId}
-        className="text-[17px] font-semibold text-[#1a1a1a]"
+        className="text-[17px] font-semibold text-dark"
       >
         {label}
         {props.required && (
-          <span className="ml-1 text-[#FF4444]" aria-hidden="true">*</span>
+          <span className="ml-1 text-error" aria-hidden="true">*</span>
         )}
       </label>
 
       {hint && (
-        <p id={hintId} className="text-[15px] text-[#666666]">
+        <p id={hintId} className="text-[15px] text-muted">
           {hint}
         </p>
       )}
@@ -67,7 +67,7 @@ export function Input({ label, error, hint, className, id, ...props }: InputProp
       />
 
       {error && (
-        <p id={errorId} role="alert" className="text-[15px] text-[#FF4444]">
+        <p id={errorId} role="alert" className="text-[15px] text-error">
           {error}
         </p>
       )}
@@ -91,16 +91,16 @@ export function Textarea({
     <div className="flex flex-col gap-2">
       <label
         htmlFor={fieldId}
-        className="text-[17px] font-semibold text-[#1a1a1a]"
+        className="text-[17px] font-semibold text-dark"
       >
         {label}
         {props.required && (
-          <span className="ml-1 text-[#FF4444]" aria-hidden="true">*</span>
+          <span className="ml-1 text-error" aria-hidden="true">*</span>
         )}
       </label>
 
       {hint && (
-        <p id={hintId} className="text-[15px] text-[#666666]">
+        <p id={hintId} className="text-[15px] text-muted">
           {hint}
         </p>
       )}
@@ -123,7 +123,7 @@ export function Textarea({
       />
 
       {error && (
-        <p id={errorId} role="alert" className="text-[15px] text-[#FF4444]">
+        <p id={errorId} role="alert" className="text-[15px] text-error">
           {error}
         </p>
       )}
@@ -149,16 +149,16 @@ export function Select({
     <div className="flex flex-col gap-2">
       <label
         htmlFor={fieldId}
-        className="text-[17px] font-semibold text-[#1a1a1a]"
+        className="text-[17px] font-semibold text-dark"
       >
         {label}
         {props.required && (
-          <span className="ml-1 text-[#FF4444]" aria-hidden="true">*</span>
+          <span className="ml-1 text-error" aria-hidden="true">*</span>
         )}
       </label>
 
       {hint && (
-        <p id={hintId} className="text-[15px] text-[#666666]">
+        <p id={hintId} className="text-[15px] text-muted">
           {hint}
         </p>
       )}
@@ -192,7 +192,7 @@ export function Select({
       </select>
 
       {error && (
-        <p id={errorId} role="alert" className="text-[15px] text-[#FF4444]">
+        <p id={errorId} role="alert" className="text-[15px] text-error">
           {error}
         </p>
       )}

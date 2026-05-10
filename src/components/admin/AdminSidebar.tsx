@@ -41,10 +41,10 @@ export function AdminSidebar() {
   }
 
   return (
-    <aside className="w-64 bg-[#111111] min-h-screen flex flex-col border-r border-white/10">
+    <aside className="w-64 bg-dark min-h-screen flex flex-col border-r border-white/10">
       {/* Logo */}
       <div className="px-6 py-6 border-b border-white/10">
-        <p className="text-[#1ED760] text-[18px] font-bold tracking-tight">
+        <p className="text-primary text-[18px] font-bold tracking-tight">
           Dynamite Motors
         </p>
         <p className="text-white/40 text-[12px] mt-1">Admin Panel</p>
@@ -64,7 +64,7 @@ export function AdminSidebar() {
                   href={href}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-medium transition-all duration-200 ${
                     isActive
-                      ? 'bg-[#1ED760]/10 text-[#1ED760]'
+                      ? 'bg-primary/10 text-primary'
                       : 'text-white/60 hover:text-white hover:bg-white/5'
                   }`}
                 >

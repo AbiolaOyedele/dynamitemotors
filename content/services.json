@@ -30,5 +30,13 @@
     "icon": "tyre",
     "features": ["Competitive prices", "Wheel balancing", "TPMS reset"],
     "image": ""
+  },
+  {
+    "id": "aircon",
+    "title": "Air Con Gas & Repair",
+    "description": "Regassing, leak checks and repairs for cleaner, cooler air through every season.",
+    "icon": "aircon",
+    "features": ["Air con regas", "Leak detection", "Compressor inspection", "System diagnosis"],
+    "image": "/aircon.jpg"
   }
 ]

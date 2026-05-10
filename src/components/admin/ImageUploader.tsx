@@ -77,7 +77,7 @@ export function ImageUploader({
 
   return (
     <div className={className}>
-      <label className="block text-[13px] font-semibold text-[#333333] mb-2">
+      <label className="block text-[13px] font-semibold text-body mb-2">
         {label}
       </label>
 
@@ -87,8 +87,8 @@ export function ImageUploader({
         onClick={() => inputRef.current?.click()}
         className={`relative border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 overflow-hidden ${
           uploading
-            ? 'border-[#D5FFD5] bg-[#f0fff0]'
-            : 'border-[#E8E8E8] hover:border-[#D5FFD5] hover:bg-[#fafafa]'
+            ? 'border-primary bg-primary/10'
+            : 'border-border hover:border-primary/45 hover:bg-light-bg'
         }`}
       >
         {displayImage ? (
@@ -109,7 +109,7 @@ export function ImageUploader({
         ) : (
           <div className="flex flex-col items-center justify-center py-10 px-4">
             <svg
-              className="w-10 h-10 text-[#cccccc] mb-3"
+              className="w-10 h-10 text-muted/50 mb-3"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -121,10 +121,10 @@ export function ImageUploader({
               <polyline points="17 8 12 3 7 8" />
               <line x1="12" y1="3" x2="12" y2="15" />
             </svg>
-            <p className="text-[14px] text-[#666666] font-medium">
+            <p className="text-[14px] text-muted font-medium">
               Drop an image here or click to browse
             </p>
-            <p className="text-[12px] text-[#999999] mt-1">
+            <p className="text-[12px] text-muted/70 mt-1">
               JPEG, PNG, WebP — max 10MB
             </p>
           </div>
@@ -133,8 +133,8 @@ export function ImageUploader({
         {uploading && (
           <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
             <div className="flex items-center gap-2">
-              <div className="w-5 h-5 border-2 border-[#D5FFD5] border-t-transparent rounded-full animate-spin" />
-              <span className="text-[14px] font-medium text-[#333333]">Uploading...</span>
+              <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+              <span className="text-[14px] font-medium text-body">Uploading...</span>
             </div>
           </div>
         )}

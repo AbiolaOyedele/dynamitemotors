@@ -2,6 +2,7 @@ import { readFileSync, writeFileSync } from 'fs'
 import path from 'path'
 
 const CONTENT_DIR = path.join(process.cwd(), 'content')
+const PUBLIC_DIR = path.join(process.cwd(), 'public')
 
 type ContentSection =
   | 'hero'
@@ -25,24 +26,43 @@ export function writeContent<T>(section: ContentSection, data: T): void {
 }
 
 /** Image upload destinations by context */
-export const IMAGE_DESTINATIONS: Record<string, string> = {
-  hero: 'public',
-  services: 'public/images/services',
-  facilities: 'public/images/facilities',
-  offers: 'public/images/offers',
-  general: 'public/images',
+export const IMAGE_DESTINATIONS = {
+  hero: {
+    uploadDir: PUBLIC_DIR,
+    publicPrefix: '',
+  },
+  services: {
+    uploadDir: path.join(PUBLIC_DIR, 'images', 'services'),
+    publicPrefix: '/images/services',
+  },
+  facilities: {
+    uploadDir: path.join(PUBLIC_DIR, 'images', 'facilities'),
+    publicPrefix: '/images/facilities',
+  },
+  offers: {
+    uploadDir: path.join(PUBLIC_DIR, 'images', 'offers'),
+    publicPrefix: '/images/offers',
+  },
+  general: {
+    uploadDir: path.join(PUBLIC_DIR, 'images'),
+    publicPrefix: '/images',
+  },
 }
 
 /** Get the absolute path for an image upload destination */
 export function getUploadDir(context: string): string {
-  const relative = IMAGE_DESTINATIONS[context] ?? IMAGE_DESTINATIONS['general']
-  return path.join(process.cwd(), relative)
+  const destination =
+    IMAGE_DESTINATIONS[context as keyof typeof IMAGE_DESTINATIONS] ??
+    IMAGE_DESTINATIONS['general']
+
+  return destination.uploadDir
 }
 
 /** Get the public URL path for an uploaded image */
 export function getPublicPath(context: string, filename: string): string {
-  if (context === 'hero') return `/${filename}`
-  const relative = IMAGE_DESTINATIONS[context] ?? IMAGE_DESTINATIONS['general']
-  const publicPrefix = relative.replace('public', '')
-  return `${publicPrefix}/${filename}`
+  const destination =
+    IMAGE_DESTINATIONS[context as keyof typeof IMAGE_DESTINATIONS] ??
+    IMAGE_DESTINATIONS['general']
+
+  return `${destination.publicPrefix}/${filename}`
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -12,12 +12,28 @@ import { cn } from '@/utils/cn'
 
 export function HeroSection() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [hidden, setHidden] = useState(false)
+  const lastScrollY = useRef(0)
   const pathname = usePathname()
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [menuOpen])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      if (currentScrollY > lastScrollY.current && currentScrollY > 80) {
+        setHidden(true)
+      } else {
+        setHidden(false)
+      }
+      lastScrollY.current = currentScrollY
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const close = () => setMenuOpen(false)
 
@@ -45,7 +61,10 @@ export function HeroSection() {
           <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent" />
 
           {/* ── Floating pill nav ── */}
-          <div className="relative z-50 w-full flex justify-center items-center py-4 px-6">
+          <div className={cn(
+            'relative z-50 w-full flex justify-center items-center py-4 px-6 transition-transform duration-300 ease-in-out',
+            hidden ? '-translate-y-full' : 'translate-y-0',
+          )}>
 
             {/* Desktop: floating white pill */}
             <div className="hidden md:flex items-center gap-6 bg-white px-6 py-2" style={{ borderRadius: '50px', boxShadow: '0 4px 20px rgba(0,0,0,0.12)' }}>
@@ -82,26 +101,21 @@ export function HeroSection() {
             </div>
 
             {/* Mobile: logo left + hamburger right */}
-            <div className="md:hidden flex items-center justify-between w-full">
-              <Link href="/" onClick={close} className="flex items-center gap-2">
-                <span className="flex items-center justify-center w-[32px] h-[32px] rounded-full bg-dark border border-white/20" aria-hidden="true">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-primary" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-                  </svg>
-                </span>
-                <span className="text-white text-[16px] font-bold tracking-tight">{BUSINESS.name.toUpperCase()}</span>
+            <div className="md:hidden flex items-center justify-between w-full bg-white rounded-[50px] px-3 py-2" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.12)' }}>
+              <Link href="/" onClick={close} className="flex items-center px-3">
+                <span className="text-dark text-[15px] font-bold tracking-tight">{BUSINESS.name.toUpperCase()}</span>
               </Link>
               <button
                 type="button"
                 onClick={() => setMenuOpen(true)}
-                className="flex flex-col justify-center items-center w-[44px] h-[44px] gap-[5px] rounded-lg hover:bg-white/10 transition-colors"
+                className="flex flex-col justify-center items-center w-[44px] h-[44px] gap-[5px] rounded-full hover:bg-light-bg transition-colors"
                 aria-label="Open navigation menu"
                 aria-expanded={menuOpen}
                 aria-controls="mobile-menu"
               >
-                <span className="block w-[22px] h-[2px] bg-white rounded-full" />
-                <span className="block w-[22px] h-[2px] bg-white rounded-full" />
-                <span className="block w-[22px] h-[2px] bg-white rounded-full" />
+                <span className="block w-[22px] h-[2px] bg-dark rounded-full" />
+                <span className="block w-[22px] h-[2px] bg-dark rounded-full" />
+                <span className="block w-[22px] h-[2px] bg-dark rounded-full" />
               </button>
             </div>
           </div>
@@ -168,11 +182,6 @@ export function HeroSection() {
         >
           <div className="flex items-center justify-between px-6 h-[72px] border-b border-border shrink-0">
             <div className="flex items-center gap-2">
-              <span className="flex items-center justify-center w-[28px] h-[28px] rounded-lg bg-primary" aria-hidden="true">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-dark" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-                </svg>
-              </span>
               <span className="text-dark text-[18px] font-bold tracking-tight">{BUSINESS.name.toUpperCase()}</span>
             </div>
             <button

@@ -40,7 +40,7 @@ export function LoginFormClient() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         autoFocus
-        className="w-full h-[52px] rounded-xl bg-white/5 border border-white/20 text-white text-[16px] px-4 placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#D5FFD5] focus:border-[#D5FFD5]"
+        className="w-full h-[52px] rounded-xl bg-white/5 border border-white/20 text-white text-[16px] px-4 placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
       />
 
       {error && (
@@ -50,7 +50,7 @@ export function LoginFormClient() {
       <button
         type="submit"
         disabled={loading || !password}
-        className="w-full h-[52px] rounded-xl bg-[#D5FFD5] text-[#1a1a1a] text-[16px] font-bold hover:bg-[#c0f0c0] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full h-[52px] rounded-xl bg-primary text-dark text-[16px] font-bold hover:bg-primary-dark hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? 'Signing in...' : 'Sign In'}
       </button>

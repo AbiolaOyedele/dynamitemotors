@@ -8,7 +8,7 @@ import { ArrowRight } from 'lucide-react'
  * Variants:
  *  primary  – transparent bg, subtle border → dark circle fills on hover (the classic FlowButton)
  *  filled   – dark bg → lighter circle ripple on hover
- *  green    – accent bg (#1ED760) → dark circle fills on hover
+ *  green    – accent bg → dark circle fills on hover
  *  outline  – bold border → dark circle fills on hover
  *  ghost    – minimal, no circle animation
  */
@@ -42,33 +42,33 @@ const FLOW_BASE =
   'rounded-[100px] font-semibold leading-none cursor-pointer select-none ' +
   'transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] ' +
   'hover:rounded-[12px] active:scale-[0.95] ' +
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1ED760] focus-visible:ring-offset-2 ' +
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ' +
   'disabled:pointer-events-none disabled:opacity-50'
 
 const VARIANT_STYLES: Record<Variant, string> = {
   primary:
-    'border-[1.5px] border-[#333333]/40 bg-transparent text-[#1a1a1a] ' +
+    'border-[1.5px] border-body/40 bg-transparent text-dark ' +
     'hover:border-transparent hover:text-white',
   filled:
-    'border-[1.5px] border-[#1a1a1a] bg-[#1a1a1a] text-white ' +
+    'border-[1.5px] border-dark bg-dark text-white ' +
     'hover:border-transparent',
   green:
-    'border-[1.5px] border-[#1ED760] bg-[#1ED760] text-[#1a1a1a] ' +
+    'border-[1.5px] border-primary bg-primary text-dark ' +
     'hover:border-transparent hover:text-white',
   outline:
-    'border-2 border-[#1a1a1a] bg-transparent text-[#1a1a1a] ' +
+    'border-2 border-dark bg-transparent text-dark ' +
     'hover:border-transparent hover:text-white',
   ghost:
-    'border border-transparent bg-transparent text-[#1a1a1a] ' +
-    'hover:bg-[#f5f5f5] active:bg-[#e8e8e8]',
+    'border border-transparent bg-transparent text-dark ' +
+    'hover:bg-light-bg active:bg-border',
 }
 
 /** Background color of the expanding circle per variant */
 const CIRCLE_COLORS: Record<Variant, string> = {
-  primary: 'bg-[#1a1a1a]',
-  filled:  'bg-[#333333]',
-  green:   'bg-[#1a1a1a]',
-  outline: 'bg-[#1a1a1a]',
+  primary: 'bg-dark',
+  filled:  'bg-body',
+  green:   'bg-dark',
+  outline: 'bg-dark',
   ghost:   '',
 }
 
@@ -206,7 +206,7 @@ export function AnimatedButtonLink({
       className={cn(
         FLOW_BASE,
         'h-[44px] px-7 text-[13px] font-bold tracking-widest uppercase',
-        'border-[1.5px] border-[#333333]/40 bg-transparent text-[#1a1a1a]',
+        'border-[1.5px] border-body/40 bg-transparent text-dark',
         'hover:border-transparent hover:text-white hover:rounded-[12px]',
         className,
       )}

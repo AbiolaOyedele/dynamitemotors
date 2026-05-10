@@ -1,10 +1,25 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
+import { ClipboardCheck, Wrench, ShieldCheck, CircleDot, Fan } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import { ServiceQuoteModal } from './ServiceQuoteModal'
 import type { Service } from '@/types/service.types'
+
+const SERVICE_IMAGES: Record<string, string> = {
+  mot:     '/mot-testing.jpg',
+  service: '/servicing.jpg',
+  brake:   '/brake-repairs.jpg',
+  tyre:    '/tyres.jpg',
+}
+
+function getServiceImage(icon: string | null): string | null {
+  if (!icon) return null
+  const key = Object.keys(SERVICE_IMAGES).find((k) => icon.toLowerCase().includes(k))
+  return key ? SERVICE_IMAGES[key] : null
+}
 
 type Props = {
   services: Service[]
@@ -16,45 +31,21 @@ function ServiceIcon({ name }: { name: string | null }) {
   const icon = name?.toLowerCase() ?? ''
 
   if (icon.includes('mot'))
-    return (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-      </svg>
-    )
+    return <ClipboardCheck size={28} aria-hidden="true" />
 
   if (icon.includes('oil') || icon.includes('service'))
-    return (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M12 2v6" /><path d="M5.636 5.636L7.05 7.05" /><path d="M2 12h6" /><path d="M5.636 18.364L7.05 16.95" /><path d="M12 22v-6" /><path d="M18.364 18.364L16.95 16.95" /><path d="M22 12h-6" /><path d="M18.364 5.636L16.95 7.05" />
-      </svg>
-    )
+    return <Wrench size={28} aria-hidden="true" />
 
   if (icon.includes('tyre') || icon.includes('tire') || icon.includes('wheel'))
-    return (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="3" /><path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
-      </svg>
-    )
+    return <CircleDot size={28} aria-hidden="true" />
 
   if (icon.includes('brake'))
-    return (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" />
-      </svg>
-    )
+    return <ShieldCheck size={28} aria-hidden="true" />
 
-  if (icon.includes('exhaust') || icon.includes('engine'))
-    return (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <rect x="2" y="7" width="20" height="10" rx="2" /><path d="M6 7V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2" /><path d="M8 17v2M16 17v2" />
-      </svg>
-    )
+  if (icon.includes('aircon') || icon.includes('air con') || icon.includes('ac'))
+    return <Fan size={28} aria-hidden="true" />
 
-  return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-    </svg>
-  )
+  return <Wrench size={28} aria-hidden="true" />
 }
 
 const FALLBACK_SERVICES: Service[] = [
@@ -136,13 +127,19 @@ export function ServicesGrid({ services, showViewAll = false, limit }: Props) {
                   </div>
                 </div>
 
-                {/* Right — image placeholder */}
-                <div className="relative hidden lg:flex items-center justify-center">
-                  <div className="w-full aspect-square rounded-3xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 flex items-center justify-center">
-                    <div className="text-center">
-                      <p className="text-muted/70 text-[16px] font-medium">Image coming soon</p>
-                    </div>
-                  </div>
+                {/* Right — image */}
+                <div className="relative hidden lg:block w-full aspect-square rounded-3xl overflow-hidden">
+                  {getServiceImage(service.icon) ? (
+                    <Image
+                      src={getServiceImage(service.icon)!}
+                      alt={service.title}
+                      fill
+                      sizes="(max-width: 1024px) 0vw, 50vw"
+                      className="object-cover object-center"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20" />
+                  )}
                 </div>
               </div>
             </li>

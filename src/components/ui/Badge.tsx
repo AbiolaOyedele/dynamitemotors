@@ -9,9 +9,9 @@ type BadgeProps = {
 }
 
 const variants: Record<Variant, string> = {
-  green: 'bg-[#f0fff4] text-[#1a1a1a] border border-[#1ED760]',
-  dark:  'bg-[#1a1a1a] text-white',
-  muted: 'bg-[#E8E8E8] text-[#666666]',
+  green: 'bg-primary/10 text-dark border border-primary/45',
+  dark:  'bg-dark text-white',
+  muted: 'bg-border text-muted',
 }
 
 export function Badge({ children, variant = 'green', className }: BadgeProps) {

@@ -27,20 +27,20 @@ function OfferCard({ offer }: { offer: Offer }) {
         )}
 
         {/* Title */}
-        <h3 className="text-[22px] md:text-[24px] font-bold text-[#1a1a1a] leading-snug">
+        <h3 className="text-[22px] md:text-[24px] font-bold text-dark leading-snug">
           {offer.title}
         </h3>
 
         {/* Description */}
         {offer.description && (
-          <p className="text-[17px] text-[#666666] leading-relaxed flex-1">
+          <p className="text-[17px] text-muted leading-relaxed flex-1">
             {offer.description}
           </p>
         )}
 
         {/* Expiry */}
         {offer.expiresAt && (
-          <p className="flex items-center gap-2 text-[14px] text-[#666666]">
+          <p className="flex items-center gap-2 text-[14px] text-muted">
             <svg
               width="15"
               height="15"
@@ -83,13 +83,13 @@ export function OffersGrid({ offers }: Props) {
       <section className="bg-white py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex flex-col items-center gap-6 max-w-md mx-auto">
-            <div className="flex items-center justify-center w-20 h-20 rounded-full bg-[#1a1a1a]">
+            <div className="flex items-center justify-center w-20 h-20 rounded-full bg-dark text-primary">
               <svg
                 width="36"
                 height="36"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#1ED760"
+                stroke="currentColor"
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -100,10 +100,10 @@ export function OffersGrid({ offers }: Props) {
               </svg>
             </div>
             <div>
-              <p className="text-[20px] font-bold text-[#1a1a1a] mb-2">
+              <p className="text-[20px] font-bold text-dark mb-2">
                 No current offers
               </p>
-              <p className="text-[17px] text-[#666666] leading-relaxed">
+              <p className="text-[17px] text-muted leading-relaxed">
                 Check back soon — we regularly run promotions on MOTs,
                 servicing, and more.
               </p>

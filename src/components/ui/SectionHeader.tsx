@@ -25,7 +25,7 @@ export function SectionHeader({
       <div
         className={cn(
           'inline-flex items-center gap-2 rounded-full pl-1 pr-4 py-1 mb-5',
-          isDark ? 'bg-white/10' : 'bg-[#1ED760]',
+          isDark ? 'bg-white/10' : 'bg-primary',
         )}
       >
         <span className={cn(
@@ -36,7 +36,8 @@ export function SectionHeader({
             width="12"
             height="12"
             viewBox="0 0 24 24"
-            fill="#1ED760"
+            fill="currentColor"
+            className="text-primary"
             aria-hidden="true"
           >
             <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
@@ -44,7 +45,7 @@ export function SectionHeader({
         </span>
         <span className={cn(
           'text-[12px] font-bold uppercase tracking-widest leading-none',
-          isDark ? 'text-[#1ED760]' : 'text-[#1a1a1a]',
+          isDark ? 'text-primary' : 'text-dark',
         )}>
           {pill}
         </span>
@@ -55,7 +56,7 @@ export function SectionHeader({
         id={headingId}
         className={cn(
           'text-[28px] md:text-[40px] font-bold leading-tight',
-          isDark ? 'text-white' : 'text-[#1a1a1a]',
+          isDark ? 'text-white' : 'text-dark',
         )}
       >
         {heading}
@@ -66,7 +67,7 @@ export function SectionHeader({
         <p
           className={cn(
             'mt-4 text-[18px] leading-relaxed',
-            isDark ? 'text-white/50' : 'text-[#666666]',
+            isDark ? 'text-white/55' : 'text-muted',
             align === 'center' && 'max-w-2xl mx-auto',
           )}
         >

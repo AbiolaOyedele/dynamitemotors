@@ -101,10 +101,10 @@ export function QuoteForm({ serviceNames }: Props) {
       <div
         role="status"
         aria-live="polite"
-        className="rounded-2xl bg-white border border-[#1ED760] p-8 md:p-10 text-center"
+        className="rounded-2xl bg-white border border-primary p-8 md:p-10 text-center"
       >
         <div
-          className="flex items-center justify-center w-16 h-16 rounded-full bg-[#1a1a1a] mx-auto mb-5"
+          className="flex items-center justify-center w-16 h-16 rounded-full bg-dark mx-auto mb-5"
           aria-hidden="true"
         >
           <svg
@@ -120,16 +120,16 @@ export function QuoteForm({ serviceNames }: Props) {
             <path d="M20 6L9 17l-5-5" />
           </svg>
         </div>
-        <h3 className="text-[24px] font-bold text-[#1a1a1a] mb-3">
+        <h3 className="text-[24px] font-bold text-dark mb-3">
           Quote request sent!
         </h3>
-        <p className="text-[17px] text-[#333333] leading-relaxed mb-6">
+        <p className="text-[17px] text-body leading-relaxed mb-6">
           Thank you — we&apos;ll be in touch shortly. If you need us straight
           away, give us a call.
         </p>
         <a
           href={BUSINESS.phoneTel}
-          className="inline-flex items-center gap-2 text-[#1ED760] text-[17px] font-semibold hover:text-[#2a9546] transition-colors"
+          className="inline-flex items-center gap-2 text-primary text-[17px] font-semibold hover:text-primary-dark transition-colors"
         >
           <svg
             width="18"
@@ -146,11 +146,11 @@ export function QuoteForm({ serviceNames }: Props) {
           </svg>
           {BUSINESS.phone}
         </a>
-        <div className="mt-6 pt-6 border-t border-[#1ED760]">
+        <div className="mt-6 pt-6 border-t border-primary">
           <button
             type="button"
             onClick={() => setStatus('idle')}
-            className="text-[15px] text-[#666666] hover:text-[#1ED760] transition-colors underline underline-offset-2"
+            className="text-[15px] text-muted hover:text-primary transition-colors underline underline-offset-2"
           >
             Send another enquiry
           </button>
@@ -213,9 +213,9 @@ export function QuoteForm({ serviceNames }: Props) {
       {status === 'error' && (
         <div
           role="alert"
-          className="rounded-lg bg-[#fff5f5] border border-[#FF4444]/30 p-4"
+          className="rounded-lg bg-error/5 border border-error/30 p-4"
         >
-          <p className="text-[16px] text-[#FF4444] font-medium">{errorMsg}</p>
+          <p className="text-[16px] text-error font-medium">{errorMsg}</p>
         </div>
       )}
 
@@ -228,7 +228,7 @@ export function QuoteForm({ serviceNames }: Props) {
         {status === 'loading' ? 'Sending…' : 'Send Quote Request'}
       </Button>
 
-      <p className="text-[14px] text-[#666666] text-center leading-relaxed">
+      <p className="text-[14px] text-muted text-center leading-relaxed">
         We typically respond within 2 hours during business hours.
       </p>
     </form>

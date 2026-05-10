@@ -17,10 +17,10 @@ export default async function AdminLayout({
   // Show login page if not authenticated
   if (!authed) {
     return (
-      <div className="min-h-screen bg-[#111111] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-dark flex items-center justify-center px-4">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-            <p className="text-[#D5FFD5] text-[24px] font-bold tracking-tight">
+            <p className="text-primary text-[24px] font-bold tracking-tight">
               Dynamite Motors
             </p>
             <p className="text-white/40 text-[14px] mt-2">Admin Panel</p>
@@ -32,7 +32,7 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-[#f8f8f8]">
+    <div className="flex min-h-screen bg-light-bg">
       <AdminSidebar />
       <main className="flex-1 overflow-auto">
         <div className="p-8 max-w-5xl">

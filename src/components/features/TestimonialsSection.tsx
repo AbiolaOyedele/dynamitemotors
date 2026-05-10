@@ -1,6 +1,3 @@
-'use client'
-
-import { useRef, useEffect, useCallback } from 'react'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import type { Testimonial } from '@/types/testimonial.types'
 
@@ -76,41 +73,12 @@ const FALLBACK_TESTIMONIALS: Testimonial[] = [
   },
 ]
 
-/** Speed in pixels per frame (~0.3px/frame at 60fps ≈ 18px/s) */
-const AUTO_SCROLL_SPEED = 0.3
-
 export function TestimonialsSection({ testimonials }: Props) {
   const items = testimonials.length > 0 ? testimonials : FALLBACK_TESTIMONIALS
   const duplicated = [...items, ...items]
 
-  const trackRef = useRef<HTMLDivElement>(null)
-  const paused = useRef(false)
-  const rafId = useRef(0)
-
-  const tick = useCallback(() => {
-    const el = trackRef.current
-    if (el && !paused.current) {
-      el.scrollLeft += AUTO_SCROLL_SPEED
-
-      // Seamless loop: when we've scrolled past the first set, jump back
-      const half = el.scrollWidth / 2
-      if (el.scrollLeft >= half) {
-        el.scrollLeft -= half
-      }
-    }
-    rafId.current = requestAnimationFrame(tick)
-  }, [])
-
-  useEffect(() => {
-    rafId.current = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(rafId.current)
-  }, [tick])
-
-  const pause = () => { paused.current = true }
-  const resume = () => { paused.current = false }
-
   return (
-    <section aria-labelledby="testimonials-heading" className="bg-[#1a1a1a] py-20 md:py-24 overflow-hidden">
+    <section aria-labelledby="testimonials-heading" className="bg-dark py-20 md:py-24 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
           pill="Customer Reviews"
@@ -121,61 +89,54 @@ export function TestimonialsSection({ testimonials }: Props) {
         />
       </div>
 
-      {/* Scrollable + auto-sliding track */}
       <div
-        ref={trackRef}
-        onMouseEnter={pause}
-        onMouseLeave={resume}
-        onTouchStart={pause}
-        onTouchEnd={resume}
         style={{
           maskImage:
             'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
         }}
-        className="flex gap-6 overflow-x-auto px-[10%] scrollbar-hide cursor-grab active:cursor-grabbing"
+        className="overflow-hidden px-[10%]"
       >
-        {duplicated.map((t, i) => (
-          <article
-            key={`${t._id}-${i}`}
-            className="shrink-0 w-[340px] sm:w-[420px] md:w-[500px] bg-white/[0.04] backdrop-blur-sm rounded-2xl border border-white/10 flex flex-col snap-start"
-          >
-            {/* Review body */}
-            <div className="flex-1 px-6 pt-6 pb-5 flex flex-col gap-4">
-              <StarRating rating={t.rating} />
-              <blockquote>
-                <p className="text-[16px] md:text-[17px] text-white/75 leading-relaxed font-light tracking-tight">
-                  &ldquo;{t.review}&rdquo;
-                </p>
-              </blockquote>
-            </div>
-
-            {/* Author footer */}
-            <footer className="border-t border-white/10 px-6 py-4 flex items-center gap-3">
-              <div
-                className="flex items-center justify-center w-10 h-10 rounded-full bg-[#1ED760] text-[#1a1a1a] font-bold text-[15px] shrink-0"
-                aria-hidden="true"
-              >
-                {t.customerName.charAt(0)}
-              </div>
-              <div className="flex-1 min-w-0">
-                <cite className="not-italic text-[15px] font-semibold text-white block">
-                  {t.customerName}
-                </cite>
-                {t.vehicleType && (
-                  <p className="text-[13px] text-white/40 truncate">{t.vehicleType}</p>
-                )}
+        <div className="flex w-max gap-6 animate-x-slider hover:[animation-play-state:paused] motion-reduce:animate-none">
+          {duplicated.map((t, i) => (
+            <article
+              key={`${t._id}-${i}`}
+              className="shrink-0 w-[340px] sm:w-[420px] md:w-[500px] bg-white/[0.04] backdrop-blur-sm rounded-2xl border border-white/10 flex flex-col"
+            >
+              <div className="flex-1 px-6 pt-6 pb-5 flex flex-col gap-4">
+                <StarRating rating={t.rating} />
+                <blockquote>
+                  <p className="text-[16px] md:text-[17px] text-white/75 leading-relaxed font-light tracking-tight">
+                    &ldquo;{t.review}&rdquo;
+                  </p>
+                </blockquote>
               </div>
 
-              {/* Google badge */}
-              <div className="flex items-center gap-1.5 bg-white/5 rounded-full px-3 py-1.5 shrink-0">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b" aria-hidden="true">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                </svg>
-                <span className="text-[12px] text-white/50 font-medium">Google</span>
-              </div>
-            </footer>
-          </article>
-        ))}
+              <footer className="border-t border-white/10 px-6 py-4 flex items-center gap-3">
+                <div
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-dark font-bold text-[15px] shrink-0"
+                  aria-hidden="true"
+                >
+                  {t.customerName.charAt(0)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <cite className="not-italic text-[15px] font-semibold text-white block">
+                    {t.customerName}
+                  </cite>
+                  {t.vehicleType && (
+                    <p className="text-[13px] text-white/40 truncate">{t.vehicleType}</p>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-1.5 bg-white/5 rounded-full px-3 py-1.5 shrink-0">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b" aria-hidden="true">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                  <span className="text-[12px] text-white/50 font-medium">Google</span>
+                </div>
+              </footer>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   )

@@ -45,13 +45,13 @@ export default function HeroAdmin() {
   }
 
   if (!data) {
-    return <div className="text-[#666666]">Loading...</div>
+    return <div className="text-muted">Loading...</div>
   }
 
   return (
     <div>
-      <h1 className="text-[28px] font-bold text-[#1a1a1a] mb-2">Hero Section</h1>
-      <p className="text-[16px] text-[#666666] mb-8">
+      <h1 className="text-[28px] font-bold text-dark mb-2">Hero Section</h1>
+      <p className="text-[16px] text-muted mb-8">
         Edit the main banner text and background image.
       </p>
 
@@ -67,53 +67,53 @@ export default function HeroAdmin() {
 
         {/* Badge text */}
         <div>
-          <label className="block text-[13px] font-semibold text-[#333333] mb-2">
+          <label className="block text-[13px] font-semibold text-body mb-2">
             Badge Text
           </label>
           <input
             type="text"
             value={data.badge}
             onChange={(e) => setData({ ...data, badge: e.target.value })}
-            className="w-full h-[44px] rounded-lg border border-[#E8E8E8] px-3 text-[15px] text-[#333333] focus:outline-none focus:ring-2 focus:ring-[#D5FFD5] focus:border-[#D5FFD5]"
+            className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
           />
         </div>
 
         {/* Heading */}
         <div>
-          <label className="block text-[13px] font-semibold text-[#333333] mb-2">
+          <label className="block text-[13px] font-semibold text-body mb-2">
             Heading (use \n for line breaks)
           </label>
           <textarea
             value={data.heading}
             onChange={(e) => setData({ ...data, heading: e.target.value })}
             rows={3}
-            className="w-full rounded-lg border border-[#E8E8E8] px-3 py-2.5 text-[15px] text-[#333333] focus:outline-none focus:ring-2 focus:ring-[#D5FFD5] focus:border-[#D5FFD5] resize-none"
+            className="w-full rounded-lg border border-border px-3 py-2.5 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
           />
         </div>
 
         {/* Accent line */}
         <div>
-          <label className="block text-[13px] font-semibold text-[#333333] mb-2">
+          <label className="block text-[13px] font-semibold text-body mb-2">
             Accent Line (green text)
           </label>
           <input
             type="text"
             value={data.accentLine}
             onChange={(e) => setData({ ...data, accentLine: e.target.value })}
-            className="w-full h-[44px] rounded-lg border border-[#E8E8E8] px-3 text-[15px] text-[#333333] focus:outline-none focus:ring-2 focus:ring-[#D5FFD5] focus:border-[#D5FFD5]"
+            className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
           />
         </div>
 
         {/* Subheading */}
         <div>
-          <label className="block text-[13px] font-semibold text-[#333333] mb-2">
+          <label className="block text-[13px] font-semibold text-body mb-2">
             Subheading
           </label>
           <textarea
             value={data.subheading}
             onChange={(e) => setData({ ...data, subheading: e.target.value })}
             rows={2}
-            className="w-full rounded-lg border border-[#E8E8E8] px-3 py-2.5 text-[15px] text-[#333333] focus:outline-none focus:ring-2 focus:ring-[#D5FFD5] focus:border-[#D5FFD5] resize-none"
+            className="w-full rounded-lg border border-border px-3 py-2.5 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
           />
         </div>
 
@@ -122,7 +122,7 @@ export default function HeroAdmin() {
           <button
             type="submit"
             disabled={saving}
-            className="h-[44px] px-6 rounded-lg bg-[#1a1a1a] text-white text-[14px] font-semibold hover:bg-[#333333] transition-colors disabled:opacity-50"
+            className="h-[44px] px-6 rounded-lg bg-dark text-white text-[14px] font-semibold hover:bg-body transition-colors disabled:opacity-50"
           >
             {saving ? 'Saving...' : 'Save Changes'}
           </button>

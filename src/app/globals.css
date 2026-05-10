@@ -22,26 +22,21 @@
     transform: translateX(0%);
   }
   100% {
-    transform: translateX(calc(-50% - 1.25rem));
+    transform: translateX(calc(-50% - 0.75rem));
   }
 }
 
 @utility animate-x-slider {
-  animation: x-slider 30s linear infinite;
-}
-
-@utility scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  animation: x-slider 70s linear infinite;
 }
 
 body {
   font-family: var(--font-sans);
   font-size: 18px;
   line-height: 1.6;
-  color: #333333;
-  background: #ffffff;
+  color: var(--color-body);
+  background: white;
 }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

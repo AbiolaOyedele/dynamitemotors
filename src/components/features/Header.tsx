@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ButtonLink } from '@/components/ui/Button'
@@ -9,6 +9,8 @@ import { cn } from '@/utils/cn'
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [hidden, setHidden] = useState(false)
+  const lastScrollY = useRef(0)
   const pathname = usePathname()
 
   useEffect(() => {
@@ -16,13 +18,32 @@ export function Header() {
     return () => { document.body.style.overflow = '' }
   }, [menuOpen])
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      if (currentScrollY > lastScrollY.current && currentScrollY > 80) {
+        setHidden(true)
+      } else {
+        setHidden(false)
+      }
+      lastScrollY.current = currentScrollY
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   if (pathname === '/') return null
 
   const close = () => setMenuOpen(false)
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-40 w-full flex justify-center py-4 px-6">
+      <header
+        className={cn(
+          'fixed top-0 left-0 right-0 z-40 w-full flex justify-center py-4 px-6 transition-transform duration-300 ease-in-out',
+          hidden ? '-translate-y-full' : 'translate-y-0',
+        )}
+      >
 
         {/* Desktop: floating white pill */}
         <div className="hidden md:flex items-center gap-6 bg-white px-6 py-2" style={{ borderRadius: '50px', boxShadow: '0 4px 20px rgba(0,0,0,0.12)' }}>
@@ -60,12 +81,7 @@ export function Header() {
 
         {/* Mobile: logo left + hamburger right */}
         <div className="md:hidden flex items-center justify-between w-full bg-white rounded-[50px] px-3 py-2" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.12)' }}>
-          <Link href="/" onClick={close} className="flex items-center gap-2">
-            <span className="flex items-center justify-center w-[36px] h-[36px] rounded-full bg-dark shrink-0" aria-hidden="true">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-primary" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-              </svg>
-            </span>
+          <Link href="/" onClick={close} className="flex items-center px-3">
             <span className="text-dark text-[15px] font-bold tracking-tight">{BUSINESS.name.toUpperCase()}</span>
           </Link>
           <button
@@ -103,11 +119,6 @@ export function Header() {
         >
           <div className="flex items-center justify-between px-6 h-[72px] border-b border-border shrink-0">
             <div className="flex items-center gap-2">
-              <span className="flex items-center justify-center w-[28px] h-[28px] rounded-full bg-dark" aria-hidden="true">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-primary" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-                </svg>
-              </span>
               <span className="text-dark text-[18px] font-bold tracking-tight">{BUSINESS.name.toUpperCase()}</span>
             </div>
             <button
