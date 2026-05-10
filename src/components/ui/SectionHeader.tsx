@@ -1,3 +1,7 @@
+'use client'
+
+import { useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
 import { cn } from '@/utils/cn'
 
 type Props = {
@@ -9,6 +13,8 @@ type Props = {
   theme?: 'light' | 'dark'
 }
 
+const EASE = [0.25, 0.1, 0.25, 1] as const
+
 export function SectionHeader({
   pill,
   heading,
@@ -17,12 +23,17 @@ export function SectionHeader({
   headingId,
   theme = 'light',
 }: Props) {
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-80px' })
   const isDark = theme === 'dark'
 
   return (
-    <div className={cn('mb-14', align === 'center' && 'text-center')}>
+    <div ref={ref} className={cn('mb-14', align === 'center' && 'text-center')}>
       {/* Pill */}
-      <div
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+        transition={{ duration: 0.5, ease: EASE }}
         className={cn(
           'inline-flex items-center gap-2 rounded-full pl-1 pr-4 py-1 mb-5',
           isDark ? 'bg-white/10' : 'bg-primary',
@@ -49,22 +60,28 @@ export function SectionHeader({
         )}>
           {pill}
         </span>
-      </div>
+      </motion.div>
 
       {/* Heading */}
-      <h2
+      <motion.h2
         id={headingId}
+        initial={{ opacity: 0, y: 16 }}
+        animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+        transition={{ duration: 0.6, delay: 0.1, ease: EASE }}
         className={cn(
           'text-[28px] md:text-[40px] font-bold leading-tight',
           isDark ? 'text-white' : 'text-dark',
         )}
       >
         {heading}
-      </h2>
+      </motion.h2>
 
       {/* Description */}
       {description && (
-        <p
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: EASE }}
           className={cn(
             'mt-4 text-[18px] leading-relaxed',
             isDark ? 'text-white/55' : 'text-muted',
@@ -72,7 +89,7 @@ export function SectionHeader({
           )}
         >
           {description}
-        </p>
+        </motion.p>
       )}
     </div>
   )

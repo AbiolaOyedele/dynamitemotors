@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { useRef, useState } from 'react'
+import { motion, useInView } from 'framer-motion'
 import type { LucideIcon } from 'lucide-react'
 import Image from 'next/image'
 import {
@@ -232,29 +232,58 @@ function ServiceCard({
   )
 }
 
+const PAGE_EASE = [0.25, 0.1, 0.25, 1] as const
+
+const expectationsVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12 } },
+}
+
+const expectationItemVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: PAGE_EASE } },
+}
+
 export function ServicesPageContent({ services }: Props) {
   const displayServices = getDisplayServices(services)
   const [activeService, setActiveService] = useState<string | null>(null)
+  const headingRef = useRef<HTMLDivElement>(null)
+  const headingInView = useInView(headingRef, { once: true, margin: '-80px' })
+  const expectRef = useRef<HTMLDivElement>(null)
+  const expectInView = useInView(expectRef, { once: true, margin: '-80px' })
 
   return (
     <>
       <section aria-labelledby="services-heading" className="bg-white py-14 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-10 lg:grid-cols-[0.72fr_1fr] lg:items-end">
+          <div ref={headingRef} className="grid gap-10 lg:grid-cols-[0.72fr_1fr] lg:items-end">
             <div>
-              <span className="text-primary text-[12px] font-bold tracking-widest uppercase">
+              <motion.span
+                initial={{ opacity: 0, y: 12 }}
+                animate={headingInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+                transition={{ duration: 0.5, ease: PAGE_EASE }}
+                className="text-primary text-[12px] font-bold tracking-widest uppercase"
+              >
                 What we handle
-              </span>
-              <h2
+              </motion.span>
+              <motion.h2
                 id="services-heading"
+                initial={{ opacity: 0, y: 16 }}
+                animate={headingInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+                transition={{ duration: 0.6, delay: 0.1, ease: PAGE_EASE }}
                 className="mt-3 text-[32px] md:text-[44px] font-bold leading-tight text-dark"
               >
                 Choose the job your car needs.
-              </h2>
+              </motion.h2>
             </div>
-            <p className="text-[17px] md:text-[18px] leading-relaxed text-muted max-w-2xl lg:ml-auto">
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={headingInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+              transition={{ duration: 0.6, delay: 0.2, ease: PAGE_EASE }}
+              className="text-[17px] md:text-[18px] leading-relaxed text-muted max-w-2xl lg:ml-auto"
+            >
               From routine servicing to MOT-related repairs, each visit starts with a straightforward conversation about the issue, the likely fix and the next best step.
-            </p>
+            </motion.p>
           </div>
 
           <nav aria-label="Jump to service" className="mt-9 flex gap-3 overflow-x-auto pb-2">
@@ -290,19 +319,35 @@ export function ServicesPageContent({ services }: Props) {
 
       <section className="bg-white py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8 lg:grid-cols-[0.85fr_1fr] lg:items-start">
+          <div ref={expectRef} className="grid gap-8 lg:grid-cols-[0.85fr_1fr] lg:items-start">
             <div>
-              <span className="text-primary text-[12px] font-bold tracking-widest uppercase">
+              <motion.span
+                initial={{ opacity: 0, y: 12 }}
+                animate={expectInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+                transition={{ duration: 0.5, ease: PAGE_EASE }}
+                className="text-primary text-[12px] font-bold tracking-widest uppercase"
+              >
                 What to expect
-              </span>
-              <h2 className="mt-3 text-[30px] md:text-[40px] font-bold leading-tight text-dark">
+              </motion.span>
+              <motion.h2
+                initial={{ opacity: 0, y: 16 }}
+                animate={expectInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+                transition={{ duration: 0.6, delay: 0.1, ease: PAGE_EASE }}
+                className="mt-3 text-[30px] md:text-[40px] font-bold leading-tight text-dark"
+              >
                 A simple garage visit, handled properly.
-              </h2>
+              </motion.h2>
             </div>
 
-            <ul role="list" className="grid gap-4">
+            <motion.ul
+              role="list"
+              className="grid gap-4"
+              variants={expectationsVariants}
+              initial="hidden"
+              animate={expectInView ? 'visible' : 'hidden'}
+            >
               {EXPECTATIONS.map(({ title, text, Icon }) => (
-                <li key={title} className="flex gap-4 border-b border-border pb-5 last:border-b-0">
+                <motion.li key={title} variants={expectationItemVariants} className="flex gap-4 border-b border-border pb-5 last:border-b-0">
                   <div className="flex items-center justify-center w-11 h-11 rounded-lg bg-dark text-primary shrink-0">
                     <Icon size={22} aria-hidden="true" />
                   </div>
@@ -310,9 +355,9 @@ export function ServicesPageContent({ services }: Props) {
                     <h3 className="text-[18px] font-bold text-dark">{title}</h3>
                     <p className="mt-1 text-[15px] leading-relaxed text-muted">{text}</p>
                   </div>
-                </li>
+                </motion.li>
               ))}
-            </ul>
+            </motion.ul>
           </div>
         </div>
       </section>

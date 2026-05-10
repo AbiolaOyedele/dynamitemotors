@@ -10,6 +10,7 @@ import { cn } from '@/utils/cn'
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [hidden, setHidden] = useState(false)
+  const [navigating, setNavigating] = useState(false)
   const lastScrollY = useRef(0)
   const pathname = usePathname()
 
@@ -35,6 +36,7 @@ export function Header() {
   if (pathname === '/') return null
 
   const close = () => setMenuOpen(false)
+  const navigate = () => { setNavigating(true); setMenuOpen(false) }
 
   return (
     <>
@@ -106,14 +108,16 @@ export function Header() {
         aria-modal="true"
         aria-label="Navigation menu"
         className={cn(
-          'fixed inset-0 z-50 md:hidden transition-opacity duration-300',
+          'fixed inset-0 z-50 md:hidden',
+          !navigating && 'transition-opacity duration-300',
           menuOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0',
         )}
       >
         <div className="absolute inset-0 bg-black/50" onClick={close} aria-hidden="true" />
         <div
           className={cn(
-            'absolute top-0 right-0 h-full w-full max-w-sm bg-white flex flex-col transition-transform duration-300 ease-out',
+            'absolute top-0 right-0 h-full w-full max-w-sm bg-white flex flex-col',
+            !navigating && 'transition-transform duration-300 ease-out',
             menuOpen ? 'translate-x-0' : 'translate-x-full',
           )}
         >
@@ -138,7 +142,7 @@ export function Header() {
               <Link
                 key={href}
                 href={href}
-                onClick={close}
+                onClick={navigate}
                 className={cn(
                   'flex items-center h-[56px] text-[18px] font-semibold tracking-wider uppercase rounded-xl px-4 transition-colors',
                   pathname === href
@@ -152,7 +156,7 @@ export function Header() {
           </nav>
 
           <div className="px-6 pb-10 pt-4 shrink-0">
-            <ButtonLink href="/contact" variant="filled" size="lg" className="w-full" onClick={close}>
+            <ButtonLink href="/contact" variant="filled" size="lg" className="w-full" onClick={navigate}>
               Get a Quote
             </ButtonLink>
           </div>

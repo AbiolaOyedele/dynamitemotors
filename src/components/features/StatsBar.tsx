@@ -1,12 +1,25 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { motion, useInView } from 'framer-motion'
 
 const STATS = [
   { end: 30, suffix: '+', label: 'Years Experience' },
   { end: 5,  suffix: '★', label: 'Google Rating'    },
   { end: 200, suffix: '+', label: 'Cars Serviced'   },
 ] as const
+
+const EASE = [0.25, 0.1, 0.25, 1] as const
+
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.15 } },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } },
+}
 
 function CountUp({ end, suffix, duration = 1800 }: { end: number; suffix: string; duration?: number }) {
   const [count, setCount] = useState(0)
@@ -25,7 +38,6 @@ function CountUp({ end, suffix, duration = 1800 }: { end: number; suffix: string
           const tick = (now: number) => {
             const elapsed = now - startTime
             const progress = Math.min(elapsed / duration, 1)
-            // ease-out cubic
             const eased = 1 - Math.pow(1 - progress, 3)
             setCount(Math.round(eased * end))
             if (progress < 1) requestAnimationFrame(tick)
@@ -48,13 +60,22 @@ function CountUp({ end, suffix, duration = 1800 }: { end: number; suffix: string
 }
 
 export function StatsBar() {
+  const ref = useRef<HTMLElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-80px' })
+
   return (
-    <section aria-label="Our credentials" className="bg-white border-b border-border">
+    <section ref={ref} aria-label="Our credentials" className="bg-white border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
-        <dl className="grid grid-cols-1 sm:grid-cols-3">
+        <motion.dl
+          className="grid grid-cols-1 sm:grid-cols-3"
+          variants={containerVariants}
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+        >
           {STATS.map(({ end, suffix, label }, i) => (
-            <div
+            <motion.div
               key={label}
+              variants={itemVariants}
               className={`flex flex-col items-center py-10 sm:py-0 sm:px-12 text-center ${
                 i > 0 ? 'border-t sm:border-t-0 sm:border-l border-border' : ''
               }`}
@@ -63,9 +84,9 @@ export function StatsBar() {
                 <CountUp end={end} suffix={suffix} />
               </dt>
               <dd className="text-[16px] text-muted mt-3">{label}</dd>
-            </div>
+            </motion.div>
           ))}
-        </dl>
+        </motion.dl>
       </div>
     </section>
   )

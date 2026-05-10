@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Image from 'next/image'
+import { motion, useInView } from 'framer-motion'
 import { ClipboardCheck, Wrench, ShieldCheck, CircleDot, Fan } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { SectionHeader } from '@/components/ui/SectionHeader'
@@ -55,10 +56,24 @@ const FALLBACK_SERVICES: Service[] = [
   { _id: 'f4', title: 'Tyres & Wheels', slug: { current: 'tyres-wheels' },   description: 'Supply and fitting of all major tyre brands, any size.', icon: 'tyre',    features: ['Competitive prices', 'Wheel balancing', 'TPMS reset'] },
 ]
 
+const EASE = [0.25, 0.1, 0.25, 1] as const
+
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12 } },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } },
+}
+
 export function ServicesGrid({ services, showViewAll = false, limit }: Props) {
   const all = services.length > 0 ? services : FALLBACK_SERVICES
   const displayServices = limit ? all.slice(0, limit) : all
   const [activeService, setActiveService] = useState<string | null>(null)
+  const listRef = useRef<HTMLUListElement>(null)
+  const inView = useInView(listRef, { once: true, margin: '-80px' })
 
   return (
     <section aria-labelledby="services-heading" className="bg-white py-20 md:py-24">
@@ -72,9 +87,16 @@ export function ServicesGrid({ services, showViewAll = false, limit }: Props) {
         />
 
         {/* Grid */}
-        <ul className="space-y-8" role="list">
+        <motion.ul
+          ref={listRef}
+          className="space-y-8"
+          role="list"
+          variants={containerVariants}
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+        >
           {displayServices.map((service) => (
-            <li key={service._id} className="bg-white rounded-3xl border border-border hover:shadow-xl transition-all duration-300">
+            <motion.li key={service._id} variants={itemVariants} className="bg-white rounded-3xl border border-border hover:shadow-xl transition-all duration-300">
 
               {/* Card — horizontal layout */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center p-8 md:p-12">
@@ -142,9 +164,9 @@ export function ServicesGrid({ services, showViewAll = false, limit }: Props) {
                   )}
                 </div>
               </div>
-            </li>
+            </motion.li>
           ))}
-        </ul>
+        </motion.ul>
 
         <ServiceQuoteModal service={activeService} onClose={() => setActiveService(null)} />
 
