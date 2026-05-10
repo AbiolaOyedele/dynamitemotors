@@ -40,11 +40,10 @@ export function HeroSection() {
   return (
     <>
       <section
-        className="relative overflow-hidden"
-        style={{ minHeight: '100vh' }}
+        className="relative overflow-hidden min-h-screen"
         aria-label="Welcome to Dynamite Motors"
       >
-        <div className="relative flex flex-col h-full">
+        <div className="relative flex flex-col min-h-screen">
 
           {/* Background image */}
           <Image
@@ -147,8 +146,8 @@ export function HeroSection() {
                   </div>
                 </div>
 
-                {/* Right — quote form */}
-                <div>
+                {/* Right — quote form (desktop only) */}
+                <div className="hidden lg:block">
                   <div className="w-full lg:w-[90%] mx-auto lg:ml-auto lg:mr-0 bg-white/[0.08] backdrop-blur-md border border-white/15 rounded-2xl p-6 md:p-7">
                     <h2 className="text-[20px] font-bold text-white mb-5">Request a Quote</h2>
                     <HeroQuoteForm />
