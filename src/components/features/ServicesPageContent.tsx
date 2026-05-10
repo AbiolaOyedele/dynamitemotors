@@ -130,11 +130,13 @@ function findServiceDetail(service: Service) {
 function getDisplayServices(services: Service[]): DisplayService[] {
   if (services.length === 0) {
     return SERVICE_DETAILS.map(({ id, title, description, features, goodFor, Icon, image }) => ({
-      id, title, description, features, goodFor, Icon, image,
+      id, title, description, features, goodFor, Icon,
+      ...(image !== undefined ? { image } : {}),
     }))
   }
   return services.map((service) => {
     const detail = findServiceDetail(service)
+    const image = detail?.image
     return {
       id: service.slug.current,
       title: service.title,
@@ -142,7 +144,7 @@ function getDisplayServices(services: Service[]): DisplayService[] {
       features: service.features?.length ? service.features : detail?.features ?? [],
       goodFor: detail?.goodFor ?? [],
       Icon: detail?.Icon ?? Wrench,
-      image: detail?.image,
+      ...(image !== undefined ? { image } : {}),
     }
   })
 }
@@ -151,12 +153,11 @@ const CARD_BAR_DEFAULT = 68
 const CARD_BAR_HOVER = 396
 
 function ServiceCard({
-  id, title, description, Icon, image, onBook,
+  id, title, description, image, onBook,
 }: {
   id: string
   title: string
   description: string | null
-  Icon: LucideIcon
   image?: string
   onBook: () => void
 }) {
@@ -270,14 +271,13 @@ export function ServicesPageContent({ services }: Props) {
       <section className="bg-light-bg py-8 md:py-12" aria-label="Service details">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ul role="list" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {displayServices.map(({ id, title, description, Icon, image }) => (
+            {displayServices.map(({ id, title, description, image }) => (
               <ServiceCard
                 key={id}
                 id={id}
                 title={title}
                 description={description}
-                Icon={Icon}
-                image={image}
+                {...(image !== undefined ? { image } : {})}
                 onBook={() => setActiveService(title)}
               />
             ))}
