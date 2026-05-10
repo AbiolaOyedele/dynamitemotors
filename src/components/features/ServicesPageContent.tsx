@@ -162,6 +162,8 @@ function ServiceCard({
   onBook: () => void
 }) {
   const [hovered, setHovered] = useState(false)
+  const [open, setOpen] = useState(false)
+  const expanded = hovered || open
   const lines = description ? splitIntoLines(description) : []
 
   return (
@@ -170,7 +172,8 @@ function ServiceCard({
       role="listitem"
       className="scroll-mt-28 relative h-[420px] rounded-2xl overflow-hidden cursor-pointer select-none bg-dark"
       onHoverStart={() => setHovered(true)}
-      onHoverEnd={() => setHovered(false)}
+      onHoverEnd={() => { setHovered(false); setOpen(false) }}
+      onClick={() => setOpen((prev) => !prev)}
     >
       {/* Background image */}
       {image && (
@@ -188,7 +191,7 @@ function ServiceCard({
       <motion.div
         className="absolute inset-x-3 bottom-3 rounded-2xl bg-dark/85 backdrop-blur-sm overflow-hidden flex flex-col justify-between"
         initial={{ height: CARD_BAR_DEFAULT }}
-        animate={{ height: hovered ? CARD_BAR_HOVER : CARD_BAR_DEFAULT }}
+        animate={{ height: expanded ? CARD_BAR_HOVER : CARD_BAR_DEFAULT }}
         transition={{ duration: 0.5, ease: EASE }}
       >
         {/* Top — title + description */}
@@ -203,8 +206,8 @@ function ServiceCard({
                 key={i}
                 className="block text-[14px] text-white/65 leading-relaxed"
                 initial={{ y: 16, opacity: 0 }}
-                animate={{ y: hovered ? 0 : 16, opacity: hovered ? 1 : 0 }}
-                transition={{ duration: 0.3, delay: hovered ? 0.18 + i * 0.07 : 0, ease: EASE }}
+                animate={{ y: expanded ? 0 : 16, opacity: expanded ? 1 : 0 }}
+                transition={{ duration: 0.3, delay: expanded ? 0.18 + i * 0.07 : 0, ease: EASE }}
               >
                 {line}
               </motion.span>
@@ -218,7 +221,7 @@ function ServiceCard({
             variant="green"
             size="md"
             showArrow
-            onClick={onBook}
+            onClick={(e) => { e.stopPropagation(); onBook() }}
             aria-label={`Book ${title}`}
           >
             Book This Service
