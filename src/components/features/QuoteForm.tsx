@@ -230,9 +230,12 @@ export function QuoteForm({ serviceNames }: Props) {
         disabled={status === 'loading'}
       >
         {status === 'loading' ? 'Sending…' : (
-          <span className="relative z-[1] flex items-center gap-2">
+          <span className="relative z-[1] inline-flex items-center gap-2 -translate-x-2 group-hover/btn:translate-x-2 transition-all duration-[800ms] ease-out">
             Send Quote Request
-            <ArrowRight className="w-4 h-4 transition-transform duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/btn:translate-x-1" />
+            <ArrowRight
+              aria-hidden
+              className="w-4 h-4 fill-none stroke-current transition-all duration-[800ms] ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/btn:translate-x-2"
+            />
           </span>
         )}
       </Button>

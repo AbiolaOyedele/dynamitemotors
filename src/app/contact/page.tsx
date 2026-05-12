@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { QuoteForm } from '@/components/features/QuoteForm'
 import { BUSINESS } from '@/config/constants'
-import { getServices } from '@/repositories/sanity.repository'
 
 export const metadata: Metadata = {
   title: 'Contact Us & Get a Quote — Dynamite Motors',
@@ -17,9 +16,6 @@ export const metadata: Metadata = {
 }
 
 export default async function ContactPage() {
-  const services = await getServices()
-  const serviceNames = services.map((s) => s.title)
-
   return (
     <>
       {/* Page hero */}
