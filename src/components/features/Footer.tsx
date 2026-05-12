@@ -79,17 +79,17 @@ export function Footer() {
           <motion.div variants={itemVariants} className="flex flex-col gap-4 md:items-end">
             <h3 className="text-[17px] font-semibold text-white">Opening Hours</h3>
             <ul className="flex flex-col gap-2">
-              <li className="flex justify-end gap-4 text-[15px]">
+              <li className="flex justify-start md:justify-end gap-4 text-[15px]">
                 <span className="text-white/55">Mon – Fri</span>
-                <span className="text-white/75 font-medium w-20 text-right">9am – 6pm</span>
+                <span className="text-white/75 font-medium w-20 md:text-right">9am – 6pm</span>
               </li>
-              <li className="flex justify-end gap-4 text-[15px]">
+              <li className="flex justify-start md:justify-end gap-4 text-[15px]">
                 <span className="text-white/55">Saturday</span>
-                <span className="text-white/75 font-medium w-20 text-right">9am – 3pm</span>
+                <span className="text-white/75 font-medium w-20 md:text-right">9am – 3pm</span>
               </li>
-              <li className="flex justify-end gap-4 text-[15px]">
+              <li className="flex justify-start md:justify-end gap-4 text-[15px]">
                 <span className="text-white/55">Sunday</span>
-                <span className="text-white/75 font-medium w-20 text-right">Closed</span>
+                <span className="text-white/75 font-medium w-20 md:text-right">Closed</span>
               </li>
             </ul>
           </motion.div>
