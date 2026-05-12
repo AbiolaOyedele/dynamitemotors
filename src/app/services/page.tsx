@@ -9,7 +9,14 @@ import { BUSINESS } from '@/config/constants'
 export const metadata: Metadata = {
   title: 'Our Services — Dynamite Motors',
   description:
-    'MOT checks, servicing, air con gas & repair, and tyres — all handled by experienced mechanics at Dynamite Motors in Gravesend.',
+    'MOT checks, full service, tyres, brakes, air con, clutches, exhausts & more — all handled by experienced mechanics at Dynamite Motors in Gravesend.',
+  alternates: { canonical: 'https://www.dynamitemotors.com/services' },
+  openGraph: {
+    url: 'https://www.dynamitemotors.com/services',
+    title: 'Our Services — Dynamite Motors',
+    description:
+      'MOT checks, full service, tyres, brakes, air con, clutches, exhausts & more — all handled by experienced mechanics at Dynamite Motors in Gravesend.',
+  },
 }
 
 export default async function ServicesPage() {

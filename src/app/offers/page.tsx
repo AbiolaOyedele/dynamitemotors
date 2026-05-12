@@ -6,6 +6,13 @@ export const metadata: Metadata = {
   title: 'Current Offers — Dynamite Motors',
   description:
     'Special promotions and discounts on MOTs, car servicing, brakes and more at Dynamite Motors in Gravesend.',
+  alternates: { canonical: 'https://www.dynamitemotors.com/offers' },
+  openGraph: {
+    url: 'https://www.dynamitemotors.com/offers',
+    title: 'Current Offers — Dynamite Motors',
+    description:
+      'Special promotions and discounts on MOTs, car servicing, brakes and more at Dynamite Motors in Gravesend.',
+  },
 }
 
 export default async function OffersPage() {

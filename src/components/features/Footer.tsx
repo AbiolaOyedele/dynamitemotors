@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, useInView } from 'framer-motion'
@@ -36,9 +37,12 @@ export function Footer() {
 
           {/* Brand */}
           <motion.div variants={itemVariants} className="flex flex-col gap-3">
-            <p className="text-primary text-[22px] font-bold tracking-tight leading-none">
-              {BUSINESS.name.toUpperCase()}
-            </p>
+            <div className="flex items-center gap-3">
+              <Image src="/logo.png" alt={BUSINESS.name} width={52} height={52} className="object-contain rounded-full shrink-0" />
+              <p className="text-primary text-[22px] font-bold tracking-tight leading-none">
+                {BUSINESS.name.toUpperCase()}
+              </p>
+            </div>
             <p className="text-white/55 text-[16px] leading-relaxed">
               {BUSINESS.tagline}
             </p>

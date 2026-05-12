@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ButtonLink } from '@/components/ui/Button'
@@ -33,8 +34,6 @@ export function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  if (pathname === '/') return null
-
   const close = () => setMenuOpen(false)
   const navigate = () => { setNavigating(true); setMenuOpen(false) }
 
@@ -51,7 +50,8 @@ export function Header() {
         <div className="hidden md:flex items-center gap-6 bg-white px-6 py-2" style={{ borderRadius: '50px', boxShadow: '0 4px 20px rgba(0,0,0,0.12)' }}>
 
           {/* Logo */}
-          <Link href="/" onClick={close} className="flex items-center shrink-0">
+          <Link href="/" onClick={close} className="flex items-center gap-2 shrink-0">
+            <Image src="/logo.png" alt={BUSINESS.name} width={40} height={40} className="object-contain rounded-full" priority />
             <span className="text-dark text-[15px] font-bold tracking-tight leading-none whitespace-nowrap">
               {BUSINESS.name.toUpperCase()}
             </span>
@@ -83,7 +83,8 @@ export function Header() {
 
         {/* Mobile: logo left + hamburger right */}
         <div className="md:hidden flex items-center justify-between w-full">
-          <Link href="/" onClick={close}>
+          <Link href="/" onClick={close} className="flex items-center gap-2">
+            <Image src="/logo.png" alt={BUSINESS.name} width={36} height={36} className="object-contain rounded-full" priority />
             <span className="text-white text-[15px] font-bold tracking-tight">{BUSINESS.name.toUpperCase()}</span>
           </Link>
           <button

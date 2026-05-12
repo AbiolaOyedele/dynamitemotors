@@ -7,6 +7,13 @@ export const metadata: Metadata = {
   title: 'Contact Us & Get a Quote — Dynamite Motors',
   description:
     'Get a free quote from Dynamite Motors in Gravesend. Call 01474 643488, email us, or fill in our quick online form.',
+  alternates: { canonical: 'https://www.dynamitemotors.com/contact' },
+  openGraph: {
+    url: 'https://www.dynamitemotors.com/contact',
+    title: 'Contact Us & Get a Quote — Dynamite Motors',
+    description:
+      'Get a free quote from Dynamite Motors in Gravesend. Call 01474 643488, email us, or fill in our quick online form.',
+  },
 }
 
 export default async function ContactPage() {

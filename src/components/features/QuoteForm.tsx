@@ -25,14 +25,16 @@ const EMPTY: FormFields = {
 }
 
 const DEFAULT_SERVICES = [
-  'MOT Testing',
   'Full Service',
-  'Interim Service',
-  'Brake Repair',
-  'Tyre Fitting',
-  'Exhaust Repair',
-  'General Repair',
-  'Other',
+  'Tyre Sale & Repair',
+  'Air Conditioning',
+  'Brakes',
+  'Clutches',
+  'Engine & Gear Repair',
+  'Full Diagnostic',
+  'Suspension',
+  'Exhausts',
+  'MOT Repairs',
 ]
 
 type Props = {

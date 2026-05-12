@@ -1,6 +1,6 @@
 export const BUSINESS = {
   name: 'Dynamite Motors',
-  tagline: 'Your trusted local garage in Gravesend',
+  tagline: 'Your Trusted Automotive Partner, Several Years Strong.',
   address: '2 Vale Rd, Northfleet, Gravesend DA11 9RE',
   phone: '01474 643488',
   phoneTel: 'tel:+441474643488',
