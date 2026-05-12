@@ -76,7 +76,7 @@ export function Header() {
           </nav>
 
           {/* CTA */}
-          <ButtonLink href="/contact" variant="green" size="md" showArrow={false}>
+          <ButtonLink href="/contact" variant="green" size="md">
             Get a Quote
           </ButtonLink>
         </div>

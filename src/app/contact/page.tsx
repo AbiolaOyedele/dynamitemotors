@@ -38,7 +38,7 @@ export default async function ContactPage() {
       {/* Main content */}
       <section className="bg-light-bg py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-stretch">
 
             {/* ── Left column: contact info + map ── */}
             <div className="flex flex-col gap-8">
@@ -121,13 +121,13 @@ export default async function ContactPage() {
               </div>
 
               {/* Google Maps embed */}
-              <div className="rounded-2xl overflow-hidden border border-border bg-white shadow-sm">
+              <div className="rounded-2xl overflow-hidden border border-border bg-white shadow-sm flex-1 min-h-[300px]">
                 <iframe
                   title="Dynamite Motors location on Google Maps"
                   src={BUSINESS.mapsEmbed}
                   width="100%"
-                  height="300"
-                  style={{ border: 0, display: 'block' }}
+                  height="100%"
+                  style={{ border: 0, display: 'block', minHeight: '300px' }}
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
@@ -145,7 +145,7 @@ export default async function ContactPage() {
                 Fill in the form and we&apos;ll get back to you with a price.
                 No obligation.
               </p>
-              <QuoteForm serviceNames={serviceNames} />
+              <QuoteForm />
             </div>
 
           </div>

@@ -66,7 +66,7 @@ const VARIANT_STYLES: Record<Variant, string> = {
 /** Background color of the expanding circle per variant */
 const CIRCLE_COLORS: Record<Variant, string> = {
   primary: 'bg-dark',
-  filled:  'bg-body',
+  filled:  'bg-white/15',
   green:   'bg-dark',
   outline: 'bg-dark',
   ghost:   '',

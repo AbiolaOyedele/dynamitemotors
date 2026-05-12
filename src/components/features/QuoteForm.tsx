@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { ArrowRight } from 'lucide-react'
 import { Input, Textarea, Select } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { BUSINESS } from '@/config/constants'
@@ -227,11 +228,16 @@ export function QuoteForm({ serviceNames }: Props) {
         className="w-full mt-1"
         disabled={status === 'loading'}
       >
-        {status === 'loading' ? 'Sending…' : 'Send Quote Request'}
+        {status === 'loading' ? 'Sending…' : (
+          <span className="relative z-[1] flex items-center gap-2">
+            Send Quote Request
+            <ArrowRight className="w-4 h-4 transition-transform duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/btn:translate-x-1" />
+          </span>
+        )}
       </Button>
 
       <p className="text-[14px] text-muted text-center leading-relaxed">
-        We typically respond within 2 hours during business hours.
+        We typically respond within 1 hour during business hours.
       </p>
     </form>
   )

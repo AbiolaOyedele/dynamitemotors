@@ -2,10 +2,8 @@
 
 import { useRef } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { motion, useInView } from 'framer-motion'
-import { BUSINESS, NAV_LINKS } from '@/config/constants'
+import { BUSINESS } from '@/config/constants'
 
 const EASE = [0.25, 0.1, 0.25, 1] as const
 
@@ -20,7 +18,6 @@ const itemVariants = {
 }
 
 export function Footer() {
-  const pathname = usePathname()
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '-60px' })
 
@@ -78,33 +75,23 @@ export function Footer() {
             </address>
           </motion.div>
 
-          {/* Nav */}
-          <motion.div variants={itemVariants} className="flex flex-col gap-4 md:items-end md:text-right">
-            <h3 className="text-[17px] font-semibold text-white">Quick Links</h3>
-            <nav aria-label="Footer navigation">
-              <ul className="flex flex-col gap-3 md:items-end">
-                {NAV_LINKS.map(({ href, label }) => {
-                  const isActive =
-                    href === '/' ? pathname === '/' : pathname.startsWith(href)
-
-                  return (
-                    <li key={href}>
-                      <Link
-                        href={href}
-                        className={`text-[16px] transition-colors ${
-                          isActive
-                            ? 'text-primary font-semibold'
-                            : 'text-white/55 hover:text-primary'
-                        }`}
-                        aria-current={isActive ? 'page' : undefined}
-                      >
-                        {label}
-                      </Link>
-                    </li>
-                  )
-                })}
-              </ul>
-            </nav>
+          {/* Opening Hours */}
+          <motion.div variants={itemVariants} className="flex flex-col gap-4 md:items-end">
+            <h3 className="text-[17px] font-semibold text-white">Opening Hours</h3>
+            <ul className="flex flex-col gap-2">
+              <li className="flex justify-end gap-4 text-[15px]">
+                <span className="text-white/55">Mon – Fri</span>
+                <span className="text-white/75 font-medium w-20 text-right">9am – 6pm</span>
+              </li>
+              <li className="flex justify-end gap-4 text-[15px]">
+                <span className="text-white/55">Saturday</span>
+                <span className="text-white/75 font-medium w-20 text-right">9am – 3pm</span>
+              </li>
+              <li className="flex justify-end gap-4 text-[15px]">
+                <span className="text-white/55">Sunday</span>
+                <span className="text-white/75 font-medium w-20 text-right">Closed</span>
+              </li>
+            </ul>
           </motion.div>
 
         </motion.div>

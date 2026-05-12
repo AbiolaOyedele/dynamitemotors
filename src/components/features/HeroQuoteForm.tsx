@@ -226,7 +226,7 @@ export function HeroQuoteForm({ initialService }: Props) {
       </Button>
 
       <p className="text-[13px] text-white/40 text-center">
-        We typically respond within 2 hours during business hours.
+        We typically respond within 1 hour during business hours.
       </p>
     </form>
   )
