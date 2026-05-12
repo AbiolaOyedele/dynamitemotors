@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
+
+export const revalidate = 3600
 import { MapPin, Phone } from 'lucide-react'
 import { ServicesPageContent } from '@/components/features/ServicesPageContent'
 import { ButtonLink } from '@/components/ui/Button'
-import { getServices } from '@/repositories/sanity.repository'
+import { fetchServices } from '@/services/content.service'
 import { BUSINESS } from '@/config/constants'
 
 export const metadata: Metadata = {
@@ -20,7 +22,7 @@ export const metadata: Metadata = {
 }
 
 export default async function ServicesPage() {
-  const services = await getServices()
+  const services = await fetchServices()
 
   return (
     <>

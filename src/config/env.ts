@@ -6,6 +6,7 @@ const envSchema = z.object({
   SANITY_API_TOKEN: z.string().min(1),
   RESEND_API_KEY: z.string().min(1),
   QUOTE_RECIPIENT_EMAIL: z.string().email(),
+  ADMIN_PASSWORD: z.string().min(8),
 })
 
 const parsed = envSchema.safeParse(process.env)

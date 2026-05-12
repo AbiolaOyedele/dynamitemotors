@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { OffersGrid } from '@/components/features/OffersGrid'
-import { getActiveOffers } from '@/repositories/sanity.repository'
+
+export const revalidate = 3600
+import { fetchActiveOffers } from '@/services/content.service'
 
 export const metadata: Metadata = {
   title: 'Current Offers — Dynamite Motors',
@@ -16,7 +18,7 @@ export const metadata: Metadata = {
 }
 
 export default async function OffersPage() {
-  const offers = await getActiveOffers()
+  const offers = await fetchActiveOffers()
 
   return (
     <>

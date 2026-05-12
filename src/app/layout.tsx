@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
-import { headers } from "next/headers";
-import { Header } from "@/components/features/Header";
-import { Footer } from "@/components/features/Footer";
 import "./globals.css";
 
 const manrope = Manrope({
   variable: "--font-manrope",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600", "700"],
   display: "swap",
 });
 
@@ -81,15 +78,11 @@ const jsonLd = {
   priceRange: '££',
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const headersList = await headers();
-  const pathname = headersList.get("x-pathname") ?? headersList.get("x-invoke-path") ?? "";
-  const isAdmin = pathname.startsWith("/admin") || pathname.startsWith("/studio");
-
   return (
     <html lang="en" className={`${manrope.variable} h-full`}>
       <head>
@@ -99,15 +92,7 @@ export default async function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col antialiased">
-        {isAdmin ? (
-          children
-        ) : (
-          <>
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </>
-        )}
+        {children}
       </body>
     </html>
   );
