@@ -224,6 +224,7 @@ export function QuoteForm({ serviceNames }: Props) {
 
       <Button
         type="submit"
+        variant="green"
         size="lg"
         className="w-full mt-1"
         disabled={status === 'loading'}
