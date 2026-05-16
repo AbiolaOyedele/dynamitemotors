@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 import { StatsBar } from '@/components/features/StatsBar'
 import { ServicesGrid } from '@/components/features/ServicesGrid'
 import { ProcessSteps } from '@/components/features/ProcessSteps'
+import { GarageGallery } from '@/components/features/GarageGallery'
 import { TestimonialsSection } from '@/components/features/TestimonialsSection'
 import { fetchServicesPreview, fetchTestimonials } from '@/services/content.service'
 
@@ -33,6 +34,7 @@ export default async function HomePage() {
       <StatsBar />
       <ServicesGrid services={services} showViewAll limit={2} />
       <ProcessSteps />
+      <GarageGallery />
       <TestimonialsSection testimonials={testimonials} />
     </>
   )
