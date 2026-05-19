@@ -45,6 +45,14 @@ export type Settings = {
   hoursMonFri: string
   hoursSat: string
   hoursSun: string
+  // Brand colours — override CSS custom properties site-wide
+  colorPrimary: string
+  colorPrimaryDark: string
+  colorDark: string
+  colorBody: string
+  colorMuted: string
+  colorLightBg: string
+  colorBorder: string
 }
 
 export async function fetchServices(): Promise<Service[]> {
@@ -148,6 +156,13 @@ export function fetchSettings(): Settings {
       hoursMonFri: '9am – 6pm',
       hoursSat: '9am – 3pm',
       hoursSun: 'Closed',
+      colorPrimary: '#1ED760',
+      colorPrimaryDark: '#19b852',
+      colorDark: '#1a1a1a',
+      colorBody: '#333333',
+      colorMuted: '#666666',
+      colorLightBg: '#F5F5F5',
+      colorBorder: '#E8E8E8',
     }
   }
 }

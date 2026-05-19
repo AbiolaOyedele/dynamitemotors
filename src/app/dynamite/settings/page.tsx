@@ -12,6 +12,71 @@ type Settings = {
   hoursMonFri: string
   hoursSat: string
   hoursSun: string
+  colorPrimary: string
+  colorPrimaryDark: string
+  colorDark: string
+  colorBody: string
+  colorMuted: string
+  colorLightBg: string
+  colorBorder: string
+}
+
+const COLOUR_FIELDS: {
+  key: keyof Settings
+  label: string
+  description: string
+}[] = [
+  { key: 'colorPrimary',     label: 'Brand Colour',        description: 'Main accent — buttons, headings, highlights' },
+  { key: 'colorPrimaryDark', label: 'Brand Colour (hover)', description: 'Darker shade used on hover states' },
+  { key: 'colorDark',        label: 'Dark',                 description: 'Dark backgrounds and strong headings' },
+  { key: 'colorBody',        label: 'Body Text',            description: 'Main paragraph text colour' },
+  { key: 'colorMuted',       label: 'Muted Text',           description: 'Secondary / subdued text' },
+  { key: 'colorLightBg',     label: 'Light Background',     description: 'Light section backgrounds' },
+  { key: 'colorBorder',      label: 'Border',               description: 'Dividers and input outlines' },
+]
+
+function ColorField({
+  label,
+  description,
+  value,
+  onChange,
+}: {
+  label: string
+  description: string
+  value: string
+  onChange: (v: string) => void
+}) {
+  return (
+    <div className="flex items-center gap-4 p-4 bg-white rounded-xl border border-border">
+      {/* Colour swatch + native picker */}
+      <label className="relative shrink-0 cursor-pointer">
+        <span
+          className="block w-12 h-12 rounded-lg border-2 border-white shadow-md ring-1 ring-border"
+          style={{ backgroundColor: value }}
+        />
+        <input
+          type="color"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+        />
+      </label>
+
+      {/* Text input */}
+      <div className="flex-1 min-w-0">
+        <p className="text-[14px] font-semibold text-dark">{label}</p>
+        <p className="text-[12px] text-muted mb-2">{description}</p>
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          maxLength={7}
+          placeholder="#000000"
+          className="w-36 h-[36px] rounded-lg border border-border px-3 text-[14px] font-mono text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+        />
+      </div>
+    </div>
+  )
 }
 
 export default function SettingsAdmin() {
@@ -25,6 +90,11 @@ export default function SettingsAdmin() {
       .then((r: { data: Settings }) => setData(r.data))
       .catch(() => {})
   }, [])
+
+  function updateColor(key: keyof Settings, value: string) {
+    if (!data) return
+    setData({ ...data, [key]: value })
+  }
 
   async function handleSave(e: FormEvent) {
     e.preventDefault()
@@ -55,116 +125,135 @@ export default function SettingsAdmin() {
     <div>
       <h1 className="text-[28px] font-bold text-dark mb-2">Settings</h1>
       <p className="text-[16px] text-muted mb-8">
-        Business information displayed across the website.
+        Business information, opening hours, and brand colours.
       </p>
 
-      <form onSubmit={handleSave} className="space-y-6 max-w-2xl">
-        <div>
-          <label className="block text-[13px] font-semibold text-body mb-2">Business Name</label>
-          <input
-            type="text"
-            value={data.name}
-            onChange={(e) => setData({ ...data, name: e.target.value })}
-            className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-          />
-        </div>
+      <form onSubmit={handleSave} className="space-y-10 max-w-2xl">
 
-        <div>
-          <label className="block text-[13px] font-semibold text-body mb-2">Tagline</label>
-          <input
-            type="text"
-            value={data.tagline}
-            onChange={(e) => setData({ ...data, tagline: e.target.value })}
-            className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-          />
-        </div>
+        {/* Business Info */}
+        <section className="space-y-5">
+          <h2 className="text-[17px] font-bold text-dark">Business Info</h2>
 
-        <div>
-          <label className="block text-[13px] font-semibold text-body mb-2">Address</label>
-          <input
-            type="text"
-            value={data.address}
-            onChange={(e) => setData({ ...data, address: e.target.value })}
-            className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-[13px] font-semibold text-body mb-2">Phone</label>
+            <label className="block text-[13px] font-semibold text-body mb-2">Business Name</label>
             <input
-              type="tel"
-              value={data.phone}
-              onChange={(e) => setData({ ...data, phone: e.target.value })}
+              type="text"
+              value={data.name}
+              onChange={(e) => setData({ ...data, name: e.target.value })}
               className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             />
           </div>
 
           <div>
-            <label className="block text-[13px] font-semibold text-body mb-2">Email</label>
+            <label className="block text-[13px] font-semibold text-body mb-2">Tagline</label>
             <input
-              type="email"
-              value={data.email}
-              onChange={(e) => setData({ ...data, email: e.target.value })}
+              type="text"
+              value={data.tagline}
+              onChange={(e) => setData({ ...data, tagline: e.target.value })}
               className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             />
           </div>
-        </div>
 
-        <div>
-          <label className="block text-[13px] font-semibold text-body mb-2">Google Maps URL</label>
-          <input
-            type="url"
-            value={data.mapsUrl}
-            onChange={(e) => setData({ ...data, mapsUrl: e.target.value })}
-            className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-          />
-        </div>
+          <div>
+            <label className="block text-[13px] font-semibold text-body mb-2">Address</label>
+            <input
+              type="text"
+              value={data.address}
+              onChange={(e) => setData({ ...data, address: e.target.value })}
+              className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-[13px] font-semibold text-body mb-2">Phone</label>
+              <input
+                type="tel"
+                value={data.phone}
+                onChange={(e) => setData({ ...data, phone: e.target.value })}
+                className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[13px] font-semibold text-body mb-2">Email</label>
+              <input
+                type="email"
+                value={data.email}
+                onChange={(e) => setData({ ...data, email: e.target.value })}
+                className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-[13px] font-semibold text-body mb-2">Google Maps URL</label>
+            <input
+              type="url"
+              value={data.mapsUrl}
+              onChange={(e) => setData({ ...data, mapsUrl: e.target.value })}
+              className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            />
+          </div>
+        </section>
 
         {/* Opening Hours */}
-        <div className="pt-2">
-          <h2 className="text-[16px] font-semibold text-dark mb-4">Opening Hours</h2>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-[13px] font-semibold text-body mb-2">
-                Mon – Fri Hours
-              </label>
-              <input
-                type="text"
-                value={data.hoursMonFri}
-                onChange={(e) => setData({ ...data, hoursMonFri: e.target.value })}
-                placeholder="e.g. 9am – 6pm"
-                className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-              />
-            </div>
+        <section className="space-y-4">
+          <h2 className="text-[17px] font-bold text-dark">Opening Hours</h2>
 
-            <div>
-              <label className="block text-[13px] font-semibold text-body mb-2">
-                Saturday Hours
-              </label>
-              <input
-                type="text"
-                value={data.hoursSat}
-                onChange={(e) => setData({ ...data, hoursSat: e.target.value })}
-                placeholder="e.g. 9am – 3pm"
-                className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-              />
-            </div>
-
-            <div>
-              <label className="block text-[13px] font-semibold text-body mb-2">
-                Sunday Hours
-              </label>
-              <input
-                type="text"
-                value={data.hoursSun}
-                onChange={(e) => setData({ ...data, hoursSun: e.target.value })}
-                placeholder="e.g. Closed"
-                className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-              />
-            </div>
+          <div>
+            <label className="block text-[13px] font-semibold text-body mb-2">Mon – Fri</label>
+            <input
+              type="text"
+              value={data.hoursMonFri}
+              onChange={(e) => setData({ ...data, hoursMonFri: e.target.value })}
+              placeholder="e.g. 9am – 6pm"
+              className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            />
           </div>
-        </div>
+
+          <div>
+            <label className="block text-[13px] font-semibold text-body mb-2">Saturday</label>
+            <input
+              type="text"
+              value={data.hoursSat}
+              onChange={(e) => setData({ ...data, hoursSat: e.target.value })}
+              placeholder="e.g. 9am – 3pm"
+              className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[13px] font-semibold text-body mb-2">Sunday</label>
+            <input
+              type="text"
+              value={data.hoursSun}
+              onChange={(e) => setData({ ...data, hoursSun: e.target.value })}
+              placeholder="e.g. Closed"
+              className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            />
+          </div>
+        </section>
+
+        {/* Brand Colours */}
+        <section className="space-y-3">
+          <div className="mb-1">
+            <h2 className="text-[17px] font-bold text-dark">Brand Colours</h2>
+            <p className="text-[13px] text-muted mt-1">
+              Changes apply across the entire website. Click the swatch or type a hex code.
+            </p>
+          </div>
+
+          {COLOUR_FIELDS.map(({ key, label, description }) => (
+            <ColorField
+              key={key}
+              label={label}
+              description={description}
+              value={(data[key] as string) || '#000000'}
+              onChange={(v) => updateColor(key, v)}
+            />
+          ))}
+        </section>
 
         <div className="flex items-center gap-4 pt-2">
           <button

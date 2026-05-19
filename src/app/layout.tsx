@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import "./globals.css";
+import { fetchSettings } from "@/services/content.service";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -78,11 +79,28 @@ const jsonLd = {
   priceRange: '££',
 }
 
+/** Validates a hex colour to prevent CSS injection */
+function safeHex(value: string, fallback: string): string {
+  return /^#[0-9a-fA-F]{6}$/.test(value) ? value : fallback
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const s = fetchSettings()
+
+  const colorVars = [
+    `--color-primary:${safeHex(s.colorPrimary, '#1ED760')}`,
+    `--color-primary-dark:${safeHex(s.colorPrimaryDark, '#19b852')}`,
+    `--color-dark:${safeHex(s.colorDark, '#1a1a1a')}`,
+    `--color-body:${safeHex(s.colorBody, '#333333')}`,
+    `--color-muted:${safeHex(s.colorMuted, '#666666')}`,
+    `--color-light-bg:${safeHex(s.colorLightBg, '#F5F5F5')}`,
+    `--color-border:${safeHex(s.colorBorder, '#E8E8E8')}`,
+  ].join(';')
+
   return (
     <html lang="en" className={`${manrope.variable} h-full`}>
       <head>
@@ -90,6 +108,8 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        {/* Dynamic colour overrides — applied after Tailwind so they win the cascade */}
+        <style dangerouslySetInnerHTML={{ __html: `*,::before,::after,::backdrop{${colorVars}}` }} />
       </head>
       <body className="min-h-full flex flex-col antialiased">
         {children}
