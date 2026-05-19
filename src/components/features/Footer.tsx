@@ -17,9 +17,21 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } },
 }
 
-export function Footer() {
+type Props = {
+  hours?: {
+    monFri: string
+    sat: string
+    sun: string
+  }
+}
+
+export function Footer({ hours }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '-60px' })
+
+  const monFri = hours?.monFri ?? '9am – 6pm'
+  const sat = hours?.sat ?? '9am – 3pm'
+  const sun = hours?.sun ?? 'Closed'
 
   return (
     <footer className="bg-dark text-white">
@@ -81,15 +93,15 @@ export function Footer() {
             <ul className="flex flex-col gap-2">
               <li className="flex justify-start md:justify-end gap-4 text-[15px]">
                 <span className="text-white/55">Mon – Fri</span>
-                <span className="text-white/75 font-medium w-20 md:text-right">9am – 6pm</span>
+                <span className="text-white/75 font-medium w-20 md:text-right">{monFri}</span>
               </li>
               <li className="flex justify-start md:justify-end gap-4 text-[15px]">
                 <span className="text-white/55">Saturday</span>
-                <span className="text-white/75 font-medium w-20 md:text-right">9am – 3pm</span>
+                <span className="text-white/75 font-medium w-20 md:text-right">{sat}</span>
               </li>
               <li className="flex justify-start md:justify-end gap-4 text-[15px]">
                 <span className="text-white/55">Sunday</span>
-                <span className="text-white/75 font-medium w-20 md:text-right">Closed</span>
+                <span className="text-white/75 font-medium w-20 md:text-right">{sun}</span>
               </li>
             </ul>
           </motion.div>

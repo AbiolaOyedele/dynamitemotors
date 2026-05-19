@@ -5,8 +5,19 @@ import { Phone } from 'lucide-react'
 import { ButtonLink } from '@/components/ui/Button'
 import { HeroQuoteForm } from './HeroQuoteForm'
 import { BUSINESS } from '@/config/constants'
+import type { HeroData } from '@/services/content.service'
 
-export function HeroSection() {
+export type { HeroData }
+
+type Props = {
+  heroData?: HeroData
+}
+
+export function HeroSection({ heroData }: Props) {
+  const image = heroData?.image ?? '/hero.jpg'
+  const heading = heroData?.heading ?? 'Your Trusted\nAutomotive Partner,'
+  const accentLine = heroData?.accentLine ?? 'Several Years Strong.'
+
   return (
     <section
       className="relative overflow-hidden min-h-screen"
@@ -16,7 +27,7 @@ export function HeroSection() {
 
         {/* Background image */}
         <Image
-          src="/hero.jpg"
+          src={image}
           alt="Mechanic working on a car engine"
           fill
           priority
@@ -36,9 +47,14 @@ export function HeroSection() {
               {/* Left — text */}
               <div>
                 <h1 className="text-[40px] sm:text-[52px] md:text-[62px] font-bold text-white leading-[1.05] tracking-tight mb-8">
-                  Your Trusted<br />
-                  Automotive Partner,<br />
-                  <span className="text-primary">Several Years Strong.</span>
+                  {heading.split('\n').map((line, i, arr) => (
+                    <span key={i}>
+                      {line}
+                      {i < arr.length - 1 && <br />}
+                    </span>
+                  ))}
+                  <br />
+                  <span className="text-primary">{accentLine}</span>
                 </h1>
 
                 <div className="flex flex-col sm:flex-row gap-4">

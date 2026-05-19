@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { SectionHeader } from '@/components/ui/SectionHeader'
+import type { ProcessStep } from '@/services/content.service'
 
-const STEPS = [
+const DEFAULT_STEPS: ProcessStep[] = [
   {
     number: '01',
     title: 'Book Online or Call',
@@ -33,7 +34,12 @@ const STEPS = [
 
 const EASE = [0.25, 0.1, 0.25, 1] as const
 
-export function ProcessSteps() {
+type Props = {
+  steps?: ProcessStep[]
+}
+
+export function ProcessSteps({ steps }: Props) {
+  const displaySteps = steps ?? DEFAULT_STEPS
   const [active, setActive] = useState(0)
   const [progress, setProgress] = useState(0)
 
@@ -47,12 +53,12 @@ export function ProcessSteps() {
   useEffect(() => {
     if (progress >= 100) {
       const t = setTimeout(() => {
-        setActive((prev) => (prev + 1) % STEPS.length)
+        setActive((prev) => (prev + 1) % displaySteps.length)
         setProgress(0)
       }, 200)
       return () => clearTimeout(t)
     }
-  }, [progress])
+  }, [progress, displaySteps.length])
 
   function handleClick(index: number) {
     setActive(index)
@@ -70,7 +76,7 @@ export function ProcessSteps() {
         />
 
         <ol className="flex flex-col gap-3" aria-label="Process steps">
-          {STEPS.map(({ number, title, description }, index) => {
+          {displaySteps.map(({ number, title, description }, index) => {
             const isActive = active === index
 
             return (

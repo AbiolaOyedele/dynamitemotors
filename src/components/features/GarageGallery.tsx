@@ -5,8 +5,9 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { SectionHeader } from '@/components/ui/SectionHeader'
+import type { GalleryImage } from '@/services/content.service'
 
-const IMAGES = [
+const DEFAULT_IMAGES: GalleryImage[] = [
   { src: '/gallery/garage-bay.jpg',        alt: 'Mechanic working under a car on the lift' },
   { src: '/gallery/aircon-regas.jpg',      alt: 'Air conditioning regas with Kheos CTR machine' },
   { src: '/gallery/tyre-rack.jpg',         alt: 'Tyre stock rack' },
@@ -16,7 +17,12 @@ const IMAGES = [
 
 const EASE = [0.25, 0.1, 0.25, 1] as const
 
-export function GarageGallery() {
+type Props = {
+  images?: GalleryImage[]
+}
+
+export function GarageGallery({ images }: Props) {
+  const displayImages = images ?? DEFAULT_IMAGES
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
 
@@ -24,15 +30,15 @@ export function GarageGallery() {
 
   const goToNext = useCallback(() => {
     setSelectedIndex((prev) =>
-      prev !== null ? (prev + 1) % IMAGES.length : null,
+      prev !== null ? (prev + 1) % displayImages.length : null,
     )
-  }, [])
+  }, [displayImages.length])
 
   const goToPrev = useCallback(() => {
     setSelectedIndex((prev) =>
-      prev !== null ? (prev - 1 + IMAGES.length) % IMAGES.length : null,
+      prev !== null ? (prev - 1 + displayImages.length) % displayImages.length : null,
     )
-  }, [])
+  }, [displayImages.length])
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -61,7 +67,7 @@ export function GarageGallery() {
 
         {/* Mobile: 2-col grid */}
         <div className="grid grid-cols-2 gap-2 md:hidden">
-          {IMAGES.map((image, index) => (
+          {displayImages.map((image, index) => (
             <div
               key={image.src}
               className="relative h-44 rounded-xl overflow-hidden cursor-pointer"
@@ -81,7 +87,7 @@ export function GarageGallery() {
 
         {/* Desktop: expandable horizontal strip */}
         <div className="hidden md:flex gap-2 h-[460px] w-full">
-          {IMAGES.map((image, index) => (
+          {displayImages.map((image, index) => (
             <motion.div
               key={image.src}
               className="relative cursor-pointer overflow-hidden rounded-xl"
@@ -154,8 +160,8 @@ export function GarageGallery() {
                   transition={{ duration: 0.2 }}
                 >
                   <Image
-                    src={IMAGES[selectedIndex].src}
-                    alt={IMAGES[selectedIndex].alt}
+                    src={displayImages[selectedIndex].src}
+                    alt={displayImages[selectedIndex].alt}
                     fill
                     sizes="90vw"
                     className="object-contain rounded-xl"
@@ -176,7 +182,7 @@ export function GarageGallery() {
 
             {/* Counter */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/60 text-[13px] font-medium bg-white/10 px-4 py-1.5 rounded-full">
-              {selectedIndex + 1} / {IMAGES.length}
+              {selectedIndex + 1} / {displayImages.length}
             </div>
           </motion.div>
         )}

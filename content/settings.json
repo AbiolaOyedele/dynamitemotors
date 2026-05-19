@@ -4,5 +4,8 @@
   "address": "2 Vale Rd, Northfleet, Gravesend DA11 9RE",
   "phone": "01474 643488",
   "email": "dynamitemotor@gmail.com",
-  "mapsUrl": "https://www.google.com/maps/search/?api=1&query=2+Vale+Rd+Northfleet+Gravesend+DA11+9RE"
+  "mapsUrl": "https://www.google.com/maps/search/?api=1&query=2+Vale+Rd+Northfleet+Gravesend+DA11+9RE",
+  "hoursMonFri": "9am – 6pm",
+  "hoursSat": "9am – 3pm",
+  "hoursSun": "Closed"
 }

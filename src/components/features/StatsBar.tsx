@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
+import type { StatItem } from '@/services/content.service'
 
-const STATS = [
-  { end: 30, suffix: '+', label: 'Years Experience' },
-  { end: 5,  suffix: '★', label: 'Google Rating'    },
-  { end: 200, suffix: '+', label: 'Cars Serviced'   },
-] as const
+const DEFAULT_STATS: StatItem[] = [
+  { value: 30, suffix: '+', label: 'Years Experience' },
+  { value: 5,  suffix: '★', label: 'Google Rating'    },
+  { value: 200, suffix: '+', label: 'Cars Serviced'   },
+]
 
 const EASE = [0.25, 0.1, 0.25, 1] as const
 
@@ -59,7 +60,12 @@ function CountUp({ end, suffix, duration = 1800 }: { end: number; suffix: string
   )
 }
 
-export function StatsBar() {
+type Props = {
+  stats?: StatItem[]
+}
+
+export function StatsBar({ stats }: Props) {
+  const displayStats = stats ?? DEFAULT_STATS
   const ref = useRef<HTMLElement>(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
 
@@ -72,7 +78,7 @@ export function StatsBar() {
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
         >
-          {STATS.map(({ end, suffix, label }, i) => (
+          {displayStats.map(({ value, suffix, label }, i) => (
             <motion.div
               key={label}
               variants={itemVariants}
@@ -81,7 +87,7 @@ export function StatsBar() {
               }`}
             >
               <dt className="text-[64px] md:text-[80px] font-bold text-dark leading-none tracking-tight">
-                <CountUp end={end} suffix={suffix} />
+                <CountUp end={value} suffix={suffix} />
               </dt>
               <dd className="text-[16px] text-muted mt-3">{label}</dd>
             </motion.div>

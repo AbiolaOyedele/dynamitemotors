@@ -11,6 +11,8 @@ type ContentSection =
   | 'offers'
   | 'stats'
   | 'settings'
+  | 'gallery'
+  | 'process'
 
 /** Read a content JSON file from the /content directory */
 export function readContent<T>(section: ContentSection): T {
@@ -46,6 +48,10 @@ export const IMAGE_DESTINATIONS = {
   general: {
     uploadDir: path.join(PUBLIC_DIR, 'images'),
     publicPrefix: '/images',
+  },
+  gallery: {
+    uploadDir: path.join(PUBLIC_DIR, 'gallery'),
+    publicPrefix: '/gallery',
   },
 }
 

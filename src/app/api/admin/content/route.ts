@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { isAuthenticated } from '@/lib/admin-auth'
 import { readContent, writeContent } from '@/lib/content'
 
-const VALID_SECTIONS = ['hero', 'services', 'testimonials', 'offers', 'stats', 'settings'] as const
+const VALID_SECTIONS = ['hero', 'services', 'testimonials', 'offers', 'stats', 'settings', 'gallery', 'process'] as const
 type Section = (typeof VALID_SECTIONS)[number]
 
 function isValidSection(s: string): s is Section {

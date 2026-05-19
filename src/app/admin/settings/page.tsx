@@ -9,6 +9,9 @@ type Settings = {
   phone: string
   email: string
   mapsUrl: string
+  hoursMonFri: string
+  hoursSat: string
+  hoursSun: string
 }
 
 export default function SettingsAdmin() {
@@ -116,6 +119,51 @@ export default function SettingsAdmin() {
             onChange={(e) => setData({ ...data, mapsUrl: e.target.value })}
             className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
           />
+        </div>
+
+        {/* Opening Hours */}
+        <div className="pt-2">
+          <h2 className="text-[16px] font-semibold text-dark mb-4">Opening Hours</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-[13px] font-semibold text-body mb-2">
+                Mon – Fri Hours
+              </label>
+              <input
+                type="text"
+                value={data.hoursMonFri}
+                onChange={(e) => setData({ ...data, hoursMonFri: e.target.value })}
+                placeholder="e.g. 9am – 6pm"
+                className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[13px] font-semibold text-body mb-2">
+                Saturday Hours
+              </label>
+              <input
+                type="text"
+                value={data.hoursSat}
+                onChange={(e) => setData({ ...data, hoursSat: e.target.value })}
+                placeholder="e.g. 9am – 3pm"
+                className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[13px] font-semibold text-body mb-2">
+                Sunday Hours
+              </label>
+              <input
+                type="text"
+                value={data.hoursSun}
+                onChange={(e) => setData({ ...data, hoursSun: e.target.value })}
+                placeholder="e.g. Closed"
+                className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              />
+            </div>
+          </div>
         </div>
 
         <div className="flex items-center gap-4 pt-2">

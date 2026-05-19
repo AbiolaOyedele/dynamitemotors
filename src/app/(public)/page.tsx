@@ -20,7 +20,14 @@ import { ServicesGrid } from '@/components/features/ServicesGrid'
 import { ProcessSteps } from '@/components/features/ProcessSteps'
 import { GarageGallery } from '@/components/features/GarageGallery'
 import { TestimonialsSection } from '@/components/features/TestimonialsSection'
-import { fetchServicesPreview, fetchTestimonials } from '@/services/content.service'
+import {
+  fetchServicesPreview,
+  fetchTestimonials,
+  fetchStats,
+  fetchProcess,
+  fetchGallery,
+  fetchHero,
+} from '@/services/content.service'
 
 export default async function HomePage() {
   const [services, testimonials] = await Promise.all([
@@ -28,13 +35,18 @@ export default async function HomePage() {
     fetchTestimonials(),
   ])
 
+  const heroData = fetchHero()
+  const stats = fetchStats()
+  const steps = fetchProcess()
+  const images = fetchGallery()
+
   return (
     <>
-      <HeroSection />
-      <StatsBar />
+      <HeroSection heroData={heroData} />
+      <StatsBar stats={stats} />
       <ServicesGrid services={services} showViewAll limit={2} />
-      <ProcessSteps />
-      <GarageGallery />
+      <ProcessSteps steps={steps} />
+      <GarageGallery images={images} />
       <TestimonialsSection testimonials={testimonials} />
     </>
   )
