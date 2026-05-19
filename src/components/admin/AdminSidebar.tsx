@@ -4,15 +4,15 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const NAV_ITEMS = [
-  { href: '/admin', label: 'Dashboard', icon: 'grid' },
-  { href: '/admin/hero', label: 'Hero Section', icon: 'image' },
-  { href: '/admin/services', label: 'Services', icon: 'wrench' },
-  { href: '/admin/testimonials', label: 'Testimonials', icon: 'star' },
-  { href: '/admin/offers', label: 'Offers', icon: 'tag' },
-  { href: '/admin/stats', label: 'Stats Bar', icon: 'bar-chart' },
-  { href: '/admin/process', label: 'Process Steps', icon: 'list' },
-  { href: '/admin/gallery', label: 'Gallery', icon: 'image-grid' },
-  { href: '/admin/settings', label: 'Settings', icon: 'settings' },
+  { href: '/dynamite', label: 'Dashboard', icon: 'grid' },
+  { href: '/dynamite/hero', label: 'Hero Section', icon: 'image' },
+  { href: '/dynamite/services', label: 'Services', icon: 'wrench' },
+  { href: '/dynamite/testimonials', label: 'Testimonials', icon: 'star' },
+  { href: '/dynamite/offers', label: 'Offers', icon: 'tag' },
+  { href: '/dynamite/stats', label: 'Stats Bar', icon: 'bar-chart' },
+  { href: '/dynamite/process', label: 'Process Steps', icon: 'list' },
+  { href: '/dynamite/gallery', label: 'Gallery', icon: 'image-grid' },
+  { href: '/dynamite/settings', label: 'Settings', icon: 'settings' },
 ] as const
 
 function NavIcon({ name }: { name: string }) {
@@ -46,7 +46,7 @@ export function AdminSidebar() {
 
   async function handleLogout() {
     await fetch('/api/admin/auth', { method: 'DELETE' })
-    window.location.href = '/admin'
+    window.location.href = '/dynamite'
   }
 
   return (
@@ -63,8 +63,8 @@ export function AdminSidebar() {
       <nav className="flex-1 px-3 py-4">
         <ul className="flex flex-col gap-1">
           {NAV_ITEMS.map(({ href, label, icon }) => {
-            const isActive = href === '/admin'
-              ? pathname === '/admin'
+            const isActive = href === '/dynamite'
+              ? pathname === '/dynamite'
               : pathname.startsWith(href)
 
             return (

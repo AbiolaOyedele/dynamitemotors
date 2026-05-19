@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin', '/api'],
+        disallow: ['/dynamite', '/api'],
       },
     ],
     sitemap: 'https://www.dynamitemotors.com/sitemap.xml',

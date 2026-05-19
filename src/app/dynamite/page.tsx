@@ -9,14 +9,14 @@ type SettingsContent = { name: string }
 type GalleryImage = { src: string; alt: string }
 
 const CARDS = [
-  { href: '/admin/hero', label: 'Hero Section', description: 'Edit hero text, image and CTA' },
-  { href: '/admin/services', label: 'Services', description: 'Manage services and images' },
-  { href: '/admin/testimonials', label: 'Testimonials', description: 'Manage customer reviews' },
-  { href: '/admin/offers', label: 'Offers', description: 'Create and manage offers' },
-  { href: '/admin/stats', label: 'Stats Bar', description: 'Edit the three headline stats' },
-  { href: '/admin/process', label: 'Process Steps', description: 'Edit the how-it-works steps' },
-  { href: '/admin/gallery', label: 'Gallery', description: 'Add and remove garage photos' },
-  { href: '/admin/settings', label: 'Settings', description: 'Business info and contact' },
+  { href: '/dynamite/hero', label: 'Hero Section', description: 'Edit hero text, image and CTA' },
+  { href: '/dynamite/services', label: 'Services', description: 'Manage services and images' },
+  { href: '/dynamite/testimonials', label: 'Testimonials', description: 'Manage customer reviews' },
+  { href: '/dynamite/offers', label: 'Offers', description: 'Create and manage offers' },
+  { href: '/dynamite/stats', label: 'Stats Bar', description: 'Edit the three headline stats' },
+  { href: '/dynamite/process', label: 'Process Steps', description: 'Edit the how-it-works steps' },
+  { href: '/dynamite/gallery', label: 'Gallery', description: 'Add and remove garage photos' },
+  { href: '/dynamite/settings', label: 'Settings', description: 'Business info and contact' },
 ] as const
 
 export default function AdminDashboard() {
