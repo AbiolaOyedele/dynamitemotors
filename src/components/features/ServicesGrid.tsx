@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react'
 import Image from 'next/image'
 import { motion, useInView } from 'framer-motion'
-import { ClipboardCheck, Wrench, ShieldCheck, CircleDot, Fan } from 'lucide-react'
+import { ClipboardCheck, Wrench, ShieldCheck, CircleDot, Fan, RotateCcw, Cog, ScanLine, ArrowUpDown, Wind } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import { ServiceQuoteModal } from './ServiceQuoteModal'
@@ -34,7 +34,7 @@ function ServiceIcon({ name }: { name: string | null }) {
   if (icon.includes('mot'))
     return <ClipboardCheck size={28} aria-hidden="true" />
 
-  if (icon.includes('oil') || icon.includes('service'))
+  if (icon.includes('service') || icon.includes('oil'))
     return <Wrench size={28} aria-hidden="true" />
 
   if (icon.includes('tyre') || icon.includes('tire') || icon.includes('wheel'))
@@ -43,17 +43,38 @@ function ServiceIcon({ name }: { name: string | null }) {
   if (icon.includes('brake'))
     return <ShieldCheck size={28} aria-hidden="true" />
 
-  if (icon.includes('aircon') || icon.includes('air con') || icon.includes('ac'))
+  if (icon.includes('aircon') || icon.includes('air con') || icon.includes('ac') || icon.includes('conditioning'))
     return <Fan size={28} aria-hidden="true" />
+
+  if (icon.includes('clutch'))
+    return <RotateCcw size={28} aria-hidden="true" />
+
+  if (icon.includes('engine') || icon.includes('gear'))
+    return <Cog size={28} aria-hidden="true" />
+
+  if (icon.includes('diagnostic'))
+    return <ScanLine size={28} aria-hidden="true" />
+
+  if (icon.includes('suspension'))
+    return <ArrowUpDown size={28} aria-hidden="true" />
+
+  if (icon.includes('exhaust'))
+    return <Wind size={28} aria-hidden="true" />
 
   return <Wrench size={28} aria-hidden="true" />
 }
 
 const FALLBACK_SERVICES: Service[] = [
-  { _id: 'f1', title: 'MOT Testing',    slug: { current: 'mot-testing' },    description: 'Fast, reliable MOT testing with same-day certificates.', icon: 'mot',    features: ['Pass or fail advice', 'Retest available', 'All vehicle classes'] },
-  { _id: 'f2', title: 'Car Servicing',  slug: { current: 'car-servicing' },  description: 'Full and interim services to keep your car running safely.', icon: 'service', features: ['Oil & filter change', 'Safety inspection', 'All makes & models'] },
-  { _id: 'f3', title: 'Brake Repairs',  slug: { current: 'brake-repairs' },  description: 'Pads, discs and fluid checks for total stopping confidence.', icon: 'brake',   features: ['Free brake check', 'Genuine parts', 'Same-day fitting'] },
-  { _id: 'f4', title: 'Tyres & Wheels', slug: { current: 'tyres-wheels' },   description: 'Supply and fitting of all major tyre brands, any size.', icon: 'tyre',    features: ['Competitive prices', 'Wheel balancing', 'TPMS reset'] },
+  { _id: 'f01', title: 'Full Service',          slug: { current: 'full-service' },       description: 'Comprehensive maintenance covering all major components for long-term reliability.', icon: 'service',      features: ['Oil & filter change', 'Full safety inspection', 'All makes & models'] },
+  { _id: 'f02', title: 'Tyre Sale & Repair',    slug: { current: 'tyre-sale-repair' },   description: 'Supply, fitting, and puncture repair for all major tyre brands and sizes.', icon: 'tyre',         features: ['Competitive prices', 'Wheel balancing', 'TPMS reset'] },
+  { _id: 'f03', title: 'Air Conditioning',      slug: { current: 'air-conditioning' },   description: 'Regassing, leak checks and repairs for cleaner, cooler air all year round.', icon: 'conditioning', features: ['AC regas', 'Leak detection', 'Compressor inspection'] },
+  { _id: 'f04', title: 'Brakes',                slug: { current: 'brakes' },             description: 'Brake pads, discs and fluid checks to keep your stopping power in top condition.', icon: 'brake',        features: ['Brake pad checks', 'Disc inspection', 'Fluid checks'] },
+  { _id: 'f05', title: 'Clutches',              slug: { current: 'clutches' },           description: 'Clutch diagnostics, adjustment and full replacement for smooth gear changes.', icon: 'clutch',       features: ['Clutch inspection', 'Cable & hydraulic check', 'Full replacement'] },
+  { _id: 'f06', title: 'Engine & Gear Repair',  slug: { current: 'engine-gear-repair' }, description: 'Diagnostics and repairs for engine and gearbox faults to get you back on the road.', icon: 'engine',       features: ['Engine diagnostics', 'Gearbox inspection', 'Fault code reading'] },
+  { _id: 'f07', title: 'Full Diagnostic',       slug: { current: 'full-diagnostic' },    description: 'Complete electronic scan of your vehicle to identify and resolve hidden faults.', icon: 'diagnostic',   features: ['OBD-II scan', 'Fault code analysis', 'Full system check'] },
+  { _id: 'f08', title: 'Suspension',            slug: { current: 'suspension' },         description: 'Shock absorber, spring and steering checks for a safer, more comfortable ride.', icon: 'suspension',   features: ['Shock absorber check', 'Spring inspection', 'Steering assessment'] },
+  { _id: 'f09', title: 'Exhausts',              slug: { current: 'exhausts' },           description: 'Exhaust repair and replacement to keep emissions low and performance high.', icon: 'exhaust',      features: ['Exhaust inspection', 'Welding & repair', 'Full system replacement'] },
+  { _id: 'f10', title: 'MOT Repairs',           slug: { current: 'mot-repairs' },        description: 'MOT preparation and repair work to help get your vehicle road legal fast.', icon: 'mot',          features: ['MOT checks', 'Repair advice', 'Same-day support where possible'] },
 ]
 
 const EASE = [0.25, 0.1, 0.25, 1] as const
