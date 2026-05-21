@@ -3,7 +3,7 @@ import { AppError } from '@/lib/errors'
 import { env } from '@/config/env'
 import type { QuoteFormData } from '@/types/quote.types'
 
-const FROM = 'Dynamite Motors <service@dynamitemotors.com>'
+const FROM = 'Dynamite Motors <services@dynamitemotors.com>'
 
 export async function sendQuoteEmail(data: QuoteFormData): Promise<void> {
   // Send both emails in parallel — notification to garage, confirmation to customer
@@ -18,7 +18,7 @@ export async function sendQuoteEmail(data: QuoteFormData): Promise<void> {
     resendClient.emails.send({
       from: FROM,
       to: data.email,
-      replyTo: 'service@dynamitemotors.com',
+      replyTo: 'services@dynamitemotors.com',
       subject: `We've received your quote request, Dynamite Motors`,
       html: buildConfirmationHtml(data),
     }),
