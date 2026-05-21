@@ -3,7 +3,7 @@ import { AppError } from '@/lib/errors'
 import { env } from '@/config/env'
 import type { QuoteFormData } from '@/types/quote.types'
 
-const FROM = 'Dynamite Motors <services@theruff.agency>'
+const FROM = 'Dynamite Motors <service@dynamitemotors.com>'
 
 export async function sendQuoteEmail(data: QuoteFormData): Promise<void> {
   // Send both emails in parallel — notification to garage, confirmation to customer
@@ -18,7 +18,7 @@ export async function sendQuoteEmail(data: QuoteFormData): Promise<void> {
     resendClient.emails.send({
       from: FROM,
       to: data.email,
-      replyTo: 'services@theruff.agency',
+      replyTo: 'service@dynamitemotors.com',
       subject: `We've received your quote request, Dynamite Motors`,
       html: buildConfirmationHtml(data),
     }),
@@ -171,7 +171,7 @@ function buildConfirmationHtml(data: QuoteFormData): string {
                 <tr>
                   <td style="background:#F5F5F5;padding:24px 40px;border-top:1px solid #E8E8E8;">
                     <p style="margin:0;color:#999999;font-size:13px;text-align:center;line-height:1.6;">
-                      You&apos;re receiving this because you submitted a quote request at dynamitemotors.com.<br />
+                      You received this because you submitted a quote request at dynamitemotors.com.<br />
                       © 2026 Dynamite Motors. All rights reserved.
                     </p>
                   </td>
