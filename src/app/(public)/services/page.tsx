@@ -21,11 +21,49 @@ export const metadata: Metadata = {
   },
 }
 
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'AutoRepair',
+  name: 'Dynamite Motors',
+  url: 'https://www.dynamitemotors.com',
+  telephone: '01474 643488',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '2 Vale Rd, Northfleet',
+    addressLocality: 'Gravesend',
+    postalCode: 'DA11 9RE',
+    addressCountry: 'GB',
+  },
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Our Services',
+    itemListElement: [
+      'Full Service',
+      'Tyre Sale & Repair',
+      'Air Conditioning',
+      'Brakes',
+      'Clutches',
+      'Engine & Gear Repair',
+      'Full Diagnostic',
+      'Suspension',
+      'Exhausts',
+      'MOT Repairs',
+    ].map((name) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name },
+    })),
+  },
+}
+
 export default async function ServicesPage() {
   const services = await fetchServices()
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+      />
       <section className="relative overflow-hidden pt-28 md:pt-32 pb-16 md:pb-20" aria-label="Services hero">
         <Image
           src="/services-hero.jpg"
