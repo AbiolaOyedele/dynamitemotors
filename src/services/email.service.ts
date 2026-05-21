@@ -3,21 +3,35 @@ import { AppError } from '@/lib/errors'
 import { env } from '@/config/env'
 import type { QuoteFormData } from '@/types/quote.types'
 
-export async function sendQuoteEmail(data: QuoteFormData): Promise<void> {
-  const { error } = await resendClient.emails.send({
-    from: 'Dynamite Motors Website <onboarding@resend.dev>',
-    to: env.QUOTE_RECIPIENT_EMAIL,
-    replyTo: data.email,
-    subject: `New Quote Request — ${data.service}`,
-    html: buildEmailHtml(data),
-  })
+const FROM = 'Dynamite Motors <services@theruff.agency>'
 
-  if (error) {
+export async function sendQuoteEmail(data: QuoteFormData): Promise<void> {
+  // Send both emails in parallel — notification to garage, confirmation to customer
+  const [notificationResult, confirmationResult] = await Promise.all([
+    resendClient.emails.send({
+      from: FROM,
+      to: env.QUOTE_RECIPIENT_EMAIL,
+      replyTo: data.email,
+      subject: `New Quote Request — ${data.service}`,
+      html: buildNotificationHtml(data),
+    }),
+    resendClient.emails.send({
+      from: FROM,
+      to: data.email,
+      replyTo: 'services@theruff.agency',
+      subject: `We've received your quote request — Dynamite Motors`,
+      html: buildConfirmationHtml(data),
+    }),
+  ])
+
+  if (notificationResult.error ?? confirmationResult.error) {
     throw new AppError(500, 'Failed to send quote email.', 'EMAIL_SEND_FAILED')
   }
 }
 
-function buildEmailHtml(data: QuoteFormData): string {
+// ── Garage notification ───────────────────────────────────────────────────────
+
+function buildNotificationHtml(data: QuoteFormData): string {
   const { name, email, phone, service, message } = data
 
   return `
@@ -51,20 +65,17 @@ function buildEmailHtml(data: QuoteFormData): string {
                       A new quote enquiry has been submitted via the website.
                     </p>
 
-                    <!-- Details table -->
                     <table width="100%" cellpadding="0" cellspacing="0"
                       style="border:1px solid #E8E8E8;border-radius:6px;overflow:hidden;">
-                      ${row('Name', name)}
-                      ${row('Email', `<a href="mailto:${email}" style="color:#1ED760;">${email}</a>`)}
-                      ${row('Phone', `<a href="tel:${phone}" style="color:#1ED760;">${phone}</a>`)}
-                      ${row('Service', service)}
+                      ${row('Name', escapeHtml(name))}
+                      ${row('Email', `<a href="mailto:${escapeHtml(email)}" style="color:#1ED760;">${escapeHtml(email)}</a>`)}
+                      ${row('Phone', `<a href="tel:${escapeHtml(phone)}" style="color:#1ED760;">${escapeHtml(phone)}</a>`)}
+                      ${row('Service', escapeHtml(service))}
                       ${message ? row('Message', escapeHtml(message)) : ''}
                     </table>
 
-                    <!-- Reply CTA -->
                     <p style="margin:32px 0 0;color:#666666;font-size:14px;line-height:1.6;">
-                      Reply directly to this email to respond to ${escapeHtml(name)} —
-                      your reply will go to <strong>${email}</strong>.
+                      Hit Reply to respond directly to <strong>${escapeHtml(name)}</strong> at ${escapeHtml(email)}.
                     </p>
                   </td>
                 </tr>
@@ -87,6 +98,102 @@ function buildEmailHtml(data: QuoteFormData): string {
   `
 }
 
+// ── Customer confirmation ─────────────────────────────────────────────────────
+
+function buildConfirmationHtml(data: QuoteFormData): string {
+  const { name, service } = data
+
+  return `
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Quote Request Received</title>
+      </head>
+      <body style="margin:0;padding:0;background:#F5F5F5;font-family:Arial,sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:#F5F5F5;padding:40px 0;">
+          <tr>
+            <td align="center">
+              <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;max-width:600px;width:100%;">
+
+                <!-- Header -->
+                <tr>
+                  <td style="background:#111111;padding:32px 40px;">
+                    <h1 style="margin:0;color:#1ED760;font-size:24px;font-weight:700;letter-spacing:-0.5px;">
+                      DYNAMITE MOTORS
+                    </h1>
+                    <p style="margin:8px 0 0;color:#ffffff;opacity:0.6;font-size:14px;">
+                      2 Vale Rd, Northfleet, Gravesend DA11 9RE
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Body -->
+                <tr>
+                  <td style="padding:40px;">
+
+                    <!-- Tick icon -->
+                    <div style="text-align:center;margin-bottom:28px;">
+                      <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:#1ED76015;border:2px solid #1ED760;">
+                        <span style="font-size:28px;line-height:1;">✓</span>
+                      </div>
+                    </div>
+
+                    <h2 style="margin:0 0 12px;color:#111111;font-size:22px;font-weight:700;text-align:center;">
+                      We&apos;ve got your request, ${escapeHtml(name)}!
+                    </h2>
+                    <p style="margin:0 0 32px;color:#555555;font-size:16px;line-height:1.7;text-align:center;">
+                      Thanks for reaching out about <strong>${escapeHtml(service)}</strong>.<br />
+                      One of our team will be in touch shortly to confirm your booking.
+                    </p>
+
+                    <!-- What happens next -->
+                    <table width="100%" cellpadding="0" cellspacing="0"
+                      style="background:#F9F9F9;border-radius:8px;padding:0;overflow:hidden;margin-bottom:32px;">
+                      <tr>
+                        <td style="padding:24px 28px;">
+                          <p style="margin:0 0 16px;color:#111111;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">
+                            What happens next
+                          </p>
+                          ${step('1', 'We review your request and check availability.')}
+                          ${step('2', 'We call or email you to confirm a date and time.')}
+                          ${step('3', 'Bring your vehicle in — we handle the rest.')}
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Need us now -->
+                    <p style="margin:0;color:#555555;font-size:15px;line-height:1.6;text-align:center;">
+                      Need us sooner? Give us a call directly on<br />
+                      <a href="tel:01474643488" style="color:#1ED760;font-weight:700;font-size:17px;text-decoration:none;">
+                        01474 643488
+                      </a>
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                  <td style="background:#F5F5F5;padding:24px 40px;border-top:1px solid #E8E8E8;">
+                    <p style="margin:0;color:#999999;font-size:13px;text-align:center;line-height:1.6;">
+                      You&apos;re receiving this because you submitted a quote request at dynamitemotors.com.<br />
+                      © 2026 Dynamite Motors. All rights reserved.
+                    </p>
+                  </td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
+  `
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
 function row(label: string, value: string): string {
   return `
     <tr>
@@ -99,6 +206,18 @@ function row(label: string, value: string): string {
         ${value}
       </td>
     </tr>
+  `
+}
+
+function step(number: string, text: string): string {
+  return `
+    <p style="margin:0 0 12px;color:#333333;font-size:15px;line-height:1.6;display:flex;align-items:flex-start;gap:10px;">
+      <span style="display:inline-block;min-width:22px;height:22px;border-radius:50%;background:#1ED760;color:#ffffff;
+                   font-size:12px;font-weight:700;text-align:center;line-height:22px;margin-right:10px;">
+        ${number}
+      </span>
+      ${escapeHtml(text)}
+    </p>
   `
 }
 
