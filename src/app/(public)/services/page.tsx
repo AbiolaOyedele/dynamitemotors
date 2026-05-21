@@ -9,15 +9,15 @@ import { fetchServices } from '@/services/content.service'
 import { BUSINESS } from '@/config/constants'
 
 export const metadata: Metadata = {
-  title: 'Our Services — Dynamite Motors',
+  title: 'Our Services | Dynamite Motors',
   description:
-    'MOT checks, full service, tyres, brakes, air con, clutches, exhausts & more — all handled by experienced mechanics at Dynamite Motors in Gravesend.',
+    'MOT checks, full service, tyres, brakes, air con, clutches, exhausts and more. All handled by experienced mechanics at Dynamite Motors in Gravesend.',
   alternates: { canonical: 'https://www.dynamitemotors.com/services' },
   openGraph: {
     url: 'https://www.dynamitemotors.com/services',
-    title: 'Our Services — Dynamite Motors',
+    title: 'Our Services | Dynamite Motors',
     description:
-      'MOT checks, full service, tyres, brakes, air con, clutches, exhausts & more — all handled by experienced mechanics at Dynamite Motors in Gravesend.',
+      'MOT checks, full service, tyres, brakes, air con, clutches, exhausts and more. All handled by experienced mechanics at Dynamite Motors in Gravesend.',
   },
 }
 
@@ -42,7 +42,7 @@ export default async function ServicesPage() {
             Our Services
           </h1>
           <p className="text-[18px] text-white/65 leading-relaxed max-w-2xl mx-auto">
-            MOT checks, servicing, air con and tyres — all handled by experienced mechanics in Gravesend.
+            MOT checks, servicing, air con and tyres. All handled by experienced mechanics in Gravesend.
           </p>
         </div>
       </section>
@@ -55,7 +55,7 @@ export default async function ServicesPage() {
             Not sure what your car needs?
           </h2>
           <p className="text-[16px] text-white/65 mb-8">
-            Call us or drop in — our team will take a look and give you an honest, no-obligation assessment.
+            Call us or drop in, our team will take a look and give you an honest, no-obligation assessment.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <ButtonLink href="/contact" variant="green" size="lg">

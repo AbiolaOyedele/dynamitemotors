@@ -10,7 +10,7 @@ const DEFAULT_STEPS: ProcessStep[] = [
     number: '01',
     title: 'Book Online or Call',
     description:
-      "Fill in our quick quote form or give us a ring. We'll confirm your slot and answer any questions — no waiting, no hassle.",
+      "Fill in our quick quote form or give us a ring. We'll confirm your slot and answer any questions, no waiting, no hassle.",
   },
   {
     number: '02',
@@ -22,7 +22,7 @@ const DEFAULT_STEPS: ProcessStep[] = [
     number: '03',
     title: 'We Get to Work',
     description:
-      "Our experienced technicians carry out the job to a high standard. We'll keep you updated if anything unexpected comes up — no surprises.",
+      "Our experienced technicians carry out the job to a high standard. We'll keep you updated if anything unexpected comes up, no surprises.",
   },
   {
     number: '04',

@@ -103,7 +103,7 @@ export function ServicesGrid({ services, showViewAll = false, limit }: Props) {
         <SectionHeader
           pill="What We Do"
           heading="Services We Offer"
-          description="From routine maintenance to complex repairs — we handle it all under one roof."
+          description="From routine maintenance to complex repairs, we handle it all under one roof."
           headingId="services-heading"
         />
 

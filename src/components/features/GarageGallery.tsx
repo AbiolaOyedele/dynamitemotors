@@ -61,7 +61,7 @@ export function GarageGallery({ images }: Props) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
           heading="See Our Garage"
-          description="The tools, the bays, and the work we do every day — take a look inside."
+          description="The tools, the bays, and the work we do every day. Take a look inside."
           theme="light"
         />
 

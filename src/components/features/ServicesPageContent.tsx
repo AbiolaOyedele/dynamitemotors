@@ -102,7 +102,7 @@ const SERVICE_DETAILS: ServiceDetail[] = [
     id: 'engine-gear-repair',
     aliases: ['engine', 'gear', 'gearbox', 'engine repair', 'gear repair'],
     title: 'Engine & Gear Repair',
-    description: 'Diagnostics and repair for engine and gearbox faults — from minor issues to full rebuilds.',
+    description: 'Diagnostics and repair for engine and gearbox faults, from minor issues to full rebuilds.',
     features: ['Engine diagnostics', 'Gearbox inspection', 'Fault code reading', 'Oil leak repair'],
     goodFor: ['Engine warning light', 'Rough running', 'Gearbox noise'],
     Icon: Cog,

@@ -4,13 +4,13 @@ import { HeroSection } from '@/components/features/HeroSection'
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: 'Dynamite Motors — Auto Repair Gravesend',
+  title: 'Dynamite Motors | Auto Repair Gravesend',
   description:
     'Professional auto repair and servicing in Gravesend, Kent. 30+ years experience. MOT, full service, tyres, brakes & more. Get a free quote today.',
   alternates: { canonical: 'https://www.dynamitemotors.com' },
   openGraph: {
     url: 'https://www.dynamitemotors.com',
-    title: 'Dynamite Motors — Auto Repair Gravesend',
+    title: 'Dynamite Motors | Auto Repair Gravesend',
     description:
       'Professional auto repair and servicing in Gravesend, Kent. 30+ years experience. MOT, full service, tyres, brakes & more. Get a free quote today.',
   },

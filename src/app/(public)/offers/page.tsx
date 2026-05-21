@@ -5,13 +5,13 @@ export const revalidate = 3600
 import { fetchActiveOffers } from '@/services/content.service'
 
 export const metadata: Metadata = {
-  title: 'Current Offers — Dynamite Motors',
+  title: 'Current Offers | Dynamite Motors',
   description:
     'Special promotions and discounts on MOTs, car servicing, brakes and more at Dynamite Motors in Gravesend.',
   alternates: { canonical: 'https://www.dynamitemotors.com/offers' },
   openGraph: {
     url: 'https://www.dynamitemotors.com/offers',
-    title: 'Current Offers — Dynamite Motors',
+    title: 'Current Offers | Dynamite Motors',
     description:
       'Special promotions and discounts on MOTs, car servicing, brakes and more at Dynamite Motors in Gravesend.',
   },
@@ -29,7 +29,7 @@ export default async function OffersPage() {
             Current Offers
           </h1>
           <p className="text-[18px] text-white/65 leading-relaxed max-w-2xl mx-auto">
-            Take advantage of our latest deals — limited availability, so don&apos;t miss out.
+            Take advantage of our latest deals, limited availability so don&apos;t miss out.
           </p>
         </div>
       </section>

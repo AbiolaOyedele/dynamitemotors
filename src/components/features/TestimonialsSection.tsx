@@ -83,7 +83,7 @@ export function TestimonialsSection({ testimonials }: Props) {
         <SectionHeader
           pill="Customer Reviews"
           heading="What Our Customers Say"
-          description="Don't just take our word for it — here's what local drivers think."
+          description="Don't just take our word for it, here's what local drivers think."
           headingId="testimonials-heading"
           theme="dark"
         />

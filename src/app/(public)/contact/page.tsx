@@ -3,13 +3,13 @@ import { QuoteForm } from '@/components/features/QuoteForm'
 import { BUSINESS } from '@/config/constants'
 
 export const metadata: Metadata = {
-  title: 'Contact Us & Get a Quote — Dynamite Motors',
+  title: 'Contact Us & Get a Quote | Dynamite Motors',
   description:
     'Get a free quote from Dynamite Motors in Gravesend. Call 01474 643488, email us, or fill in our quick online form.',
   alternates: { canonical: 'https://www.dynamitemotors.com/contact' },
   openGraph: {
     url: 'https://www.dynamitemotors.com/contact',
-    title: 'Contact Us & Get a Quote — Dynamite Motors',
+    title: 'Contact Us & Get a Quote | Dynamite Motors',
     description:
       'Get a free quote from Dynamite Motors in Gravesend. Call 01474 643488, email us, or fill in our quick online form.',
   },
@@ -25,7 +25,7 @@ export default async function ContactPage() {
             Get in Touch
           </h1>
           <p className="text-[18px] text-white/65 leading-relaxed max-w-2xl mx-auto">
-            Fill in the form below or give us a call — we&apos;re happy to help
+            Fill in the form below or give us a call, we&apos;re happy to help
             with any questions.
           </p>
         </div>

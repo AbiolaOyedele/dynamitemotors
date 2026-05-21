@@ -12,14 +12,14 @@ export async function sendQuoteEmail(data: QuoteFormData): Promise<void> {
       from: FROM,
       to: env.QUOTE_RECIPIENT_EMAIL,
       replyTo: data.email,
-      subject: `New Quote Request — ${data.service}`,
+      subject: `New Quote Request: ${data.service}`,
       html: buildNotificationHtml(data),
     }),
     resendClient.emails.send({
       from: FROM,
       to: data.email,
       replyTo: 'services@theruff.agency',
-      subject: `We've received your quote request — Dynamite Motors`,
+      subject: `We've received your quote request, Dynamite Motors`,
       html: buildConfirmationHtml(data),
     }),
   ])
@@ -100,8 +100,34 @@ function buildNotificationHtml(data: QuoteFormData): string {
 
 // ── Customer confirmation ─────────────────────────────────────────────────────
 
+function getServiceBlurb(service: string): string {
+  const s = service.toLowerCase()
+  if (s.includes('full service') || s.includes('servicing'))
+    return "We'll check your oil, filters, fluids and run through a full safety inspection so your car leaves in the best shape possible."
+  if (s.includes('tyre') || s.includes('tire'))
+    return "We'll check your tyre sizes, source the right fit and have you back on the road with safe, balanced rubber."
+  if (s.includes('air') || s.includes('aircon') || s.includes('conditioning'))
+    return "We'll regas your system, check for leaks and make sure you're getting clean, cold air whenever you need it."
+  if (s.includes('brake'))
+    return "We'll inspect your pads, discs and fluid and give you an honest assessment of what needs doing before any work starts."
+  if (s.includes('clutch'))
+    return "We'll diagnose the issue, talk you through the options and carry out the repair to get your gear changes smooth again."
+  if (s.includes('engine') || s.includes('gear'))
+    return "We'll run a full diagnostic, identify the fault and talk you through the repair before we touch anything."
+  if (s.includes('diagnostic'))
+    return "We'll scan every system on your vehicle, pull the fault codes and give you a clear picture of what's going on."
+  if (s.includes('suspension'))
+    return "We'll check your shocks, springs and steering components and let you know exactly what's needed for a smoother, safer ride."
+  if (s.includes('exhaust'))
+    return "We'll inspect the full system, advise on whether a repair or replacement is the right call and get it sorted quickly."
+  if (s.includes('mot'))
+    return "We'll prep your vehicle thoroughly so it goes in for its MOT in the best possible condition."
+  return "We'll be in touch to confirm the details and get you booked in at a time that suits you."
+}
+
 function buildConfirmationHtml(data: QuoteFormData): string {
   const { name, service } = data
+  const blurb = getServiceBlurb(service)
 
   return `
     <!DOCTYPE html>
@@ -133,19 +159,15 @@ function buildConfirmationHtml(data: QuoteFormData): string {
                 <tr>
                   <td style="padding:40px;">
 
-                    <!-- Tick icon -->
-                    <div style="text-align:center;margin-bottom:28px;">
-                      <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:#1ED76015;border:2px solid #1ED760;">
-                        <span style="font-size:28px;line-height:1;">✓</span>
-                      </div>
-                    </div>
 
                     <h2 style="margin:0 0 12px;color:#111111;font-size:22px;font-weight:700;text-align:center;">
                       We&apos;ve got your request, ${escapeHtml(name)}!
                     </h2>
+                    <p style="margin:0 0 12px;color:#555555;font-size:16px;line-height:1.7;text-align:center;">
+                      Thanks for reaching out about <strong>${escapeHtml(service)}</strong>.
+                    </p>
                     <p style="margin:0 0 32px;color:#555555;font-size:16px;line-height:1.7;text-align:center;">
-                      Thanks for reaching out about <strong>${escapeHtml(service)}</strong>.<br />
-                      One of our team will be in touch shortly to confirm your booking.
+                      ${escapeHtml(blurb)}
                     </p>
 
                     <!-- What happens next -->
@@ -158,7 +180,7 @@ function buildConfirmationHtml(data: QuoteFormData): string {
                           </p>
                           ${step('1', 'We review your request and check availability.')}
                           ${step('2', 'We call or email you to confirm a date and time.')}
-                          ${step('3', 'Bring your vehicle in — we handle the rest.')}
+                          ${step('3', 'Bring your vehicle in, we handle the rest.')}
                         </td>
                       </tr>
                     </table>

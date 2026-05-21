@@ -15,8 +15,8 @@ const BASE_URL = 'https://www.dynamitemotors.com'
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'Dynamite Motors — Auto Repair Gravesend',
-    template: '%s — Dynamite Motors',
+    default: 'Dynamite Motors | Auto Repair Gravesend',
+    template: '%s | Dynamite Motors',
   },
   description:
     'Professional auto repair and servicing in Gravesend, Kent. 30+ years experience. MOT, full service, tyres, brakes & more. Get a free quote today.',
@@ -25,14 +25,14 @@ export const metadata: Metadata = {
     siteName: 'Dynamite Motors',
     locale: 'en_GB',
     url: BASE_URL,
-    title: 'Dynamite Motors — Auto Repair Gravesend',
+    title: 'Dynamite Motors | Auto Repair Gravesend',
     description:
       'Professional auto repair and servicing in Gravesend, Kent. 30+ years experience. MOT, full service, tyres, brakes & more. Get a free quote today.',
-    images: [{ url: '/hero.jpg', width: 1200, height: 630, alt: 'Dynamite Motors — Gravesend' }],
+    images: [{ url: '/hero.jpg', width: 1200, height: 630, alt: 'Dynamite Motors, Gravesend' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Dynamite Motors — Auto Repair Gravesend',
+    title: 'Dynamite Motors | Auto Repair Gravesend',
     description:
       'Professional auto repair and servicing in Gravesend, Kent. 30+ years experience. MOT, full service, tyres, brakes & more.',
     images: ['/hero.jpg'],

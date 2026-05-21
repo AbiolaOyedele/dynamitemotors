@@ -164,7 +164,7 @@ export function QuoteForm({ serviceNames }: Props) {
             Quote request sent!
           </h3>
           <p className="text-[17px] text-body leading-relaxed mb-6">
-            Thank you — we&apos;ll be in touch shortly. If you need us straight
+            Thank you, we&apos;ll be in touch shortly. If you need us straight
             away, give us a call.
           </p>
           <a
@@ -254,7 +254,7 @@ export function QuoteForm({ serviceNames }: Props) {
           value={fields.message}
           onChange={setField('message')}
           placeholder="Make, model, mileage, or anything else we should know…"
-          hint="Optional — the more detail you give, the more accurate your quote."
+          hint="Optional: the more detail you give, the more accurate your quote."
           rows={4}
         />
 

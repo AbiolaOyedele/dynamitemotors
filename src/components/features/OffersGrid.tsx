@@ -84,7 +84,7 @@ function OfferCard({ offer }: { offer: Offer }) {
           href="/contact"
           size="md"
           className="w-full"
-          aria-label={`Claim this offer — ${offer.title}`}
+          aria-label={`Claim this offer: ${offer.title}`}
         >
           Claim This Offer
         </ButtonLink>
@@ -123,7 +123,7 @@ export function OffersGrid({ offers }: Props) {
                 No current offers
               </p>
               <p className="text-[17px] text-muted leading-relaxed">
-                Check back soon — we regularly run promotions on MOTs,
+                Check back soon, we regularly run promotions on MOTs,
                 servicing, and more.
               </p>
             </div>
