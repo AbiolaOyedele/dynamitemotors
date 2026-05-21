@@ -37,6 +37,7 @@ const SERVICES = [
   'Suspension',
   'Exhausts',
   'MOT Repairs',
+  'Others',
 ]
 
 // ── Styles ────────────────────────────────────────────────────────────────────

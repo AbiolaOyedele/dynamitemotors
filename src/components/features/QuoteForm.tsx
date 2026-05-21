@@ -39,6 +39,7 @@ const DEFAULT_SERVICES = [
   'Suspension',
   'Exhausts',
   'MOT Repairs',
+  'Others',
 ]
 
 type Props = {

@@ -100,34 +100,8 @@ function buildNotificationHtml(data: QuoteFormData): string {
 
 // ── Customer confirmation ─────────────────────────────────────────────────────
 
-function getServiceBlurb(service: string): string {
-  const s = service.toLowerCase()
-  if (s.includes('full service') || s.includes('servicing'))
-    return "We'll check your oil, filters, fluids and run through a full safety inspection so your car leaves in the best shape possible."
-  if (s.includes('tyre') || s.includes('tire'))
-    return "We'll check your tyre sizes, source the right fit and have you back on the road with safe, balanced rubber."
-  if (s.includes('air') || s.includes('aircon') || s.includes('conditioning'))
-    return "We'll regas your system, check for leaks and make sure you're getting clean, cold air whenever you need it."
-  if (s.includes('brake'))
-    return "We'll inspect your pads, discs and fluid and give you an honest assessment of what needs doing before any work starts."
-  if (s.includes('clutch'))
-    return "We'll diagnose the issue, talk you through the options and carry out the repair to get your gear changes smooth again."
-  if (s.includes('engine') || s.includes('gear'))
-    return "We'll run a full diagnostic, identify the fault and talk you through the repair before we touch anything."
-  if (s.includes('diagnostic'))
-    return "We'll scan every system on your vehicle, pull the fault codes and give you a clear picture of what's going on."
-  if (s.includes('suspension'))
-    return "We'll check your shocks, springs and steering components and let you know exactly what's needed for a smoother, safer ride."
-  if (s.includes('exhaust'))
-    return "We'll inspect the full system, advise on whether a repair or replacement is the right call and get it sorted quickly."
-  if (s.includes('mot'))
-    return "We'll prep your vehicle thoroughly so it goes in for its MOT in the best possible condition."
-  return "We'll be in touch to confirm the details and get you booked in at a time that suits you."
-}
-
 function buildConfirmationHtml(data: QuoteFormData): string {
   const { name, service } = data
-  const blurb = getServiceBlurb(service)
 
   return `
     <!DOCTYPE html>
@@ -163,11 +137,9 @@ function buildConfirmationHtml(data: QuoteFormData): string {
                     <h2 style="margin:0 0 12px;color:#111111;font-size:22px;font-weight:700;text-align:center;">
                       We&apos;ve got your request, ${escapeHtml(name)}!
                     </h2>
-                    <p style="margin:0 0 12px;color:#555555;font-size:16px;line-height:1.7;text-align:center;">
-                      Thanks for reaching out about <strong>${escapeHtml(service)}</strong>.
-                    </p>
                     <p style="margin:0 0 32px;color:#555555;font-size:16px;line-height:1.7;text-align:center;">
-                      ${escapeHtml(blurb)}
+                      Thanks for reaching out about <strong>${escapeHtml(service)}</strong>.<br />
+                      One of our team will be in touch shortly to confirm your booking.
                     </p>
 
                     <!-- What happens next -->
