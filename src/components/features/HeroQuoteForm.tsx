@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Toast } from '@/components/ui/Toast'
+import { BookingCalendar } from '@/components/ui/BookingCalendar'
 import { BUSINESS } from '@/config/constants'
 import type { QuoteApiResponse } from '@/types/quote.types'
 
@@ -24,6 +25,15 @@ const EMPTY: FormFields = {
   name: '', email: '', phone: '', service: '', message: '',
   preferredDate: '', preferredTime: '',
 }
+
+const ALL_TIMES = [
+  { value: 'Morning (9am–12pm)',      label: 'Morning (9am–12pm)' },
+  { value: 'Afternoon (12pm–3pm)',    label: 'Afternoon (12pm–3pm)' },
+  { value: 'Late Afternoon (3pm–5pm)', label: 'Late Afternoon (3pm–5pm)' },
+]
+
+// Saturday: garage closes at 3pm — morning and 12pm–3pm only
+const SAT_TIMES = ALL_TIMES.slice(0, 2)
 
 type Props = {
   initialService?: string
@@ -104,20 +114,27 @@ export function HeroQuoteForm({ initialService, onSuccess }: Props) {
     : SERVICES
 
   const [fields, setFields] = useState<FormFields>({ ...EMPTY, service: initialService ?? '' })
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
 
-  // Min date = tomorrow (prevents booking same-day)
-  const tomorrow = new Date()
-  tomorrow.setDate(tomorrow.getDate() + 1)
-  const minDate = tomorrow.toISOString().split('T')[0] ?? ''
+  const isSaturday = selectedDate?.getDay() === 6
+  const timeSlots = isSaturday ? SAT_TIMES : ALL_TIMES
+
   const [status, setStatus] = useState<Status>('idle')
   const [errorMsg, setErrorMsg] = useState('')
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [showToast, setShowToast] = useState(false)
 
+  function handleDateSelect(date: Date | undefined) {
+    setSelectedDate(date)
+    // If switching to Saturday, clear Late Afternoon which isn't available
+    if (date?.getDay() === 6 && fields.preferredTime === 'Late Afternoon (3pm–5pm)') {
+      setFields((prev) => ({ ...prev, preferredTime: '' }))
+    }
+  }
+
   function setField(key: keyof FormFields) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
       setFields((prev) => ({ ...prev, [key]: e.target.value }))
-      // Clear error for this field as user corrects it
       if (fieldErrors[key]) setFieldErrors((prev) => ({ ...prev, [key]: undefined }))
     }
   }
@@ -143,7 +160,7 @@ export function HeroQuoteForm({ initialService, onSuccess }: Props) {
         service: fields.service,
       }
       if (fields.message.trim()) body['message'] = fields.message.trim()
-      if (fields.preferredDate) body['preferredDate'] = fields.preferredDate
+      if (selectedDate) body['preferredDate'] = selectedDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
       if (fields.preferredTime) body['preferredTime'] = fields.preferredTime
 
       const res = await fetch('/api/v1/quote', {
@@ -162,6 +179,7 @@ export function HeroQuoteForm({ initialService, onSuccess }: Props) {
 
       setStatus('success')
       setFields(EMPTY)
+      setSelectedDate(undefined)
       setShowToast(true)
       onSuccess?.()
     } catch {
@@ -300,22 +318,14 @@ export function HeroQuoteForm({ initialService, onSuccess }: Props) {
           </div>
         </div>
 
-        {/* Row 3: Preferred date + time — modal (booking) only */}
+        {/* Booking date + time — modal only */}
         {onSuccess && (
-          <div className="grid grid-cols-2 gap-4 items-start">
-            <div className="flex flex-col gap-1">
-              <input
-                className={inputNormal + ' [color-scheme:dark]'}
-                type="date"
-                name="preferredDate"
-                min={minDate}
-                value={fields.preferredDate}
-                onChange={setField('preferredDate')}
-                aria-label="Preferred date (optional)"
-              />
-            </div>
+          <div className="flex flex-col gap-2">
+            <div className="grid grid-cols-2 gap-4 items-start">
+              {/* Date picker popup */}
+              <BookingCalendar selected={selectedDate} onSelect={handleDateSelect} />
 
-            <div className="flex flex-col gap-1">
+              {/* Time slot */}
               <div className="relative">
                 <select
                   className={selectNormal}
@@ -324,10 +334,10 @@ export function HeroQuoteForm({ initialService, onSuccess }: Props) {
                   onChange={setField('preferredTime')}
                   aria-label="Preferred time slot (optional)"
                 >
-                  <option value="">Any time</option>
-                  <option value="Morning (9am–12pm)">Morning (9am–12pm)</option>
-                  <option value="Afternoon (12pm–3pm)">Afternoon (12pm–3pm)</option>
-                  <option value="Late Afternoon (3pm–5pm)">Late Afternoon (3pm–5pm)</option>
+                  <option value="" disabled>Select a time</option>
+                  {timeSlots.map((slot) => (
+                    <option key={slot.value} value={slot.value}>{slot.label}</option>
+                  ))}
                 </select>
                 <svg
                   className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-white/50"
@@ -339,6 +349,12 @@ export function HeroQuoteForm({ initialService, onSuccess }: Props) {
                 </svg>
               </div>
             </div>
+
+            {isSaturday && (
+              <p className="text-[12px] text-white/45 px-1">
+                Saturday hours are 9am–3pm. Late afternoon slots are not available.
+              </p>
+            )}
           </div>
         )}
 
