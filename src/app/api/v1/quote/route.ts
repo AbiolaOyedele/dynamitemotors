@@ -7,11 +7,13 @@ import { BUSINESS } from '@/config/constants'
 // ── Schema (matches CLAUDE.md spec exactly) ──────────────────────────────────
 
 const quoteSchema = z.object({
-  name:    z.string().min(2).max(100),
-  email:   z.string().email(),
-  phone:   z.string().min(7).max(20),
-  service: z.string().min(1),
-  message: z.string().max(1000).optional(),
+  name:          z.string().min(2).max(100),
+  email:         z.string().email(),
+  phone:         z.string().min(7).max(20),
+  service:       z.string().min(1),
+  message:       z.string().max(1000).optional(),
+  preferredDate: z.string().optional(),
+  preferredTime: z.string().optional(),
 })
 
 // ── In-memory sliding-window rate limiter ─────────────────────────────────────
@@ -92,10 +94,13 @@ export async function POST(request: NextRequest) {
   }
 
   // 4. Build email data — construct explicitly to satisfy exactOptionalPropertyTypes
-  const { name, email, phone, service, message } = parsed.data
-  const emailData = message
-    ? { name, email, phone, service, message }
-    : { name, email, phone, service }
+  const { name, email, phone, service, message, preferredDate, preferredTime } = parsed.data
+  const emailData = {
+    name, email, phone, service,
+    ...(message       !== undefined ? { message }       : {}),
+    ...(preferredDate !== undefined ? { preferredDate } : {}),
+    ...(preferredTime !== undefined ? { preferredTime } : {}),
+  }
 
   // 5. Send email
   try {

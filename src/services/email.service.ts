@@ -32,7 +32,7 @@ export async function sendQuoteEmail(data: QuoteFormData): Promise<void> {
 // ── Garage notification ───────────────────────────────────────────────────────
 
 function buildNotificationHtml(data: QuoteFormData): string {
-  const { name, email, phone, service, message } = data
+  const { name, email, phone, service, message, preferredDate, preferredTime } = data
 
   return `
     <!DOCTYPE html>
@@ -71,6 +71,8 @@ function buildNotificationHtml(data: QuoteFormData): string {
                       ${row('Email', `<a href="mailto:${escapeHtml(email)}" style="color:#1ED760;">${escapeHtml(email)}</a>`)}
                       ${row('Phone', `<a href="tel:${escapeHtml(phone)}" style="color:#1ED760;">${escapeHtml(phone)}</a>`)}
                       ${row('Service', escapeHtml(service))}
+                      ${preferredDate ? row('Preferred Date', escapeHtml(preferredDate)) : ''}
+                      ${preferredTime ? row('Preferred Time', escapeHtml(preferredTime)) : ''}
                       ${message ? row('Message', escapeHtml(message)) : ''}
                     </table>
 

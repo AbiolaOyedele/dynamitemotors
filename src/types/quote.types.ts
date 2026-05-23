@@ -4,6 +4,8 @@ export type QuoteFormData = {
   phone: string
   service: string
   message?: string
+  preferredDate?: string
+  preferredTime?: string
 }
 
 export type QuoteSuccessResponse = {

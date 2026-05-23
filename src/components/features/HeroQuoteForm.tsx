@@ -14,11 +14,16 @@ type FormFields = {
   phone: string
   service: string
   message: string
+  preferredDate: string
+  preferredTime: string
 }
 
 type FieldErrors = Partial<Record<keyof FormFields, string>>
 
-const EMPTY: FormFields = { name: '', email: '', phone: '', service: '', message: '' }
+const EMPTY: FormFields = {
+  name: '', email: '', phone: '', service: '', message: '',
+  preferredDate: '', preferredTime: '',
+}
 
 type Props = {
   initialService?: string
@@ -99,6 +104,11 @@ export function HeroQuoteForm({ initialService, onSuccess }: Props) {
     : SERVICES
 
   const [fields, setFields] = useState<FormFields>({ ...EMPTY, service: initialService ?? '' })
+
+  // Min date = tomorrow (prevents booking same-day)
+  const tomorrow = new Date()
+  tomorrow.setDate(tomorrow.getDate() + 1)
+  const minDate = tomorrow.toISOString().split('T')[0] ?? ''
   const [status, setStatus] = useState<Status>('idle')
   const [errorMsg, setErrorMsg] = useState('')
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
@@ -133,6 +143,8 @@ export function HeroQuoteForm({ initialService, onSuccess }: Props) {
         service: fields.service,
       }
       if (fields.message.trim()) body['message'] = fields.message.trim()
+      if (fields.preferredDate) body['preferredDate'] = fields.preferredDate
+      if (fields.preferredTime) body['preferredTime'] = fields.preferredTime
 
       const res = await fetch('/api/v1/quote', {
         method: 'POST',
@@ -288,6 +300,48 @@ export function HeroQuoteForm({ initialService, onSuccess }: Props) {
           </div>
         </div>
 
+        {/* Row 3: Preferred date + time — modal (booking) only */}
+        {onSuccess && (
+          <div className="grid grid-cols-2 gap-4 items-start">
+            <div className="flex flex-col gap-1">
+              <input
+                className={inputNormal + ' [color-scheme:dark]'}
+                type="date"
+                name="preferredDate"
+                min={minDate}
+                value={fields.preferredDate}
+                onChange={setField('preferredDate')}
+                aria-label="Preferred date (optional)"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <div className="relative">
+                <select
+                  className={selectNormal}
+                  name="preferredTime"
+                  value={fields.preferredTime}
+                  onChange={setField('preferredTime')}
+                  aria-label="Preferred time slot (optional)"
+                >
+                  <option value="">Any time</option>
+                  <option value="Morning (9am–12pm)">Morning (9am–12pm)</option>
+                  <option value="Afternoon (12pm–3pm)">Afternoon (12pm–3pm)</option>
+                  <option value="Late Afternoon (3pm–5pm)">Late Afternoon (3pm–5pm)</option>
+                </select>
+                <svg
+                  className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-white/50"
+                  width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Message */}
         <textarea
           className={textareaCls}
@@ -313,7 +367,7 @@ export function HeroQuoteForm({ initialService, onSuccess }: Props) {
           className="w-full"
           disabled={status === 'loading'}
         >
-          {status === 'loading' ? 'Sending…' : 'Get a Free Quote'}
+          {status === 'loading' ? 'Sending…' : onSuccess ? 'Book a Service' : 'Get a Quote'}
         </Button>
 
         <p className="text-[13px] text-white/40 text-center">

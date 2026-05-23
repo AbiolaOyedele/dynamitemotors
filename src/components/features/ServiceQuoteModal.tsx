@@ -14,19 +14,21 @@ type Props = {
 export function ServiceQuoteModal({ service, onClose }: Props) {
   const [showToast, setShowToast] = useState(false)
 
+  const isOpen = service !== null
+
   useEffect(() => {
-    if (!service) return
+    if (!isOpen) return
     function handleKey(e: KeyboardEvent) {
       if (e.key === 'Escape') onClose()
     }
     document.addEventListener('keydown', handleKey)
     return () => document.removeEventListener('keydown', handleKey)
-  }, [service, onClose])
+  }, [isOpen, onClose])
 
   useEffect(() => {
-    document.body.style.overflow = service ? 'hidden' : ''
+    document.body.style.overflow = isOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
-  }, [service])
+  }, [isOpen])
 
   function handleSuccess() {
     onClose()
@@ -36,7 +38,7 @@ export function ServiceQuoteModal({ service, onClose }: Props) {
   return (
     <>
       <AnimatePresence>
-        {service && (
+        {isOpen && (
           <motion.div
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
@@ -55,7 +57,7 @@ export function ServiceQuoteModal({ service, onClose }: Props) {
             <motion.div
               role="dialog"
               aria-modal="true"
-              aria-label={`Book ${service}`}
+              aria-label={service ? `Book ${service}` : 'Book a Service'}
               className="relative z-10 w-full max-w-lg bg-white/[0.08] backdrop-blur-md border border-white/15 rounded-2xl p-6 md:p-8 max-h-[90vh] overflow-y-auto"
               initial={{ scale: 0.94, opacity: 0, y: 16 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -68,7 +70,7 @@ export function ServiceQuoteModal({ service, onClose }: Props) {
                     Book a service
                   </p>
                   <h2 className="text-[22px] font-bold text-white leading-tight">
-                    {service}
+                    {service || 'Choose your service below'}
                   </h2>
                 </div>
                 <button

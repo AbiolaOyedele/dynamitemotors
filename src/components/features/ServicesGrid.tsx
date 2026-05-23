@@ -162,10 +162,10 @@ export function ServicesGrid({ services, showViewAll = false, limit }: Props) {
                     <Button
                       variant="primary"
                       size="lg"
-                      aria-label={`Get a quote for ${service.title}`}
+                      aria-label={`Book ${service.title}`}
                       onClick={() => setActiveService(service.title)}
                     >
-                      Get a Quote
+                      Book this Service
                     </Button>
                   </div>
                 </div>

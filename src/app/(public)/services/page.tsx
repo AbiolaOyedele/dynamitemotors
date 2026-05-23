@@ -2,11 +2,9 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 
 export const revalidate = 3600
-import { MapPin, Phone } from 'lucide-react'
 import { ServicesPageContent } from '@/components/features/ServicesPageContent'
-import { ButtonLink } from '@/components/ui/Button'
+import { ServicesPageCTA } from '@/components/features/ServicesPageCTA'
 import { fetchServices } from '@/services/content.service'
-import { BUSINESS } from '@/config/constants'
 
 export const metadata: Metadata = {
   title: 'Our Services | Dynamite Motors',
@@ -95,27 +93,7 @@ export default async function ServicesPage() {
           <p className="text-[16px] text-white/65 mb-8">
             Call us or drop in, our team will take a look and give you an honest, no-obligation assessment.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <ButtonLink href="/contact" variant="green" size="lg">
-              Get a Free Quote
-            </ButtonLink>
-            <a
-              href={BUSINESS.phoneTel}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-[100px] border border-white/25 text-white text-[15px] font-semibold hover:bg-white/10 transition-colors"
-            >
-              <Phone size={16} aria-hidden="true" />
-              {BUSINESS.phone}
-            </a>
-          </div>
-          <a
-            href={BUSINESS.mapsUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-7 inline-flex items-center justify-center gap-2 text-[14px] font-medium text-white/55 hover:text-white transition-colors"
-          >
-            <MapPin size={16} aria-hidden="true" />
-            {BUSINESS.address}
-          </a>
+          <ServicesPageCTA />
         </div>
       </section>
     </>

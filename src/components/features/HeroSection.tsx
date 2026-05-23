@@ -1,9 +1,11 @@
 'use client'
 
+import { useState } from 'react'
 import Image from 'next/image'
 import { Phone } from 'lucide-react'
-import { ButtonLink } from '@/components/ui/Button'
+import { Button } from '@/components/ui/Button'
 import { HeroQuoteForm } from './HeroQuoteForm'
+import { ServiceQuoteModal } from './ServiceQuoteModal'
 import { BUSINESS } from '@/config/constants'
 import type { HeroData } from '@/services/content.service'
 
@@ -17,6 +19,8 @@ export function HeroSection({ heroData }: Props) {
   const image = heroData?.image ?? '/hero.jpg'
   const heading = heroData?.heading ?? 'Your Trusted\nAutomotive Partner,'
   const accentLine = heroData?.accentLine ?? 'Several Years Strong.'
+
+  const [modalService, setModalService] = useState<string | null>(null)
 
   return (
     <section
@@ -58,9 +62,13 @@ export function HeroSection({ heroData }: Props) {
                 </h1>
 
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <ButtonLink href="/contact" variant="green" size="lg">
+                  <Button
+                    variant="green"
+                    size="lg"
+                    onClick={() => setModalService('')}
+                  >
                     Book a Service
-                  </ButtonLink>
+                  </Button>
                   <a
                     href={BUSINESS.phoneTel}
                     className="inline-flex h-[60px] items-center justify-center gap-2 px-7 rounded-[100px] border border-white/30 text-white text-[16px] font-semibold hover:bg-white/10 transition-colors"
@@ -84,6 +92,11 @@ export function HeroSection({ heroData }: Props) {
         </div>
 
       </div>
+
+      <ServiceQuoteModal
+        service={modalService}
+        onClose={() => setModalService(null)}
+      />
     </section>
   )
 }
