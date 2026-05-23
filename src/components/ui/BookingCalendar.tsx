@@ -24,15 +24,14 @@ export function BookingCalendar({ selected, onSelect }: Props) {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  // Lock body scroll while popup is open
+  // Close on Escape — stopImmediatePropagation prevents the parent modal also closing
   useEffect(() => {
-    if (open) document.body.style.overflow = 'hidden'
-    return () => { document.body.style.overflow = '' }
-  }, [open])
-
-  // Close on Escape
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) { if (e.key === 'Escape') setOpen(false) }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        e.stopImmediatePropagation()
+        setOpen(false)
+      }
+    }
     if (open) document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [open])

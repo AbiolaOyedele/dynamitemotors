@@ -15,15 +15,13 @@ type FormFields = {
   phone: string
   service: string
   message: string
-  preferredDate: string
   preferredTime: string
 }
 
 type FieldErrors = Partial<Record<keyof FormFields, string>>
 
 const EMPTY: FormFields = {
-  name: '', email: '', phone: '', service: '', message: '',
-  preferredDate: '', preferredTime: '',
+  name: '', email: '', phone: '', service: '', message: '', preferredTime: '',
 }
 
 const ALL_TIMES = [
