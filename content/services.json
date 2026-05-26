@@ -1,42 +1,82 @@
 [
   {
-    "id": "mot-testing",
-    "title": "MOT Testing",
-    "description": "Fast, reliable MOT testing with same-day certificates.",
-    "icon": "mot",
-    "features": ["Pass or fail advice", "Retest available", "All vehicle classes"],
-    "image": ""
-  },
-  {
-    "id": "car-servicing",
-    "title": "Car Servicing",
-    "description": "Full and interim services to keep your car running safely.",
+    "id": "full-service",
+    "title": "Full Service",
+    "description": "Comprehensive maintenance covering all major components to keep your car reliable, safe and efficient.",
     "icon": "service",
-    "features": ["Oil & filter change", "Safety inspection", "All makes & models"],
-    "image": ""
+    "features": ["Oil & filter change", "Air filter check", "Fluid level top-up", "Full safety inspection", "All makes & models"],
+    "image": "/servicing.jpg"
   },
   {
-    "id": "brake-repairs",
-    "title": "Brake Repairs",
-    "description": "Pads, discs and fluid checks for total stopping confidence.",
-    "icon": "brake",
-    "features": ["Free brake check", "Genuine parts", "Same-day fitting"],
-    "image": ""
-  },
-  {
-    "id": "tyres-wheels",
-    "title": "Tyres & Wheels",
-    "description": "Supply and fitting of all major tyre brands, any size.",
+    "id": "tyre-sale-repair",
+    "title": "Tyre Sale & Repair",
+    "description": "Supply, fitting and puncture repair for all major tyre brands and vehicle sizes.",
     "icon": "tyre",
-    "features": ["Competitive prices", "Wheel balancing", "TPMS reset"],
-    "image": ""
+    "features": ["Puncture repairs", "Supply & fit all sizes", "Wheel balancing", "TPMS reset"],
+    "image": "/tyres.jpg"
   },
   {
-    "id": "aircon",
-    "title": "Air Con Gas & Repair",
-    "description": "Regassing, leak checks and repairs for cleaner, cooler air through every season.",
-    "icon": "aircon",
-    "features": ["Air con regas", "Leak detection", "Compressor inspection", "System diagnosis"],
+    "id": "air-conditioning",
+    "title": "Air Conditioning",
+    "description": "Regassing, leak checks and repairs to keep your air con blowing cold and clean all year.",
+    "icon": "conditioning",
+    "features": ["AC regas", "Leak detection", "Compressor inspection", "System diagnosis"],
     "image": "/aircon.jpg"
+  },
+  {
+    "id": "brakes",
+    "title": "Brakes",
+    "description": "Brake pad, disc and fluid checks so you always have confident, reliable stopping power.",
+    "icon": "brake",
+    "features": ["Brake pad checks", "Disc inspection", "Fluid checks", "Free brake assessment"],
+    "image": "/brakes.jpg"
+  },
+  {
+    "id": "clutches",
+    "title": "Clutches",
+    "description": "Clutch inspection, adjustment and full replacement for smooth, reliable gear changes every time.",
+    "icon": "clutch",
+    "features": ["Clutch inspection", "Cable & hydraulic check", "Wear assessment", "Full replacement"],
+    "image": "/clutches.jpg"
+  },
+  {
+    "id": "engine-gear-repair",
+    "title": "Engine & Gear Repair",
+    "description": "Diagnostics and repair for engine and gearbox faults, from minor issues to full rebuilds.",
+    "icon": "engine",
+    "features": ["Engine diagnostics", "Gearbox inspection", "Fault code reading", "Oil leak repair"],
+    "image": "/engine-repair.jpg"
+  },
+  {
+    "id": "full-diagnostic",
+    "title": "Full Diagnostic",
+    "description": "Complete electronic scan of every system in your vehicle to pinpoint and resolve hidden faults.",
+    "icon": "diagnostic",
+    "features": ["OBD-II full scan", "Fault code analysis", "All systems checked", "Detailed report"],
+    "image": "/full-diagnostic.webp"
+  },
+  {
+    "id": "suspension",
+    "title": "Suspension",
+    "description": "Shock absorber, spring and steering checks for a smoother, safer and more comfortable ride.",
+    "icon": "suspension",
+    "features": ["Shock absorber check", "Spring inspection", "Steering assessment", "Wheel alignment"],
+    "image": "/suspension.jpg"
+  },
+  {
+    "id": "exhausts",
+    "title": "Exhausts",
+    "description": "Exhaust inspection, welding and full replacement to keep emissions and performance on point.",
+    "icon": "exhaust",
+    "features": ["Exhaust inspection", "Welding & repair", "Full system replacement", "Emissions check"],
+    "image": "/exhausts.jpg"
+  },
+  {
+    "id": "mot-repairs",
+    "title": "MOT Repairs",
+    "description": "MOT preparation and targeted repair work to help get your vehicle road legal as quickly as possible.",
+    "icon": "mot",
+    "features": ["MOT checks", "Repair advice", "Same-day support where possible", "Clear pass or fail guidance"],
+    "image": "/mot-testing.jpg"
   }
 ]

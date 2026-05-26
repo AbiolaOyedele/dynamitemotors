@@ -45,6 +45,7 @@ export type Settings = {
   hoursMonFri: string
   hoursSat: string
   hoursSun: string
+  servicesHeroImage?: string
   // Brand colours — override CSS custom properties site-wide
   colorPrimary: string
   colorPrimaryDark: string

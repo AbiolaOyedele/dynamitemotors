@@ -4,7 +4,7 @@ import Image from 'next/image'
 export const revalidate = 3600
 import { ServicesPageContent } from '@/components/features/ServicesPageContent'
 import { ServicesPageCTA } from '@/components/features/ServicesPageCTA'
-import { fetchServices } from '@/services/content.service'
+import { fetchServices, fetchSettings } from '@/services/content.service'
 
 export const metadata: Metadata = {
   title: 'Our Services | Dynamite Motors',
@@ -54,7 +54,8 @@ const serviceSchema = {
 }
 
 export default async function ServicesPage() {
-  const services = await fetchServices()
+  const [services, settings] = await Promise.all([fetchServices(), Promise.resolve(fetchSettings())])
+  const heroImage = settings.servicesHeroImage ?? '/services-hero.jpg'
 
   return (
     <>
@@ -64,7 +65,7 @@ export default async function ServicesPage() {
       />
       <section className="relative overflow-hidden pt-28 md:pt-32 pb-16 md:pb-20" aria-label="Services hero">
         <Image
-          src="/services-hero.jpg"
+          src={heroImage}
           alt="Mechanic working on a car at Dynamite Motors"
           fill
           priority

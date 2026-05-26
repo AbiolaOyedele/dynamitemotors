@@ -87,7 +87,7 @@ const SERVICE_DETAILS: ServiceDetail[] = [
     features: ['Brake pad checks', 'Disc inspection', 'Fluid checks', 'Free brake assessment'],
     goodFor: ['Squeaking brakes', 'Brake warning lights', 'Soft pedals'],
     Icon: ShieldCheck,
-    image: '/brake-repairs.jpg',
+    image: '/brakes.jpg',
   },
   {
     id: 'clutches',
@@ -97,6 +97,7 @@ const SERVICE_DETAILS: ServiceDetail[] = [
     features: ['Clutch inspection', 'Cable & hydraulic check', 'Wear assessment', 'Full replacement'],
     goodFor: ['Slipping clutch', 'Hard gear changes', 'Clutch judder'],
     Icon: RotateCcw,
+    image: '/clutches.jpg',
   },
   {
     id: 'engine-gear-repair',
@@ -106,6 +107,7 @@ const SERVICE_DETAILS: ServiceDetail[] = [
     features: ['Engine diagnostics', 'Gearbox inspection', 'Fault code reading', 'Oil leak repair'],
     goodFor: ['Engine warning light', 'Rough running', 'Gearbox noise'],
     Icon: Cog,
+    image: '/engine-repair.jpg',
   },
   {
     id: 'full-diagnostic',
@@ -115,6 +117,7 @@ const SERVICE_DETAILS: ServiceDetail[] = [
     features: ['OBD-II full scan', 'Fault code analysis', 'All systems checked', 'Detailed report'],
     goodFor: ['Warning lights on', 'Unexplained issues', 'Pre-purchase checks'],
     Icon: ScanLine,
+    image: '/full-diagnostic.webp',
   },
   {
     id: 'suspension',
@@ -124,6 +127,7 @@ const SERVICE_DETAILS: ServiceDetail[] = [
     features: ['Shock absorber check', 'Spring inspection', 'Steering assessment', 'Wheel alignment'],
     goodFor: ['Bumpy ride', 'Pulling to one side', 'Excessive body roll'],
     Icon: ArrowUpDown,
+    image: '/suspension.jpg',
   },
   {
     id: 'exhausts',
@@ -133,6 +137,7 @@ const SERVICE_DETAILS: ServiceDetail[] = [
     features: ['Exhaust inspection', 'Welding & repair', 'Full system replacement', 'Emissions check'],
     goodFor: ['Loud exhaust', 'Failed emissions test', 'Exhaust smoke'],
     Icon: Wind,
+    image: '/exhausts.jpg',
   },
   {
     id: 'mot-repairs',

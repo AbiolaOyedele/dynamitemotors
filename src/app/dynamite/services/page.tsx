@@ -21,7 +21,19 @@ const EMPTY_SERVICE: ServiceItem = {
   image: '',
 }
 
-const ICON_OPTIONS = ['mot', 'service', 'brake', 'tyre', 'exhaust', 'wrench']
+const ICON_OPTIONS = [
+  'mot',
+  'service',
+  'brake',
+  'tyre',
+  'exhaust',
+  'conditioning',
+  'clutch',
+  'engine',
+  'diagnostic',
+  'suspension',
+  'wrench',
+]
 
 export default function ServicesAdmin() {
   const [services, setServices] = useState<ServiceItem[]>([])

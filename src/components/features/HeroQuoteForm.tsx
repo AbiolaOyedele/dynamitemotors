@@ -384,9 +384,6 @@ export function HeroQuoteForm({ initialService, onSuccess }: Props) {
           {status === 'loading' ? 'Sending…' : onSuccess ? 'Book a Service' : 'Get a Quote'}
         </Button>
 
-        <p className="text-[13px] text-white/40 text-center">
-          We typically respond within 1 hour during business hours.
-        </p>
       </form>
 
       {/* Toast is only rendered here for the hero section (non-modal) use */}

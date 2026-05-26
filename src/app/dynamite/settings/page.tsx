@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, type FormEvent } from 'react'
+import { ImageUploader } from '@/components/admin/ImageUploader'
 
 type Settings = {
   name: string
@@ -12,6 +13,7 @@ type Settings = {
   hoursMonFri: string
   hoursSat: string
   hoursSun: string
+  servicesHeroImage: string
   colorPrimary: string
   colorPrimaryDark: string
   colorDark: string
@@ -195,6 +197,18 @@ export default function SettingsAdmin() {
               className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             />
           </div>
+        </section>
+
+        {/* Page Images */}
+        <section className="space-y-5">
+          <h2 className="text-[17px] font-bold text-dark">Page Images</h2>
+          <ImageUploader
+            context="services"
+            currentImage={data.servicesHeroImage || undefined}
+            customFilename="services-hero.jpg"
+            label="Services Page Hero Image"
+            onUpload={(path) => setData({ ...data, servicesHeroImage: path })}
+          />
         </section>
 
         {/* Opening Hours */}

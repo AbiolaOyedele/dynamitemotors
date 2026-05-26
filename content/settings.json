@@ -8,6 +8,7 @@
   "hoursMonFri": "9am – 6pm",
   "hoursSat": "9am – 3pm",
   "hoursSun": "Closed",
+  "servicesHeroImage": "/services-hero.jpg",
   "colorPrimary": "#1ED760",
   "colorPrimaryDark": "#19b852",
   "colorDark": "#1a1a1a",
