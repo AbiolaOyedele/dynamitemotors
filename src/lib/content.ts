@@ -34,8 +34,8 @@ export const IMAGE_DESTINATIONS = {
     publicPrefix: '',
   },
   services: {
-    uploadDir: path.join(PUBLIC_DIR, 'images', 'services'),
-    publicPrefix: '/images/services',
+    uploadDir: PUBLIC_DIR,
+    publicPrefix: '',
   },
   facilities: {
     uploadDir: path.join(PUBLIC_DIR, 'images', 'facilities'),
@@ -70,5 +70,6 @@ export function getPublicPath(context: string, filename: string): string {
     IMAGE_DESTINATIONS[context as keyof typeof IMAGE_DESTINATIONS] ??
     IMAGE_DESTINATIONS['general']
 
-  return `${destination.publicPrefix}/${filename}`
+  const prefix = destination.publicPrefix
+  return prefix ? `${prefix}/${filename}` : `/${filename}`
 }

@@ -191,7 +191,8 @@ function getDisplayServices(services: Service[]): DisplayService[] {
   }
   return services.map((service) => {
     const detail = findServiceDetail(service)
-    const image = detail?.image
+    // Prefer image from content/services.json (admin-managed), fall back to static detail
+    const image = service.image || detail?.image
     return {
       id: service.slug.current,
       title: service.title,
@@ -199,7 +200,7 @@ function getDisplayServices(services: Service[]): DisplayService[] {
       features: service.features?.length ? service.features : detail?.features ?? [],
       goodFor: detail?.goodFor ?? [],
       Icon: detail?.Icon ?? Wrench,
-      ...(image !== undefined ? { image } : {}),
+      ...(image ? { image } : {}),
     }
   })
 }

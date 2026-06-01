@@ -170,11 +170,11 @@ export function ServicesGrid({ services, showViewAll = false, limit }: Props) {
                   </div>
                 </div>
 
-                {/* Right — image */}
+                {/* Right — image (prefer service.image, fall back to icon-based lookup) */}
                 <div className="relative hidden lg:block w-full aspect-square rounded-3xl overflow-hidden">
-                  {getServiceImage(service.icon) ? (
+                  {(service.image || getServiceImage(service.icon)) ? (
                     <Image
-                      src={getServiceImage(service.icon)!}
+                      src={service.image ?? getServiceImage(service.icon)!}
                       alt={service.title}
                       fill
                       sizes="(max-width: 1024px) 0vw, 50vw"

@@ -1,22 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFileSync, mkdirSync, existsSync } from 'fs'
-import path from 'path'
 import { isAuthenticated } from '@/lib/admin-auth'
-import { getUploadDir, getPublicPath } from '@/lib/content'
+import { env } from '@/config/env'
 
-const EXTENSIONS_BY_TYPE: Record<string, string> = {
-  'image/jpeg': 'jpg',
-  'image/png': 'png',
-  'image/webp': 'webp',
-  'image/avif': 'avif',
-}
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif']
+const MAX_SIZE = 10 * 1024 * 1024 // 10MB
 
-function sanitizeFilename(value: string): string {
-  const normalized = value.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9-_]/g, '-')
-  return normalized.replace(/-+/g, '-').replace(/^-|-$/g, '') || 'upload'
-}
-
-/** POST /api/admin/upload — Upload an image */
+/** POST /api/admin/upload — Upload an image to Cloudinary */
 export async function POST(request: NextRequest) {
   const authed = await isAuthenticated()
   if (!authed) {
@@ -26,54 +15,49 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File | null
-    const context = (formData.get('context') as string) ?? 'general'
-    const customName = formData.get('filename') as string | null
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    // Validate file type
-    const allowedTypes = Object.keys(EXTENSIONS_BY_TYPE)
-    if (!allowedTypes.includes(file.type)) {
+    if (!ALLOWED_TYPES.includes(file.type)) {
       return NextResponse.json(
         { error: 'Invalid file type. Allowed: JPEG, PNG, WebP, AVIF' },
         { status: 400 },
       )
     }
 
-    // Max 10MB
-    const MAX_SIZE = 10 * 1024 * 1024
     if (file.size > MAX_SIZE) {
       return NextResponse.json({ error: 'File too large. Max 10MB.' }, { status: 400 })
     }
 
-    // Determine filename
-    const ext = EXTENSIONS_BY_TYPE[file.type]
-    const baseName = sanitizeFilename(customName ?? file.name)
-    const filename = `${baseName}.${ext}`
+    // Upload to Cloudinary via unsigned preset
+    const cloudinaryForm = new FormData()
+    cloudinaryForm.append('file', file)
+    cloudinaryForm.append('upload_preset', env.CLOUDINARY_UPLOAD_PRESET)
+    cloudinaryForm.append('folder', 'dynamite-motors')
 
-    // Ensure directory exists
-    const uploadDir = getUploadDir(context)
-    if (!existsSync(/* turbopackIgnore: true */ uploadDir)) {
-      mkdirSync(/* turbopackIgnore: true */ uploadDir, { recursive: true })
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${env.CLOUDINARY_CLOUD_NAME}/image/upload`,
+      { method: 'POST', body: cloudinaryForm },
+    )
+
+    if (!res.ok) {
+      const err = await res.text()
+      console.error('Cloudinary upload error:', err)
+      return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
     }
 
-    // Write file
-    const buffer = Buffer.from(await file.arrayBuffer())
-    const filePath = path.join(/* turbopackIgnore: true */ uploadDir, filename)
-    writeFileSync(/* turbopackIgnore: true */ filePath, buffer)
-
-    // Return the public URL path
-    const publicPath = getPublicPath(context, filename)
+    const data = (await res.json()) as { secure_url: string; public_id: string }
 
     return NextResponse.json({
       success: true,
-      path: publicPath,
-      filename,
+      path: data.secure_url,
+      filename: data.public_id,
       size: file.size,
     })
-  } catch {
+  } catch (err) {
+    console.error('Upload error:', err)
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
   }
 }

@@ -21,6 +21,7 @@ type LocalService = {
   description: string
   icon: string
   features: string[]
+  image?: string
 }
 
 type LocalOffer = {
@@ -56,6 +57,7 @@ function mapLocalService(service: LocalService): Service {
     description: service.description || null,
     icon: service.icon || null,
     features: service.features.length > 0 ? service.features : null,
+    ...(service.image ? { image: service.image } : {}),
   }
 }
 

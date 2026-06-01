@@ -1,5 +1,6 @@
 import { Header } from '@/components/features/Header'
 import { Footer } from '@/components/features/Footer'
+import { LenisProvider } from '@/components/ui/LenisProvider'
 import { fetchSettings } from '@/services/content.service'
 
 export default function PublicLayout({
@@ -15,10 +16,10 @@ export default function PublicLayout({
   }
 
   return (
-    <>
+    <LenisProvider>
       <Header />
       <main className="flex-1">{children}</main>
       <Footer hours={hours} />
-    </>
+    </LenisProvider>
   )
 }

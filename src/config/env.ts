@@ -7,6 +7,8 @@ const envSchema = z.object({
   RESEND_API_KEY: z.string().min(1),
   QUOTE_RECIPIENT_EMAIL: z.string().email(),
   ADMIN_PASSWORD: z.string().min(8),
+  CLOUDINARY_CLOUD_NAME: z.string().min(1),
+  CLOUDINARY_UPLOAD_PRESET: z.string().min(1),
 })
 
 const parsed = envSchema.safeParse(process.env)

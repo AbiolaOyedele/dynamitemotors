@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import "./globals.css";
 import { fetchSettings } from "@/services/content.service";
-import { LenisProvider } from "@/components/ui/LenisProvider";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -113,9 +112,7 @@ export default function RootLayout({
         <style dangerouslySetInnerHTML={{ __html: `*,::before,::after,::backdrop{${colorVars}}` }} />
       </head>
       <body className="min-h-full flex flex-col antialiased">
-        <LenisProvider>
-          {children}
-        </LenisProvider>
+        {children}
       </body>
     </html>
   );

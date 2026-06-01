@@ -1,6 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { isAuthenticated } from '@/lib/admin-auth'
 import { readContent, writeContent } from '@/lib/content'
+
+// Map each section to the pages it affects
+const SECTION_PATHS: Record<string, string[]> = {
+  hero:         ['/', '/dynamite'],
+  services:     ['/', '/services', '/dynamite/services'],
+  testimonials: ['/', '/dynamite/testimonials'],
+  offers:       ['/', '/offers', '/dynamite/offers'],
+  stats:        ['/', '/dynamite/stats'],
+  gallery:      ['/', '/dynamite/gallery'],
+  process:      ['/', '/dynamite/process'],
+  settings:     ['/', '/services', '/contact', '/about', '/dynamite/settings'],
+}
 
 const VALID_SECTIONS = ['hero', 'services', 'testimonials', 'offers', 'stats', 'settings', 'gallery', 'process'] as const
 type Section = (typeof VALID_SECTIONS)[number]
@@ -50,6 +63,13 @@ export async function PUT(request: NextRequest) {
   try {
     const body = await request.json()
     writeContent(section, body)
+
+    // Bust Next.js cache for every page this section affects
+    const paths = SECTION_PATHS[section] ?? ['/']
+    for (const p of paths) {
+      revalidatePath(p)
+    }
+
     return NextResponse.json({ success: true })
   } catch {
     return NextResponse.json({ error: 'Failed to write content' }, { status: 500 })

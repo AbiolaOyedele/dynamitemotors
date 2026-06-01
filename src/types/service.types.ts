@@ -5,4 +5,5 @@ export type Service = {
   description: string | null
   icon: string | null
   features: string[] | null
+  image?: string
 }
