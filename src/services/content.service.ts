@@ -4,8 +4,9 @@ import {
   getServiceBySlug,
   getActiveOffers,
   getTestimonials,
+  getSingleton,
+  getAllOfType,
 } from '@/repositories/sanity.repository'
-import { readContent } from '@/lib/content'
 import type { Service } from '@/types/service.types'
 import type { Offer } from '@/types/offer.types'
 import type { Testimonial } from '@/types/testimonial.types'
@@ -46,7 +47,6 @@ export type Settings = {
   hoursSat: string
   hoursSun: string
   servicesHeroImage?: string
-  // Brand colours — override CSS custom properties site-wide
   colorPrimary: string
   colorPrimaryDark: string
   colorDark: string
@@ -54,6 +54,25 @@ export type Settings = {
   colorMuted: string
   colorLightBg: string
   colorBorder: string
+}
+
+const SETTINGS_FALLBACK: Settings = {
+  name: 'Dynamite Motors',
+  tagline: 'Your trusted local garage in Gravesend',
+  address: '2 Vale Rd, Northfleet, Gravesend DA11 9RE',
+  phone: '01474 643488',
+  email: 'dynamitemotor@gmail.com',
+  mapsUrl: 'https://www.google.com/maps/search/?api=1&query=2+Vale+Rd+Northfleet+Gravesend+DA11+9RE',
+  hoursMonFri: '9am – 6pm',
+  hoursSat: '9am – 3pm',
+  hoursSun: 'Closed',
+  colorPrimary: '#1ED760',
+  colorPrimaryDark: '#19b852',
+  colorDark: '#1a1a1a',
+  colorBody: '#333333',
+  colorMuted: '#666666',
+  colorLightBg: '#F5F5F5',
+  colorBorder: '#E8E8E8',
 }
 
 export async function fetchServices(): Promise<Service[]> {
@@ -76,94 +95,36 @@ export async function fetchTestimonials(): Promise<Testimonial[]> {
   return getTestimonials()
 }
 
-export function fetchStats(): StatItem[] {
-  try {
-    return readContent<StatItem[]>('stats')
-  } catch {
-    return [
-      { value: 30, suffix: '+', label: 'Years Experience' },
-      { value: 5, suffix: '★', label: 'Google Rating' },
-      { value: 200, suffix: '+', label: 'Cars Serviced' },
-    ]
-  }
+export async function fetchStats(): Promise<StatItem[]> {
+  const doc = await getSingleton<{ items: StatItem[] }>('stats')
+  return doc?.items ?? [
+    { value: 30, suffix: '+', label: 'Years Experience' },
+    { value: 5, suffix: '★', label: 'Google Rating' },
+    { value: 200, suffix: '+', label: 'Cars Serviced' },
+  ]
 }
 
-export function fetchProcess(): ProcessStep[] {
-  try {
-    return readContent<ProcessStep[]>('process')
-  } catch {
-    return [
-      {
-        number: '01',
-        title: 'Book Online or Call',
-        description:
-          "Fill in our quick quote form or give us a ring. We'll confirm your slot and answer any questions, no waiting, no hassle.",
-      },
-      {
-        number: '02',
-        title: 'Drop Your Car Off',
-        description:
-          "Bring your car to our Northfleet garage at the agreed time. We'll carry out a thorough inspection before any work begins.",
-      },
-      {
-        number: '03',
-        title: 'We Get to Work',
-        description:
-          "Our experienced technicians carry out the job to a high standard. We'll keep you updated if anything unexpected comes up, no surprises.",
-      },
-      {
-        number: '04',
-        title: 'Collect & Drive Away',
-        description:
-          "We'll call you as soon as your car is ready. Pay, collect, and drive away knowing the job's been done properly.",
-      },
-    ]
-  }
+export async function fetchProcess(): Promise<ProcessStep[]> {
+  const doc = await getSingleton<{ steps: ProcessStep[] }>('process')
+  return doc?.steps ?? []
 }
 
-export function fetchGallery(): GalleryImage[] {
-  try {
-    return readContent<GalleryImage[]>('gallery')
-  } catch {
-    return [
-      { src: '/gallery/garage-bay.jpg', alt: 'Mechanic working under a car on the lift' },
-      { src: '/gallery/aircon-regas.jpg', alt: 'Air conditioning regas with Kheos CTR machine' },
-      { src: '/gallery/tyre-rack.jpg', alt: 'Tyre stock rack' },
-      { src: '/gallery/garage-interior.jpg', alt: 'Garage interior with cars being serviced' },
-      { src: '/gallery/building-exterior.jpg', alt: 'Dynamite Motors building exterior' },
-    ]
-  }
+export async function fetchGallery(): Promise<GalleryImage[]> {
+  const doc = await getSingleton<{ items: GalleryImage[] }>('gallery')
+  return doc?.items ?? []
 }
 
-export function fetchHero(): HeroData {
-  try {
-    return readContent<HeroData>('hero')
-  } catch {
-    return {}
-  }
+export async function fetchHero(): Promise<HeroData> {
+  const doc = await getSingleton<HeroData>('hero')
+  return doc ?? {}
 }
 
-export function fetchSettings(): Settings {
-  try {
-    return readContent<Settings>('settings')
-  } catch {
-    return {
-      name: 'Dynamite Motors',
-      tagline: 'Your trusted local garage in Gravesend',
-      address: '2 Vale Rd, Northfleet, Gravesend DA11 9RE',
-      phone: '01474 643488',
-      email: 'dynamitemotor@gmail.com',
-      mapsUrl: 'https://www.google.com/maps/search/?api=1&query=2+Vale+Rd+Northfleet+Gravesend+DA11+9RE',
-      hoursMonFri: '9am – 6pm',
-      hoursSat: '9am – 3pm',
-      hoursSun: 'Closed',
-      colorPrimary: '#1ED760',
-      colorPrimaryDark: '#19b852',
-      colorDark: '#1a1a1a',
-      colorBody: '#333333',
-      colorMuted: '#666666',
-      colorLightBg: '#F5F5F5',
-      colorBorder: '#E8E8E8',
-    }
-  }
+export async function fetchSettings(): Promise<Settings> {
+  const doc = await getSingleton<Settings>('siteSettings')
+  return doc ?? SETTINGS_FALLBACK
+}
+
+// Used by admin to fetch all documents of a type for editing
+export async function fetchAllOfType<T>(type: string): Promise<T[]> {
+  return getAllOfType<T>(type)
 }

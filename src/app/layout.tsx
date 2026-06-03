@@ -84,12 +84,12 @@ function safeHex(value: string, fallback: string): string {
   return /^#[0-9a-fA-F]{6}$/.test(value) ? value : fallback
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const s = fetchSettings()
+  const s = await fetchSettings()
 
   const colorVars = [
     `--color-primary:${safeHex(s.colorPrimary, '#1ED760')}`,

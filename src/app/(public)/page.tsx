@@ -30,15 +30,14 @@ import {
 } from '@/services/content.service'
 
 export default async function HomePage() {
-  const [services, testimonials] = await Promise.all([
+  const [services, testimonials, heroData, stats, steps, images] = await Promise.all([
     fetchServicesPreview(),
     fetchTestimonials(),
+    fetchHero(),
+    fetchStats(),
+    fetchProcess(),
+    fetchGallery(),
   ])
-
-  const heroData = fetchHero()
-  const stats = fetchStats()
-  const steps = fetchProcess()
-  const images = fetchGallery()
 
   return (
     <>

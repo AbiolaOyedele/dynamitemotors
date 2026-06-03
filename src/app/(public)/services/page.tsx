@@ -54,7 +54,7 @@ const serviceSchema = {
 }
 
 export default async function ServicesPage() {
-  const [services, settings] = await Promise.all([fetchServices(), Promise.resolve(fetchSettings())])
+  const [services, settings] = await Promise.all([fetchServices(), fetchSettings()])
   const heroImage = settings.servicesHeroImage ?? '/services-hero.jpg'
 
   return (

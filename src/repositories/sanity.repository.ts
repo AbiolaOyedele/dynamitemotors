@@ -1,74 +1,18 @@
 import { sanityClient } from '@/lib/sanity'
-import { readContent } from '@/lib/content'
 import type { Service } from '@/types/service.types'
 import type { Offer } from '@/types/offer.types'
 import type { Testimonial } from '@/types/testimonial.types'
 
 const CACHE = { next: { revalidate: 3600 } } as const
+const NO_CACHE = { next: { revalidate: 0 } } as const
 
-const SERVICE_FIELDS = `
-  _id,
-  title,
-  slug,
-  description,
-  icon,
-  features
-`
-
-type LocalService = {
-  id: string
-  title: string
-  description: string
-  icon: string
-  features: string[]
-  image?: string
-}
-
-type LocalOffer = {
-  id: string
-  title: string
-  description: string
-  badge: string
-  expiresAt: string
-  active: boolean
-}
-
-type LocalTestimonial = {
-  id: string
-  customerName: string
-  review: string
-  rating: number
-  vehicleType: string
-}
-
-function readLocalContent<T>(section: Parameters<typeof readContent>[0]): T | null {
-  try {
-    return readContent<T>(section)
-  } catch {
-    return null
-  }
-}
-
-function mapLocalService(service: LocalService): Service {
-  return {
-    _id: service.id,
-    title: service.title,
-    slug: { current: service.id },
-    description: service.description || null,
-    icon: service.icon || null,
-    features: service.features.length > 0 ? service.features : null,
-    ...(service.image ? { image: service.image } : {}),
-  }
-}
+// ── Services ──────────────────────────────────────────────────────────────────
 
 export async function getServices(): Promise<Service[]> {
-  const localServices = readLocalContent<LocalService[]>('services')
-  if (localServices) {
-    return localServices.map(mapLocalService)
-  }
-
   return sanityClient.fetch<Service[]>(
-    `*[_type == "service"] | order(_createdAt asc) { ${SERVICE_FIELDS} }`,
+    `*[_type == "service"] | order(_createdAt asc) {
+      _id, title, slug, description, icon, features, image
+    }`,
     {},
     CACHE,
   )
@@ -80,72 +24,69 @@ export async function getServicesPreview(): Promise<Service[]> {
 }
 
 export async function getServiceBySlug(slug: string): Promise<Service | null> {
-  const localServices = readLocalContent<LocalService[]>('services')
-  const localMatch = localServices
-    ?.map(mapLocalService)
-    .find((service) => service.slug.current === slug)
-
-  if (localMatch) {
-    return localMatch
-  }
-
   return sanityClient.fetch<Service | null>(
-    `*[_type == "service" && slug.current == $slug][0] { ${SERVICE_FIELDS} }`,
+    `*[_type == "service" && slug.current == $slug][0] {
+      _id, title, slug, description, icon, features, image
+    }`,
     { slug },
     CACHE,
   )
 }
 
-export async function getActiveOffers(): Promise<Offer[]> {
-  const localOffers = readLocalContent<LocalOffer[]>('offers')
-  if (localOffers) {
-    return localOffers
-      .filter((offer) => offer.active)
-      .map((offer) => ({
-        _id: offer.id,
-        title: offer.title,
-        description: offer.description || null,
-        badge: offer.badge || null,
-        expiresAt: offer.expiresAt || null,
-        active: offer.active,
-      }))
-  }
+// ── Offers ────────────────────────────────────────────────────────────────────
 
+export async function getActiveOffers(): Promise<Offer[]> {
   return sanityClient.fetch<Offer[]>(
     `*[_type == "offer" && active == true] | order(_createdAt desc) {
-      _id,
-      title,
-      description,
-      badge,
-      expiresAt,
-      active
+      _id, title, description, badge, expiresAt, active
     }`,
     {},
     CACHE,
   )
 }
 
-export async function getTestimonials(): Promise<Testimonial[]> {
-  const localTestimonials = readLocalContent<LocalTestimonial[]>('testimonials')
-  if (localTestimonials) {
-    return localTestimonials.map((testimonial) => ({
-      _id: testimonial.id,
-      customerName: testimonial.customerName,
-      review: testimonial.review,
-      rating: testimonial.rating,
-      vehicleType: testimonial.vehicleType || null,
-    }))
-  }
+// ── Testimonials ──────────────────────────────────────────────────────────────
 
+export async function getTestimonials(): Promise<Testimonial[]> {
   return sanityClient.fetch<Testimonial[]>(
-    `*[_type == "testimonial"] | order(_createdAt desc) {
-      _id,
-      customerName,
-      review,
-      rating,
-      vehicleType
+    `*[_type == "testimonial"] | order(_createdAt asc) {
+      _id, customerName, review, rating, vehicleType
     }`,
     {},
     CACHE,
+  )
+}
+
+// ── Singleton helpers (hero, settings, stats, gallery, process) ───────────────
+
+export async function getSingleton<T>(type: string): Promise<T | null> {
+  return sanityClient.fetch<T | null>(
+    `*[_type == $type][0]`,
+    { type },
+    CACHE,
+  )
+}
+
+export async function getSingletonFresh<T>(type: string): Promise<T | null> {
+  return sanityClient.fetch<T | null>(
+    `*[_type == $type][0]`,
+    { type },
+    NO_CACHE,
+  )
+}
+
+export async function getAllOfType<T>(type: string): Promise<T[]> {
+  return sanityClient.fetch<T[]>(
+    `*[_type == $type] | order(_createdAt asc)`,
+    { type },
+    CACHE,
+  )
+}
+
+export async function getAllOfTypeFresh<T>(type: string): Promise<T[]> {
+  return sanityClient.fetch<T[]>(
+    `*[_type == $type] | order(_createdAt asc)`,
+    { type },
+    NO_CACHE,
   )
 }

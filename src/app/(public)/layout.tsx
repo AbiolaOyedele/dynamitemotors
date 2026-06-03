@@ -3,12 +3,12 @@ import { Footer } from '@/components/features/Footer'
 import { LenisProvider } from '@/components/ui/LenisProvider'
 import { fetchSettings } from '@/services/content.service'
 
-export default function PublicLayout({
+export default async function PublicLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const settings = fetchSettings()
+  const settings = await fetchSettings()
   const hours = {
     monFri: settings.hoursMonFri,
     sat: settings.hoursSat,
