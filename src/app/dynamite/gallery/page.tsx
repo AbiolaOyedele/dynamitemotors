@@ -4,6 +4,7 @@ import { useState, useEffect, type FormEvent } from 'react'
 import Image from 'next/image'
 import { ImageUploader } from '@/components/admin/ImageUploader'
 import { Trash2 } from 'lucide-react'
+import { useUnsavedChanges } from '@/components/admin/UnsavedChanges'
 
 type GalleryImage = {
   src: string
@@ -14,33 +15,34 @@ export default function GalleryAdmin() {
   const [images, setImages] = useState<GalleryImage[] | null>(null)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [uploadedPath, setUploadedPath] = useState<string | null>(null)
+  const { setDirty } = useUnsavedChanges()
 
   useEffect(() => {
     fetch('/api/admin/content?section=gallery')
       .then((r) => r.json())
       .then((r: { data: GalleryImage[] }) => setImages(r.data))
-      .catch(() => {})
+      .catch(() => setError('Failed to load content'))
   }, [])
 
   function updateAlt(index: number, alt: string) {
     if (!images) return
     setImages(images.map((img, i) => (i === index ? { ...img, alt } : img)))
+    setDirty(true)
   }
 
   function removeImage(index: number) {
     if (!images) return
     setImages(images.filter((_, i) => i !== index))
-  }
-
-  function handleUpload(path: string) {
-    setUploadedPath(path)
+    setDirty(true)
   }
 
   function addImage() {
     if (!images || !uploadedPath) return
     setImages([...images, { src: uploadedPath, alt: '' }])
     setUploadedPath(null)
+    setDirty(true)
   }
 
   async function handleSave(e: FormEvent) {
@@ -48,25 +50,27 @@ export default function GalleryAdmin() {
     if (!images) return
     setSaving(true)
     setSaved(false)
+    setError(null)
 
     try {
-      await fetch('/api/admin/content?section=gallery', {
+      const res = await fetch('/api/admin/content?section=gallery', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(images),
       })
+      if (!res.ok) throw new Error('Save failed')
       setSaved(true)
+      setDirty(false)
       setTimeout(() => setSaved(false), 3000)
     } catch {
-      alert('Failed to save')
+      setError('Failed to save. Please try again.')
     } finally {
       setSaving(false)
     }
   }
 
-  if (!images) {
-    return <div className="text-muted">Loading...</div>
-  }
+  if (!images && !error) return <div className="text-muted">Loading...</div>
+  if (!images) return <div className="text-red-500 text-[14px]">{error}</div>
 
   const newFilename = `gallery-${Date.now()}.jpg`
 
@@ -87,7 +91,10 @@ export default function GalleryAdmin() {
           )}
 
           {images.map((image, index) => (
-            <div key={image.src + index} className="bg-white rounded-xl border border-border p-4 flex gap-4 items-start">
+            <div
+              key={image.src + String(index)}
+              className="bg-white rounded-xl border border-border p-4 flex gap-4 items-start"
+            >
               <div className="relative w-28 h-20 rounded-lg overflow-hidden shrink-0 bg-light-bg">
                 <Image
                   src={image.src}
@@ -99,9 +106,7 @@ export default function GalleryAdmin() {
               </div>
 
               <div className="flex-1 min-w-0">
-                <label className="block text-[13px] font-semibold text-body mb-2">
-                  Alt Text
-                </label>
+                <label className="block text-[13px] font-semibold text-body mb-2">Alt Text</label>
                 <input
                   type="text"
                   value={image.alt}
@@ -132,7 +137,7 @@ export default function GalleryAdmin() {
             context="gallery"
             customFilename={newFilename}
             label="Upload Photo"
-            onUpload={handleUpload}
+            onUpload={setUploadedPath}
           />
 
           {uploadedPath && (
@@ -159,9 +164,8 @@ export default function GalleryAdmin() {
           >
             {saving ? 'Saving...' : 'Save Changes'}
           </button>
-          {saved && (
-            <span className="text-[14px] text-green-600 font-medium">Saved!</span>
-          )}
+          {saved && <span className="text-[14px] text-green-600 font-medium">Saved successfully!</span>}
+          {error && <span className="text-[14px] text-red-500 font-medium">{error}</span>}
         </div>
       </form>
     </div>

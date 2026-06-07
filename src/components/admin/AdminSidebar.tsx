@@ -1,22 +1,22 @@
 'use client'
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { useUnsavedChanges } from '@/components/admin/UnsavedChanges'
 
 const NAV_ITEMS = [
-  { href: '/dynamite', label: 'Dashboard', icon: 'grid' },
-  { href: '/dynamite/hero', label: 'Hero Section', icon: 'image' },
-  { href: '/dynamite/services', label: 'Services', icon: 'wrench' },
-  { href: '/dynamite/testimonials', label: 'Testimonials', icon: 'star' },
-  { href: '/dynamite/offers', label: 'Offers', icon: 'tag' },
-  { href: '/dynamite/stats', label: 'Stats Bar', icon: 'bar-chart' },
-  { href: '/dynamite/process', label: 'Process Steps', icon: 'list' },
-  { href: '/dynamite/gallery', label: 'Gallery', icon: 'image-grid' },
-  { href: '/dynamite/settings', label: 'Settings', icon: 'settings' },
+  { href: '/dynamite',              label: 'Dashboard',     icon: 'grid' },
+  { href: '/dynamite/hero',         label: 'Hero Section',  icon: 'image' },
+  { href: '/dynamite/services',     label: 'Services',      icon: 'wrench' },
+  { href: '/dynamite/testimonials', label: 'Testimonials',  icon: 'star' },
+  { href: '/dynamite/offers',       label: 'Offers',        icon: 'tag' },
+  { href: '/dynamite/stats',        label: 'Stats Bar',     icon: 'bar-chart' },
+  { href: '/dynamite/process',      label: 'Process Steps', icon: 'list' },
+  { href: '/dynamite/gallery',      label: 'Gallery',       icon: 'image-grid' },
+  { href: '/dynamite/settings',     label: 'Settings',      icon: 'settings' },
 ] as const
 
 function NavIcon({ name }: { name: string }) {
-  const cls = "w-5 h-5"
+  const cls = 'w-5 h-5'
   switch (name) {
     case 'grid':
       return <svg className={cls} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>
@@ -43,8 +43,15 @@ function NavIcon({ name }: { name: string }) {
 
 export function AdminSidebar() {
   const pathname = usePathname()
+  const router = useRouter()
+  const { confirmNavigation } = useUnsavedChanges()
+
+  function navigate(href: string) {
+    if (confirmNavigation()) router.push(href)
+  }
 
   async function handleLogout() {
+    if (!confirmNavigation()) return
     await fetch('/api/admin/auth', { method: 'DELETE' })
     window.location.href = '/dynamite'
   }
@@ -63,15 +70,16 @@ export function AdminSidebar() {
       <nav className="flex-1 px-3 py-4">
         <ul className="flex flex-col gap-1">
           {NAV_ITEMS.map(({ href, label, icon }) => {
-            const isActive = href === '/dynamite'
-              ? pathname === '/dynamite'
-              : pathname.startsWith(href)
+            const isActive =
+              href === '/dynamite'
+                ? pathname === '/dynamite'
+                : pathname.startsWith(href)
 
             return (
               <li key={href}>
-                <Link
-                  href={href}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-medium transition-all duration-200 ${
+                <button
+                  onClick={() => navigate(href)}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-medium transition-all duration-200 ${
                     isActive
                       ? 'bg-primary/10 text-primary'
                       : 'text-white/60 hover:text-white hover:bg-white/5'
@@ -79,7 +87,7 @@ export function AdminSidebar() {
                 >
                   <NavIcon name={icon} />
                   {label}
-                </Link>
+                </button>
               </li>
             )
           })}
@@ -88,15 +96,15 @@ export function AdminSidebar() {
 
       {/* Footer */}
       <div className="px-3 py-4 border-t border-white/10">
-        <a
-          href="/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] text-white/40 hover:text-white hover:bg-white/5 transition-all duration-200"
+        <button
+          onClick={() => {
+            if (confirmNavigation()) window.open('/', '_blank')
+          }}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] text-white/40 hover:text-white hover:bg-white/5 transition-all duration-200"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
           View Site
-        </a>
+        </button>
         <button
           onClick={handleLogout}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] text-white/40 hover:text-red-400 hover:bg-red-500/5 transition-all duration-200"

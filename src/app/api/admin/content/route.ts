@@ -36,16 +36,8 @@ const MULTI_TYPE: Record<string, string> = {
   offers:       'offer',
 }
 
-const SECTION_PATHS: Record<string, string[]> = {
-  hero:         ['/'],
-  services:     ['/', '/services'],
-  testimonials: ['/'],
-  offers:       ['/', '/offers'],
-  stats:        ['/'],
-  gallery:      ['/'],
-  process:      ['/'],
-  settings:     ['/', '/services', '/contact'],
-}
+// Revalidation is now done globally via revalidatePath('/', 'layout')
+// which busts all pages sharing the public layout in a single call.
 
 function isValidSection(s: string): s is Section {
   return VALID_SECTIONS.includes(s as Section)
@@ -208,8 +200,8 @@ export async function PUT(request: NextRequest) {
     }
 
     // Bust page cache immediately
-    const paths = SECTION_PATHS[section] ?? ['/']
-    for (const p of paths) revalidatePath(p)
+    // 'layout' type busts the page AND all shared layout caches
+    revalidatePath('/', 'layout')
 
     return NextResponse.json({ success: true })
   } catch (err) {

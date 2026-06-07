@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, type FormEvent } from 'react'
+import { useUnsavedChanges } from '@/components/admin/UnsavedChanges'
 
 type StatItem = {
   value: number
@@ -12,12 +13,14 @@ export default function StatsAdmin() {
   const [data, setData] = useState<StatItem[] | null>(null)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const { setDirty } = useUnsavedChanges()
 
   useEffect(() => {
     fetch('/api/admin/content?section=stats')
       .then((r) => r.json())
       .then((r: { data: StatItem[] }) => setData(r.data))
-      .catch(() => {})
+      .catch(() => setError('Failed to load content'))
   }, [])
 
   function updateStat(index: number, field: keyof StatItem, value: string | number) {
@@ -26,6 +29,7 @@ export default function StatsAdmin() {
       i === index ? { ...stat, [field]: value } : stat,
     )
     setData(updated)
+    setDirty(true)
   }
 
   async function handleSave(e: FormEvent) {
@@ -33,25 +37,27 @@ export default function StatsAdmin() {
     if (!data) return
     setSaving(true)
     setSaved(false)
+    setError(null)
 
     try {
-      await fetch('/api/admin/content?section=stats', {
+      const res = await fetch('/api/admin/content?section=stats', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       })
+      if (!res.ok) throw new Error('Save failed')
       setSaved(true)
+      setDirty(false)
       setTimeout(() => setSaved(false), 3000)
     } catch {
-      alert('Failed to save')
+      setError('Failed to save. Please try again.')
     } finally {
       setSaving(false)
     }
   }
 
-  if (!data) {
-    return <div className="text-muted">Loading...</div>
-  }
+  if (!data && !error) return <div className="text-muted">Loading...</div>
+  if (!data) return <div className="text-red-500 text-[14px]">{error}</div>
 
   return (
     <div>
@@ -66,9 +72,7 @@ export default function StatsAdmin() {
             <p className="text-[13px] font-semibold text-muted mb-4">Stat {index + 1}</p>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-[13px] font-semibold text-body mb-2">
-                  Value
-                </label>
+                <label className="block text-[13px] font-semibold text-body mb-2">Value</label>
                 <input
                   type="number"
                   value={stat.value}
@@ -77,9 +81,7 @@ export default function StatsAdmin() {
                 />
               </div>
               <div>
-                <label className="block text-[13px] font-semibold text-body mb-2">
-                  Suffix
-                </label>
+                <label className="block text-[13px] font-semibold text-body mb-2">Suffix</label>
                 <input
                   type="text"
                   value={stat.suffix}
@@ -89,9 +91,7 @@ export default function StatsAdmin() {
                 />
               </div>
               <div>
-                <label className="block text-[13px] font-semibold text-body mb-2">
-                  Label
-                </label>
+                <label className="block text-[13px] font-semibold text-body mb-2">Label</label>
                 <input
                   type="text"
                   value={stat.label}
@@ -112,9 +112,8 @@ export default function StatsAdmin() {
           >
             {saving ? 'Saving...' : 'Save Changes'}
           </button>
-          {saved && (
-            <span className="text-[14px] text-green-600 font-medium">Saved!</span>
-          )}
+          {saved && <span className="text-[14px] text-green-600 font-medium">Saved successfully!</span>}
+          {error && <span className="text-[14px] text-red-500 font-medium">{error}</span>}
         </div>
       </form>
     </div>

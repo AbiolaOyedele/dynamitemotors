@@ -1,6 +1,10 @@
 import { isAuthenticated } from '@/lib/admin-auth'
 import { AdminSidebar } from '@/components/admin/AdminSidebar'
 import { LoginFormClient } from '@/components/admin/LoginFormClient'
+import {
+  UnsavedChangesProvider,
+  UnsavedChangesBanner,
+} from '@/components/admin/UnsavedChanges'
 
 export const metadata = {
   title: 'Admin — Dynamite Motors',
@@ -14,7 +18,6 @@ export default async function AdminLayout({
 }) {
   const authed = await isAuthenticated()
 
-  // Show login page if not authenticated
   if (!authed) {
     return (
       <div className="min-h-screen bg-dark flex items-center justify-center px-4">
@@ -32,13 +35,16 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-light-bg">
-      <AdminSidebar />
-      <main className="flex-1 overflow-auto">
-        <div className="p-8 max-w-5xl">
-          {children}
-        </div>
-      </main>
-    </div>
+    <UnsavedChangesProvider>
+      <div className="flex min-h-screen bg-light-bg">
+        <AdminSidebar />
+        <main className="flex-1 overflow-auto">
+          <UnsavedChangesBanner />
+          <div className="p-8 max-w-5xl">
+            {children}
+          </div>
+        </main>
+      </div>
+    </UnsavedChangesProvider>
   )
 }

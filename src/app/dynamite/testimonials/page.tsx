@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, type FormEvent } from 'react'
+import { useUnsavedChanges } from '@/components/admin/UnsavedChanges'
 
 type TestimonialItem = {
   id: string
@@ -24,28 +25,35 @@ export default function TestimonialsAdmin() {
   const [isNew, setIsNew] = useState(false)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const { setDirty } = useUnsavedChanges()
 
   useEffect(() => {
     fetch('/api/admin/content?section=testimonials')
       .then((r) => r.json())
-      .then((r: { data: TestimonialItem[] }) => setItems(r.data))
-      .catch(() => {})
+      .then((r: { data: TestimonialItem[] }) => setItems(r.data ?? []))
+      .catch(() => setError('Failed to load testimonials'))
   }, [])
 
-  async function saveAll(updated: TestimonialItem[]) {
+  async function saveAll(updated: TestimonialItem[], showFeedback = true) {
     setSaving(true)
     setSaved(false)
+    setError(null)
     try {
-      await fetch('/api/admin/content?section=testimonials', {
+      const res = await fetch('/api/admin/content?section=testimonials', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updated),
       })
+      if (!res.ok) throw new Error('Save failed')
       setItems(updated)
-      setSaved(true)
-      setTimeout(() => setSaved(false), 3000)
+      setDirty(false)
+      if (showFeedback) {
+        setSaved(true)
+        setTimeout(() => setSaved(false), 3000)
+      }
     } catch {
-      alert('Failed to save')
+      setError('Failed to save. Please try again.')
     } finally {
       setSaving(false)
     }
@@ -62,9 +70,9 @@ export default function TestimonialsAdmin() {
   }
 
   function handleDelete(id: string) {
-    if (!confirm('Delete this testimonial?')) return
+    if (!confirm('Delete this testimonial? This will save immediately.')) return
     const updated = items.filter((t) => t.id !== id)
-    saveAll(updated)
+    void saveAll(updated)
   }
 
   async function handleSave(e: FormEvent) {
@@ -76,18 +84,21 @@ export default function TestimonialsAdmin() {
       item.id = `t${Date.now()}`
     }
 
-    let updated: TestimonialItem[]
-    if (isNew) {
-      updated = [...items, item]
-    } else {
-      updated = items.map((t) => (t.id === item.id ? item : t))
-    }
+    const updated = isNew
+      ? [...items, item]
+      : items.map((t) => (t.id === item.id ? item : t))
 
     await saveAll(updated)
     setEditing(null)
   }
 
-  // Editor
+  function updateEditing<K extends keyof TestimonialItem>(key: K, value: TestimonialItem[K]) {
+    setEditing((prev) => (prev ? { ...prev, [key]: value } : prev))
+    setDirty(true)
+  }
+
+  // ── Editor ─────────────────────────────────────────────────────────────────
+
   if (editing) {
     return (
       <div>
@@ -109,7 +120,7 @@ export default function TestimonialsAdmin() {
             <input
               type="text"
               value={editing.customerName}
-              onChange={(e) => setEditing({ ...editing, customerName: e.target.value })}
+              onChange={(e) => updateEditing('customerName', e.target.value)}
               required
               className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             />
@@ -119,7 +130,7 @@ export default function TestimonialsAdmin() {
             <label className="block text-[13px] font-semibold text-body mb-2">Review</label>
             <textarea
               value={editing.review}
-              onChange={(e) => setEditing({ ...editing, review: e.target.value })}
+              onChange={(e) => updateEditing('review', e.target.value)}
               required
               rows={4}
               className="w-full rounded-lg border border-border px-3 py-2.5 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
@@ -131,7 +142,7 @@ export default function TestimonialsAdmin() {
               <label className="block text-[13px] font-semibold text-body mb-2">Rating</label>
               <select
                 value={editing.rating}
-                onChange={(e) => setEditing({ ...editing, rating: Number(e.target.value) })}
+                onChange={(e) => updateEditing('rating', Number(e.target.value))}
                 className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
               >
                 {[5, 4, 3, 2, 1].map((n) => (
@@ -139,13 +150,12 @@ export default function TestimonialsAdmin() {
                 ))}
               </select>
             </div>
-
             <div>
               <label className="block text-[13px] font-semibold text-body mb-2">Vehicle Type (optional)</label>
               <input
                 type="text"
                 value={editing.vehicleType}
-                onChange={(e) => setEditing({ ...editing, vehicleType: e.target.value })}
+                onChange={(e) => updateEditing('vehicleType', e.target.value)}
                 placeholder="e.g. Ford Focus"
                 className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
               />
@@ -162,29 +172,27 @@ export default function TestimonialsAdmin() {
             </button>
             <button
               type="button"
-              onClick={() => setEditing(null)}
+              onClick={() => { setEditing(null); setDirty(false) }}
               className="h-[44px] px-6 rounded-lg border border-border text-muted text-[14px] font-semibold hover:bg-light-bg transition-colors"
             >
               Cancel
             </button>
-            {saved && (
-              <span className="text-[14px] text-green-600 font-medium">Saved!</span>
-            )}
+            {saved && <span className="text-[14px] text-green-600 font-medium">Saved!</span>}
+            {error && <span className="text-[14px] text-red-500 font-medium">{error}</span>}
           </div>
         </form>
       </div>
     )
   }
 
-  // List view
+  // ── List view ──────────────────────────────────────────────────────────────
+
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-[28px] font-bold text-dark mb-2">Testimonials</h1>
-          <p className="text-[16px] text-muted">
-            Manage customer reviews shown on the homepage.
-          </p>
+          <p className="text-[16px] text-muted">Manage customer reviews shown on the homepage.</p>
         </div>
         <button
           onClick={handleNew}
@@ -193,6 +201,19 @@ export default function TestimonialsAdmin() {
           + Add Review
         </button>
       </div>
+
+      {/* List-view save feedback */}
+      {saved && (
+        <div className="mb-4 flex items-center gap-2 text-[14px] text-green-700 font-medium bg-green-50 border border-green-200 rounded-lg px-4 py-3">
+          <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12" /></svg>
+          Changes saved successfully.
+        </div>
+      )}
+      {error && (
+        <div className="mb-4 text-[14px] text-red-600 font-medium bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+          {error}
+        </div>
+      )}
 
       <div className="space-y-3">
         {items.map((t) => (
@@ -220,9 +241,10 @@ export default function TestimonialsAdmin() {
                 </button>
                 <button
                   onClick={() => handleDelete(t.id)}
-                  className="h-[36px] px-4 rounded-lg border border-border text-[13px] font-semibold text-red-500 hover:bg-red-50 hover:border-red-200 transition-colors"
+                  disabled={saving}
+                  className="h-[36px] px-4 rounded-lg border border-border text-[13px] font-semibold text-red-500 hover:bg-red-50 hover:border-red-200 transition-colors disabled:opacity-50"
                 >
-                  Delete
+                  {saving ? '...' : 'Delete'}
                 </button>
               </div>
             </div>
@@ -231,7 +253,7 @@ export default function TestimonialsAdmin() {
 
         {items.length === 0 && (
           <p className="text-muted/70 text-[14px] text-center py-10">
-            No testimonials yet. Click "Add Review" to get started.
+            No testimonials yet. Click &ldquo;Add Review&rdquo; to get started.
           </p>
         )}
       </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, type FormEvent } from 'react'
 import { ImageUploader } from '@/components/admin/ImageUploader'
+import { useUnsavedChanges } from '@/components/admin/UnsavedChanges'
 
 type Settings = {
   name: string
@@ -50,7 +51,6 @@ function ColorField({
 }) {
   return (
     <div className="flex items-center gap-4 p-4 bg-white rounded-xl border border-border">
-      {/* Colour swatch + native picker */}
       <label className="relative shrink-0 cursor-pointer">
         <span
           className="block w-12 h-12 rounded-lg border-2 border-white shadow-md ring-1 ring-border"
@@ -63,8 +63,6 @@ function ColorField({
           className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
         />
       </label>
-
-      {/* Text input */}
       <div className="flex-1 min-w-0">
         <p className="text-[14px] font-semibold text-dark">{label}</p>
         <p className="text-[12px] text-muted mb-2">{description}</p>
@@ -85,17 +83,19 @@ export default function SettingsAdmin() {
   const [data, setData] = useState<Settings | null>(null)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const { setDirty } = useUnsavedChanges()
 
   useEffect(() => {
     fetch('/api/admin/content?section=settings')
       .then((r) => r.json())
       .then((r: { data: Settings }) => setData(r.data))
-      .catch(() => {})
+      .catch(() => setError('Failed to load content'))
   }, [])
 
-  function updateColor(key: keyof Settings, value: string) {
-    if (!data) return
-    setData({ ...data, [key]: value })
+  function update<K extends keyof Settings>(key: K, value: Settings[K]) {
+    setData((prev) => (prev ? { ...prev, [key]: value } : prev))
+    setDirty(true)
   }
 
   async function handleSave(e: FormEvent) {
@@ -103,25 +103,27 @@ export default function SettingsAdmin() {
     if (!data) return
     setSaving(true)
     setSaved(false)
+    setError(null)
 
     try {
-      await fetch('/api/admin/content?section=settings', {
+      const res = await fetch('/api/admin/content?section=settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       })
+      if (!res.ok) throw new Error('Save failed')
       setSaved(true)
+      setDirty(false)
       setTimeout(() => setSaved(false), 3000)
     } catch {
-      alert('Failed to save')
+      setError('Failed to save. Please try again.')
     } finally {
       setSaving(false)
     }
   }
 
-  if (!data) {
-    return <div className="text-muted">Loading...</div>
-  }
+  if (!data && !error) return <div className="text-muted">Loading...</div>
+  if (!data) return <div className="text-red-500 text-[14px]">{error}</div>
 
   return (
     <div>
@@ -141,7 +143,7 @@ export default function SettingsAdmin() {
             <input
               type="text"
               value={data.name}
-              onChange={(e) => setData({ ...data, name: e.target.value })}
+              onChange={(e) => update('name', e.target.value)}
               className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             />
           </div>
@@ -151,7 +153,7 @@ export default function SettingsAdmin() {
             <input
               type="text"
               value={data.tagline}
-              onChange={(e) => setData({ ...data, tagline: e.target.value })}
+              onChange={(e) => update('tagline', e.target.value)}
               className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             />
           </div>
@@ -161,7 +163,7 @@ export default function SettingsAdmin() {
             <input
               type="text"
               value={data.address}
-              onChange={(e) => setData({ ...data, address: e.target.value })}
+              onChange={(e) => update('address', e.target.value)}
               className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             />
           </div>
@@ -172,17 +174,16 @@ export default function SettingsAdmin() {
               <input
                 type="tel"
                 value={data.phone}
-                onChange={(e) => setData({ ...data, phone: e.target.value })}
+                onChange={(e) => update('phone', e.target.value)}
                 className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
               />
             </div>
-
             <div>
               <label className="block text-[13px] font-semibold text-body mb-2">Email</label>
               <input
                 type="email"
                 value={data.email}
-                onChange={(e) => setData({ ...data, email: e.target.value })}
+                onChange={(e) => update('email', e.target.value)}
                 className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
               />
             </div>
@@ -193,7 +194,7 @@ export default function SettingsAdmin() {
             <input
               type="url"
               value={data.mapsUrl}
-              onChange={(e) => setData({ ...data, mapsUrl: e.target.value })}
+              onChange={(e) => update('mapsUrl', e.target.value)}
               className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             />
           </div>
@@ -207,7 +208,7 @@ export default function SettingsAdmin() {
             currentImage={data.servicesHeroImage || undefined}
             customFilename="services-hero.jpg"
             label="Services Page Hero Image"
-            onUpload={(path) => setData({ ...data, servicesHeroImage: path })}
+            onUpload={(path) => update('servicesHeroImage', path)}
           />
         </section>
 
@@ -220,7 +221,7 @@ export default function SettingsAdmin() {
             <input
               type="text"
               value={data.hoursMonFri}
-              onChange={(e) => setData({ ...data, hoursMonFri: e.target.value })}
+              onChange={(e) => update('hoursMonFri', e.target.value)}
               placeholder="e.g. 9am – 6pm"
               className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             />
@@ -231,7 +232,7 @@ export default function SettingsAdmin() {
             <input
               type="text"
               value={data.hoursSat}
-              onChange={(e) => setData({ ...data, hoursSat: e.target.value })}
+              onChange={(e) => update('hoursSat', e.target.value)}
               placeholder="e.g. 9am – 3pm"
               className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             />
@@ -242,7 +243,7 @@ export default function SettingsAdmin() {
             <input
               type="text"
               value={data.hoursSun}
-              onChange={(e) => setData({ ...data, hoursSun: e.target.value })}
+              onChange={(e) => update('hoursSun', e.target.value)}
               placeholder="e.g. Closed"
               className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             />
@@ -257,14 +258,13 @@ export default function SettingsAdmin() {
               Changes apply across the entire website. Click the swatch or type a hex code.
             </p>
           </div>
-
           {COLOUR_FIELDS.map(({ key, label, description }) => (
             <ColorField
               key={key}
               label={label}
               description={description}
               value={(data[key] as string) || '#000000'}
-              onChange={(v) => updateColor(key, v)}
+              onChange={(v) => update(key, v as Settings[typeof key])}
             />
           ))}
         </section>
@@ -277,9 +277,8 @@ export default function SettingsAdmin() {
           >
             {saving ? 'Saving...' : 'Save Changes'}
           </button>
-          {saved && (
-            <span className="text-[14px] text-green-600 font-medium">Saved!</span>
-          )}
+          {saved && <span className="text-[14px] text-green-600 font-medium">Saved successfully!</span>}
+          {error && <span className="text-[14px] text-red-500 font-medium">{error}</span>}
         </div>
       </form>
     </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, type FormEvent } from 'react'
+import { useUnsavedChanges } from '@/components/admin/UnsavedChanges'
 
 type ProcessStep = {
   number: string
@@ -12,12 +13,14 @@ export default function ProcessAdmin() {
   const [data, setData] = useState<ProcessStep[] | null>(null)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const { setDirty } = useUnsavedChanges()
 
   useEffect(() => {
     fetch('/api/admin/content?section=process')
       .then((r) => r.json())
       .then((r: { data: ProcessStep[] }) => setData(r.data))
-      .catch(() => {})
+      .catch(() => setError('Failed to load content'))
   }, [])
 
   function updateStep(index: number, field: keyof ProcessStep, value: string) {
@@ -26,6 +29,7 @@ export default function ProcessAdmin() {
       i === index ? { ...step, [field]: value } : step,
     )
     setData(updated)
+    setDirty(true)
   }
 
   async function handleSave(e: FormEvent) {
@@ -33,25 +37,27 @@ export default function ProcessAdmin() {
     if (!data) return
     setSaving(true)
     setSaved(false)
+    setError(null)
 
     try {
-      await fetch('/api/admin/content?section=process', {
+      const res = await fetch('/api/admin/content?section=process', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       })
+      if (!res.ok) throw new Error('Save failed')
       setSaved(true)
+      setDirty(false)
       setTimeout(() => setSaved(false), 3000)
     } catch {
-      alert('Failed to save')
+      setError('Failed to save. Please try again.')
     } finally {
       setSaving(false)
     }
   }
 
-  if (!data) {
-    return <div className="text-muted">Loading...</div>
-  }
+  if (!data && !error) return <div className="text-muted">Loading...</div>
+  if (!data) return <div className="text-red-500 text-[14px]">{error}</div>
 
   return (
     <div>
@@ -69,9 +75,7 @@ export default function ProcessAdmin() {
             </div>
 
             <div>
-              <label className="block text-[13px] font-semibold text-body mb-2">
-                Title
-              </label>
+              <label className="block text-[13px] font-semibold text-body mb-2">Title</label>
               <input
                 type="text"
                 value={step.title}
@@ -81,9 +85,7 @@ export default function ProcessAdmin() {
             </div>
 
             <div>
-              <label className="block text-[13px] font-semibold text-body mb-2">
-                Description
-              </label>
+              <label className="block text-[13px] font-semibold text-body mb-2">Description</label>
               <textarea
                 value={step.description}
                 onChange={(e) => updateStep(index, 'description', e.target.value)}
@@ -102,9 +104,8 @@ export default function ProcessAdmin() {
           >
             {saving ? 'Saving...' : 'Save Changes'}
           </button>
-          {saved && (
-            <span className="text-[14px] text-green-600 font-medium">Saved!</span>
-          )}
+          {saved && <span className="text-[14px] text-green-600 font-medium">Saved successfully!</span>}
+          {error && <span className="text-[14px] text-red-500 font-medium">{error}</span>}
         </div>
       </form>
     </div>
