@@ -1,17 +1,18 @@
-# Dynamite Motors — AI Handover Document
+# Dynamite Motors — Handover Document
 
-**Last updated:** 2026-05-20  
+**Last updated:** 2026-06-07  
 **GitHub:** https://github.com/AbiolaOyedele/dynamitemotors  
 **Production URL:** https://www.dynamitemotors.com  
+**Admin panel:** https://www.dynamitemotors.com/dynamite  
 **Local dev:** http://localhost:3000
 
 ---
 
 ## 1. What This Project Is
 
-A marketing + booking website for **Dynamite Motors**, a local auto repair garage in Gravesend, Kent, UK. Audience skews older (elderly customers are explicitly a known demographic — keep UX simple and accessible). The website is live and actively used.
+A marketing and booking website for **Dynamite Motors**, a local auto repair garage in Gravesend, Kent, UK. The site is live, actively used, and has a password-protected admin panel the client uses to manage all content.
 
-The codebase is a **Next.js 16 App Router** site with a fully custom file-based CMS (no database — content is JSON files on disk). There is a password-protected admin panel at `/dynamite`.
+Known audience includes elderly customers — keep UX simple, accessible, and never add complexity to public-facing pages without good reason.
 
 ---
 
@@ -19,53 +20,63 @@ The codebase is a **Next.js 16 App Router** site with a fully custom file-based 
 
 | Concern | Choice |
 |---|---|
-| Framework | Next.js 16 (App Router) |
-| Language | TypeScript strict mode |
+| Framework | Next.js 15/16 (App Router) |
+| Language | TypeScript strict mode (`exactOptionalPropertyTypes: true`) |
 | Styling | Tailwind CSS v4 (`@theme inline` in `globals.css`) |
-| Animations | Framer Motion |
+| Animations | Framer Motion + Lenis (smooth scroll, public only) |
 | Font | Manrope (Google Fonts) |
-| CMS | Custom file-based JSON (`/content/*.json`) |
-| Email | Resend (quote form submissions) |
-| Image hosting | Local `public/` directory |
-| Deployment | Vercel (assumed) |
+| CMS / Storage | **Sanity CMS** (all persistent content) |
+| Image hosting | **Cloudinary** (unsigned upload preset) |
+| Email | Resend (quote form → garage inbox + customer confirmation) |
+| Deployment | Vercel |
 | Repo | GitHub — `AbiolaOyedele/dynamitemotors` |
 
-**Not used:** Supabase, databases, Sanity (Sanity scaffolding exists from a previous version but is not actively used for the main CMS — services/testimonials/offers still query a Sanity project but the admin panel overrides this with file-based content).
+**Critical:** Vercel uses an **ephemeral filesystem** — file writes do not persist across deployments or serverless function invocations. All content must go through Sanity. Do not reintroduce file-based writes.
 
 ---
 
-## 3. Project Structure
+## 3. Environment Variables
+
+All variables are validated at startup by Zod in `src/config/env.ts`. **Never read `process.env` directly anywhere else — always import `env` from that file.**
+
+```env
+# Sanity CMS
+NEXT_PUBLIC_SANITY_PROJECT_ID=muezpf4i
+NEXT_PUBLIC_SANITY_DATASET=production
+SANITY_API_TOKEN=<token with editor/write permissions>
+
+# Email
+RESEND_API_KEY=<key>
+QUOTE_RECIPIENT_EMAIL=dynamitemotor@gmail.com
+
+# Admin panel
+ADMIN_PASSWORD=<min 8 chars>
+
+# Cloudinary image uploads
+CLOUDINARY_CLOUD_NAME=diud4qb2x
+CLOUDINARY_UPLOAD_PRESET=dynamite_motors
+```
+
+All 8 variables must also be set in **Vercel project settings** (Environment Variables tab). Missing any one will crash the app at boot.
+
+---
+
+## 4. Project Structure
 
 ```
 /
-├── content/                  # File-based CMS — all editable via admin panel
-│   ├── hero.json
-│   ├── services.json
-│   ├── testimonials.json
-│   ├── offers.json
-│   ├── stats.json
-│   ├── process.json
-│   ├── gallery.json
-│   └── settings.json         # Includes brand colours + opening hours
-│
-├── public/
-│   ├── gallery/              # Garage photos (5 real photos, compressed)
-│   ├── images/services/      # Service card images
-│   └── hero.jpg              # Hero background
-│
 ├── src/
 │   ├── app/
-│   │   ├── layout.tsx        # Root layout — injects dynamic CSS colour vars
-│   │   ├── globals.css       # Tailwind v4 @theme inline — CSS custom properties
-│   │   ├── (public)/         # Route group — all public pages
-│   │   │   ├── layout.tsx    # Wraps children with Header + Footer
-│   │   │   ├── page.tsx      # Home page
-│   │   │   ├── services/
-│   │   │   ├── offers/
-│   │   │   └── contact/
-│   │   ├── dynamite/         # Admin panel (password protected)
-│   │   │   ├── layout.tsx    # Auth gate — shows login or sidebar+content
-│   │   │   ├── page.tsx      # Dashboard
+│   │   ├── layout.tsx              # Root layout — injects dynamic CSS colour vars from Sanity settings
+│   │   ├── (public)/               # All public pages
+│   │   │   ├── layout.tsx          # Header + Footer + LenisProvider
+│   │   │   ├── page.tsx            # Home — Promise.all fetches
+│   │   │   ├── services/page.tsx
+│   │   │   ├── offers/page.tsx
+│   │   │   └── contact/page.tsx
+│   │   ├── dynamite/               # Admin panel (password protected)
+│   │   │   ├── layout.tsx          # Auth gate
+│   │   │   ├── page.tsx            # Dashboard with live Sanity counts
 │   │   │   ├── hero/
 │   │   │   ├── services/
 │   │   │   ├── testimonials/
@@ -73,219 +84,274 @@ The codebase is a **Next.js 16 App Router** site with a fully custom file-based 
 │   │   │   ├── stats/
 │   │   │   ├── process/
 │   │   │   ├── gallery/
-│   │   │   └── settings/     # Business info + opening hours + brand colours
+│   │   │   └── settings/
 │   │   └── api/
-│   │       ├── admin/auth/   # POST = login, DELETE = logout
-│   │       ├── admin/content/# GET/PUT content sections
-│   │       ├── admin/upload/ # POST image upload
-│   │       └── v1/quote/     # POST sends quote email via Resend
+│   │       ├── admin/auth/         # POST=login, DELETE=logout
+│   │       ├── admin/content/      # GET/PUT all content sections (→ Sanity)
+│   │       ├── admin/upload/       # POST image → Cloudinary
+│   │       └── v1/quote/           # POST sends quote email via Resend
 │   │
 │   ├── components/
-│   │   ├── admin/            # AdminSidebar, ImageUploader, LoginFormClient
-│   │   ├── features/         # Page sections: HeroSection, StatsBar, etc.
-│   │   └── ui/               # Primitives: Button, Card, SectionHeader, etc.
+│   │   ├── admin/                  # AdminSidebar, ImageUploader, LoginFormClient
+│   │   ├── features/               # Page section components
+│   │   └── ui/                     # Primitives: Button, Card, BookingCalendar, etc.
 │   │
 │   ├── services/
-│   │   ├── content.service.ts  # fetchHero, fetchStats, fetchProcess, fetchGallery,
-│   │   │                       # fetchSettings, fetchServices, fetchTestimonials etc.
-│   │   └── email.service.ts    # sendQuoteEmail()
+│   │   ├── content.service.ts      # All async fetch* functions — reads from Sanity
+│   │   └── email.service.ts        # sendQuoteEmail()
 │   │
 │   ├── repositories/
-│   │   └── sanity.repository.ts # Sanity queries (still used for services/testimonials/offers fallback)
+│   │   └── sanity.repository.ts    # All Sanity GROQ queries (getServices, getSingleton, etc.)
 │   │
 │   ├── lib/
-│   │   ├── content.ts        # readContent<T>(section) / writeContent(section, data)
-│   │   ├── admin-auth.ts     # Cookie-based session (SHA-256 of ADMIN_PASSWORD)
-│   │   ├── errors.ts         # AppError class
-│   │   └── resend.ts         # Resend client
+│   │   ├── sanity.ts               # Sanity client setup
+│   │   ├── admin-auth.ts           # Cookie session (SHA-256 of ADMIN_PASSWORD, 24h TTL)
+│   │   ├── errors.ts               # AppError class
+│   │   └── resend.ts               # Resend client
 │   │
 │   ├── config/
-│   │   ├── env.ts            # Zod-validated env exports
-│   │   └── constants.ts      # BUSINESS object + NAV_LINKS
+│   │   ├── env.ts                  # Zod-validated env — import from here, not process.env
+│   │   └── constants.ts            # BUSINESS object + NAV_LINKS (some fields hardcoded — see Known Issues)
 │   │
-│   └── types/                # service.types.ts, offer.types.ts, etc.
+│   └── types/                      # service.types.ts, offer.types.ts, quote.types.ts, etc.
+│
+├── public/
+│   ├── gallery/                    # Legacy local gallery photos
+│   ├── images/services/            # Legacy local service images
+│   └── hero.jpg                    # Default hero fallback
+│
+└── content/                        # LEGACY — no longer written to. Kept as fallback reference only.
+    └── *.json
 ```
 
 ---
 
-## 4. Layering Rules (MUST follow)
+## 5. Content Architecture (Sanity)
 
-```
-Routes → Services → Repositories
-Pages call services only. Services call repositories. No skipping layers.
-```
+### Singleton documents (one per type)
 
-- `app/**/page.tsx` — calls service functions only
-- `src/services/` — all business logic, calls repositories or `readContent`
-- `src/repositories/` — all DB/external queries
-- `src/lib/content.ts` — filesystem read/write only (don't call from pages directly)
-- `src/config/env.ts` — only place that reads `process.env`
+| Section | Sanity `_type` | Array field |
+|---|---|---|
+| Hero | `hero` | — (flat object) |
+| Stats bar | `stats` | `items` |
+| Gallery | `gallery` | `items` |
+| Process steps | `process` | `steps` |
+| Site settings | `siteSettings` | — (flat object) |
+
+### Multi-documents (many per type)
+
+| Section | Sanity `_type` |
+|---|---|
+| Services | `service` |
+| Testimonials | `testimonial` |
+| Offers | `offer` |
+
+### How the admin API normalises data
+
+The admin content API (`/api/admin/content`) bridges between Sanity's document structure and what the admin pages expect:
+
+**GET** — normalises for admin:
+- Singleton array-wrapped fields (`stats.items`, `gallery.items`, `process.steps`) are **unwrapped** to flat arrays
+- Multi-doc `_id` is **mapped to `id`** for admin compatibility
+- Internal Sanity meta fields (`_rev`, `_createdAt`, etc.) are stripped
+
+**PUT** — denormalises before saving:
+- Flat arrays are **re-wrapped** back into named fields for singleton patches
+- `id`/`_id`/meta fields are **stripped** before Sanity creates new docs
+- Singleton patches are **explicitly published** (not left as drafts)
+- `revalidatePath()` is called for all affected pages after every save
 
 ---
 
-## 5. Colour System
+## 6. Layering Rules (hard — do not violate)
+
+```
+Pages → Services → Repositories → Sanity
+```
+
+- `app/**/page.tsx` — calls service functions only, never repositories directly
+- `src/services/content.service.ts` — all async, with fallback defaults if Sanity returns null
+- `src/repositories/sanity.repository.ts` — all GROQ queries, nothing else
+- `src/config/env.ts` — only place that touches `process.env`
+
+---
+
+## 7. Colour System
 
 Colours are CSS custom properties defined in `src/app/globals.css` using Tailwind v4's `@theme inline`:
 
 ```css
 @theme inline {
-  --color-primary:      #1ED760;   /* brand green */
-  --color-primary-dark: #19b852;   /* hover green */
-  --color-dark:         #1a1a1a;   /* near-black */
-  --color-body:         #333333;   /* body text */
-  --color-muted:        #666666;   /* muted text */
-  --color-light-bg:     #F5F5F5;   /* light sections */
-  --color-border:       #E8E8E8;   /* borders */
+  --color-primary:      #1ED760;
+  --color-primary-dark: #19b852;
+  --color-dark:         #1a1a1a;
+  --color-body:         #333333;
+  --color-muted:        #666666;
+  --color-light-bg:     #F5F5F5;
+  --color-border:       #E8E8E8;
 }
 ```
 
-**The admin can override all 7 colours** from `/dynamite/settings`. On every server render, `src/app/layout.tsx` injects a `<style>` tag into `<head>` that overrides these variables from `content/settings.json`. Hex values are sanitised (`/^#[0-9a-fA-F]{6}$/`) before injection to prevent CSS injection.
+The admin can override all 7 colours from `/dynamite/settings`. On every server render, `src/app/layout.tsx` reads the `siteSettings` Sanity document and injects a `<style>` tag into `<head>` that overrides these variables. Hex values are sanitised (`/^#[0-9a-fA-F]{6}$/`) before injection to prevent CSS injection.
 
 ---
 
-## 6. Admin Panel
+## 8. Admin Panel
 
 **URL:** `/dynamite`  
-**Password:** stored in `.env.local` as `ADMIN_PASSWORD`  
+**Password:** value of `ADMIN_PASSWORD` env var  
 **Auth:** SHA-256 cookie (`dm_admin_session`), 24-hour session  
-**Note:** The API routes are still at `/api/admin/*` — only the UI moved to `/dynamite`
+**API routes:** all still under `/api/admin/*`
 
-### Admin Pages
+### Admin Sections
 
 | Page | Path | What it controls |
 |---|---|---|
-| Dashboard | `/dynamite` | Stats overview + quick links |
-| Hero | `/dynamite/hero` | Heading, accent line, subheading, background image |
+| Dashboard | `/dynamite` | Live counts from Sanity + quick links |
+| Hero | `/dynamite/hero` | Heading, accent, subheading, hero image |
 | Services | `/dynamite/services` | Full CRUD — title, description, icon, features, image |
 | Testimonials | `/dynamite/testimonials` | Full CRUD — name, review, rating, vehicle |
 | Offers | `/dynamite/offers` | Full CRUD — title, badge, expiry, active toggle |
 | Stats Bar | `/dynamite/stats` | 3 stats — value, suffix, label |
 | Process Steps | `/dynamite/process` | 4 steps — title + description |
-| Gallery | `/dynamite/gallery` | Upload/remove photos, edit alt text |
-| Settings | `/dynamite/settings` | Business info, hours, **7 brand colours** |
+| Gallery | `/dynamite/gallery` | Upload photos, edit alt text, remove |
+| Settings | `/dynamite/settings` | Business info, hours, 7 brand colours |
+
+Every section has a **Save Changes** button. On save:
+1. PUT → `/api/admin/content?section=<name>`
+2. Route writes to Sanity via REST mutations API
+3. `revalidatePath` busts Next.js ISR cache
+4. Change appears on live site within seconds
 
 ---
 
-## 7. Content System
+## 9. Image Uploads
 
-All editable content lives in `/content/*.json`. The pattern:
+Images are uploaded via `POST /api/admin/upload`:
 
-```ts
-// Read
-import { readContent } from '@/lib/content'
-const data = readContent<MyType>('section-name')
+1. Receives `multipart/form-data`
+2. Forwards to Cloudinary unsigned upload endpoint
+3. Returns `{ path: secure_url }` — a full Cloudinary HTTPS URL
+4. Admin pages save this URL into the relevant Sanity document field
 
-// Write (admin API only)
-import { writeContent } from '@/lib/content'
-writeContent('section-name', updatedData)
-```
+**Cloudinary account:** `diud4qb2x`  
+**Upload preset:** `dynamite_motors` (unsigned, must exist in Cloudinary dashboard)
 
-**Via service layer (preferred):**
-```ts
-import { fetchSettings, fetchGallery, fetchStats } from '@/services/content.service'
-const settings = fetchSettings() // sync, with fallback defaults
-```
-
-All `fetch*` functions in `content.service.ts` are synchronous and have try/catch fallbacks to hardcoded defaults — so the site never breaks if a JSON file is missing.
+Do not revert to filesystem uploads — they will not persist on Vercel.
 
 ---
 
-## 8. Environment Variables
+## 10. Booking Flow
 
-Required in `.env.local`:
+The "Book a Service" modal is wired from:
+- Home page hero "Book a Service" button → `ServiceQuoteModal` with `service=""`
+- Services grid "Book this Service" buttons → `ServiceQuoteModal` with pre-filled service name
+- Services page CTA → `ServicesPageCTA` (client component) → same modal
 
-```env
-NEXT_PUBLIC_SANITY_PROJECT_ID=muezpf4i
-NEXT_PUBLIC_SANITY_DATASET=production
-SANITY_API_TOKEN=<token>
-RESEND_API_KEY=<key>
-QUOTE_RECIPIENT_EMAIL=dynamitemotor@gmail.com
-ADMIN_PASSWORD=<min 8 chars>
-```
+The modal renders `HeroQuoteForm` with an `onSuccess` prop. When `onSuccess` is present:
+- Form shows date/time picker (`BookingCalendar` component)
+- Submit button label is "Book a Service"
+- Date restrictions: no Sundays, no past dates, Saturdays limited to Morning + Afternoon (closes 3pm)
 
-All validated at startup via Zod in `src/config/env.ts`. Import `env` from there — never `process.env` directly anywhere else.
+Without `onSuccess` (standalone quote form on home hero): shows as "Get a Quote" with no date picker.
+
+Quote submissions go to `POST /api/v1/quote` → Resend → garage email + customer confirmation.
 
 ---
 
-## 9. Public Pages
+## 11. Smooth Scroll
 
-| Route | File | Data sources |
+Lenis smooth scroll is initialised in `src/components/ui/LenisProvider.tsx`, which is placed in `src/(public)/layout.tsx` **only** — not the root layout. This keeps smooth scroll off the admin panel.
+
+`LenisProvider` uses a `MutationObserver` to watch `document.body` style — when a modal sets `overflow: hidden`, Lenis is paused automatically to prevent scroll-lock conflicts.
+
+---
+
+## 12. Public Pages
+
+| Route | Data fetched |
+|---|---|
+| `/` | hero, stats, services (preview), process, gallery, testimonials |
+| `/services` | services, settings (for hero image) |
+| `/offers` | active offers |
+| `/contact` | static |
+
+All public pages have `export const revalidate = 3600` (ISR, 1-hour cache). After admin saves, `revalidatePath` forces immediate refresh.
+
+The `(public)/layout.tsx` fetches `settings` for the Footer's opening hours.  
+The root `layout.tsx` fetches `settings` for brand colour injection.
+
+---
+
+## 13. Email
+
+Two emails are sent on quote/booking submission:
+
+1. **Garage notification** (`QUOTE_RECIPIENT_EMAIL`) — full job details, preferred date/time if booking
+2. **Customer confirmation** — sent to the email they entered in the form
+
+Both are plain HTML via Resend. Template lives in `src/services/email.service.ts`.
+
+**From address:** `services@dynamitemotors.com` (domain verified in Resend)
+
+---
+
+## 14. Known Issues / Tech Debt
+
+| Issue | Risk | Fix |
 |---|---|---|
-| `/` | `(public)/page.tsx` | fetchHero, fetchStats, fetchServicesPreview, fetchProcess, fetchGallery, fetchTestimonials |
-| `/services` | `(public)/services/page.tsx` | fetchServices |
-| `/offers` | `(public)/offers/page.tsx` | fetchActiveOffers |
-| `/contact` | `(public)/contact/page.tsx` | static |
-
-All public pages have `export const revalidate = 3600` (ISR — 1 hour cache).
-
-**Footer** receives `hours` prop (monFri/sat/sun) from `(public)/layout.tsx` via `fetchSettings()`.
+| `src/config/constants.ts` `BUSINESS` object has hardcoded phone/address | Admin settings changes won't update header phone link or schema.org JSON-LD | Wire to `fetchSettings()` |
+| No quote inbox — submissions are email-only | If Resend fails, quote is silently lost | Add Sanity `quote` document type to persist all submissions |
+| Admin is password-only (no 2FA) | Low for a local business, but worth noting | Add TOTP if requested |
+| Some legacy local images in `public/images/services/` | Still served fine, just not managed via Cloudinary | Migrate when services are re-uploaded through admin |
+| `content/*.json` files still present | Stale, no longer read or written | Safe to delete if confirmed not referenced anywhere |
+| Vercel CLI outdated (54.7.1 → 54.9.1) | Minor compatibility gap | `npm i -g vercel@latest` |
 
 ---
 
-## 10. Key Components
-
-### `SectionHeader` (`src/components/ui/SectionHeader.tsx`)
-- Props: `heading`, `description?`, `align?`, `headingId?`, `theme?`
-- Heading always renders as `text-primary` (the brand colour)
-- No pill/badge — removed
-
-### `Button` / `ButtonLink` (`src/components/ui/Button.tsx`)
-- Variants: `green` (primary CTA), `dark`, `outline`
-- Uses `FlowButton` for the expanding circle animation + sliding arrow
-- `group/btn` class required on the parent group for arrow animations
-
-### `GarageGallery` (`src/components/features/GarageGallery.tsx`)
-- Accepts `images?: GalleryImage[]` prop
-- Desktop: expandable horizontal accordion (Framer Motion flex animation)
-- Mobile: 2-col grid
-- Lightbox with keyboard nav (Escape, ArrowLeft, ArrowRight)
-
-### `HeroSection` (`src/components/features/HeroSection.tsx`)
-- Accepts `heroData?: HeroData` prop
-- Falls back to hardcoded strings if prop not provided
-- `HeroData` type is exported from `content.service.ts`
-
----
-
-## 11. Known Issues / Not Yet Done
-
-- **`src/config/constants.ts` is stale** — `BUSINESS` object has hardcoded contact details that don't read from `content/settings.json`. If the user updates their phone/address in the admin, the Header's phone link and schema.org JSON-LD in `layout.tsx` won't update. These should be wired to `fetchSettings()`.
-- **No image optimisation pipeline in admin** — images uploaded via the admin are stored as-is. Large uploads will affect Lighthouse scores.
-- **No 2FA on admin** — password-only auth. Acceptable for now but worth noting.
-- **Sanity is partially wired** — `sanity.repository.ts` still queries a Sanity project for services/testimonials/offers as a data source. The file-based admin writes to local JSON. These two sources could conflict. Long-term: migrate fully to file-based or fully to Sanity.
-- **No quote inbox** — quote form submissions are emailed via Resend but not stored anywhere. If email fails, the quote is lost.
-- **`RESEND_API_KEY=your_resend_api_key`** in `.env.local` — the key is a placeholder, so the quote form will fail in dev. The owner needs to plug in a real Resend key.
-
----
-
-## 12. How to Run
+## 15. How to Run Locally
 
 ```bash
 cd "dynamite-motors copy"
 npm install
+# Ensure .env.local has all 8 required variables
 npm run dev        # http://localhost:3000
 ```
 
-Admin panel: http://localhost:3000/dynamite  
+Admin: http://localhost:3000/dynamite  
 Password: value of `ADMIN_PASSWORD` in `.env.local`
+
+**Note:** Local dev may hit Sanity DNS resolution errors if your network blocks certain CDN subdomains. This does not affect the Vercel deployment — it is a local sandbox issue.
 
 ---
 
-## 13. Git Conventions
+## 16. Deployment
+
+- **Vercel** — auto-deploys on push to `main`
+- **Domain:** `www.dynamitemotors.com` (canonical); `dynamitemotors.vercel.app` redirects to www
+- After every deploy, admin saves trigger `revalidatePath` which clears ISR cache
+
+If the admin "Save Changes" button shows no change on the site after saving, the most likely cause is either:
+1. A Sanity token permissions issue (check `SANITY_API_TOKEN` has write access)
+2. A `revalidatePath` not being called for the right route (check `SECTION_PATHS` in `/api/admin/content/route.ts`)
+
+---
+
+## 17. Git Conventions
 
 - Branch: `main` — direct commits, no PR workflow currently
 - Commit messages describe *why*, not just what
-- Never commit `.env.local` (it's gitignored)
-- Don't push without being asked
+- Never commit `.env.local` — it is gitignored
+- Don't push without being asked by the user
 
 ---
 
-## 14. Design Principles (from PRODUCT.md)
+## 18. Design Principles
 
 1. **Reliable** — nothing feels broken or untested
 2. **Local** — feels like a real Gravesend business, not a generic template
 3. **Clean** — uncluttered, easy to scan
-4. **Accessible** — WCAG AA; elderly users are a known audience (large tap targets, clear contrast, no tiny text)
-5. **Fast** — ISR caching, compressed images, no unnecessary JS
+4. **Accessible** — WCAG AA; elderly users are a known audience (large tap targets, clear contrast, readable font sizes)
+5. **Fast** — ISR caching, Cloudinary CDN images, minimal JS
 
-Brand tone: direct, trustworthy, no jargon.
+Brand tone: direct, trustworthy, no jargon. No status pills, availability badges, or "live indicator chips" — ever.
