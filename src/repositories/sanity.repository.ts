@@ -37,7 +37,7 @@ export async function getServiceBySlug(slug: string): Promise<Service | null> {
 
 export async function getActiveOffers(): Promise<Offer[]> {
   return sanityClient.fetch<Offer[]>(
-    `*[_type == "offer" && active == true] | order(_createdAt desc) {
+    `*[_type == "offer" && active == true && (expiresAt == null || expiresAt > now())] | order(_createdAt desc) {
       _id, title, description, badge, expiresAt, active
     }`,
     {},

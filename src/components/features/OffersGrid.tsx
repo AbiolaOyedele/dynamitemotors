@@ -1,10 +1,11 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Card, CardBody, CardFooter } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
-import { ButtonLink } from '@/components/ui/Button'
+import { Button, ButtonLink } from '@/components/ui/Button'
+import { ServiceQuoteModal } from '@/components/features/ServiceQuoteModal'
 import type { Offer } from '@/types/offer.types'
 
 const EASE = [0.25, 0.1, 0.25, 1] as const
@@ -23,6 +24,11 @@ type Props = {
   offers: Offer[]
 }
 
+type OfferCardProps = {
+  offer: Offer
+  onClaim: (title: string) => void
+}
+
 function formatExpiry(isoDate: string): string {
   return new Intl.DateTimeFormat('en-GB', {
     day: 'numeric',
@@ -31,7 +37,7 @@ function formatExpiry(isoDate: string): string {
   }).format(new Date(isoDate))
 }
 
-function OfferCard({ offer }: { offer: Offer }) {
+function OfferCard({ offer, onClaim }: OfferCardProps) {
   return (
     <Card className="h-full flex flex-col hover:shadow-md transition-shadow duration-200">
       <CardBody className="flex flex-col gap-4 flex-1">
@@ -80,14 +86,14 @@ function OfferCard({ offer }: { offer: Offer }) {
       </CardBody>
 
       <CardFooter>
-        <ButtonLink
-          href="/contact"
+        <Button
           size="md"
           className="w-full"
           aria-label={`Claim this offer: ${offer.title}`}
+          onClick={() => onClaim(offer.title)}
         >
           Claim This Offer
-        </ButtonLink>
+        </Button>
       </CardFooter>
     </Card>
   )
@@ -96,6 +102,7 @@ function OfferCard({ offer }: { offer: Offer }) {
 export function OffersGrid({ offers }: Props) {
   const listRef = useRef<HTMLUListElement>(null)
   const inView = useInView(listRef, { once: true, margin: '-80px' })
+  const [modalService, setModalService] = useState<string | null>(null)
 
   if (offers.length === 0) {
     return (
@@ -150,11 +157,16 @@ export function OffersGrid({ offers }: Props) {
         >
           {offers.map((offer) => (
             <motion.li key={offer._id} variants={itemVariants}>
-              <OfferCard offer={offer} />
+              <OfferCard offer={offer} onClaim={setModalService} />
             </motion.li>
           ))}
         </motion.ul>
       </div>
+
+      <ServiceQuoteModal
+        service={modalService}
+        onClose={() => setModalService(null)}
+      />
     </section>
   )
 }
