@@ -57,7 +57,7 @@ export function AdminSidebar() {
   }
 
   return (
-    <aside className="w-64 bg-dark min-h-screen flex flex-col border-r border-white/10">
+    <aside className="w-64 bg-dark h-full flex flex-col border-r border-white/10 shrink-0">
       {/* Logo */}
       <div className="px-6 py-6 border-b border-white/10">
         <p className="text-primary text-[18px] font-bold tracking-tight">

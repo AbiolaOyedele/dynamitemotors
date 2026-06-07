@@ -36,12 +36,14 @@ export default async function AdminLayout({
 
   return (
     <UnsavedChangesProvider>
-      <div className="flex min-h-screen bg-light-bg">
+      <div className="flex h-screen overflow-hidden bg-light-bg">
         <AdminSidebar />
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 flex flex-col overflow-hidden">
           <UnsavedChangesBanner />
-          <div className="p-8 max-w-5xl">
-            {children}
+          <div className="flex-1 overflow-y-auto p-8">
+            <div className="max-w-5xl">
+              {children}
+            </div>
           </div>
         </main>
       </div>
