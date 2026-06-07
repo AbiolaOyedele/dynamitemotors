@@ -108,8 +108,9 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {/* Dynamic colour overrides — applied after Tailwind so they win the cascade */}
-        <style dangerouslySetInnerHTML={{ __html: `*,::before,::after,::backdrop{${colorVars}}` }} />
+        {/* Dynamic colour overrides — :root wins over Tailwind's :root (same specificity, later source order)
+            * wins for all child elements regardless of specificity */}
+        <style dangerouslySetInnerHTML={{ __html: `:root,*,::before,::after,::backdrop{${colorVars}}` }} />
       </head>
       <body className="min-h-full flex flex-col antialiased">
         {children}
