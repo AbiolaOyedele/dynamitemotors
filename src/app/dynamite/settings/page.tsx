@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, type FormEvent } from 'react'
+import { useState, useEffect, useRef, type FormEvent } from 'react'
+import { useRouter } from 'next/navigation'
 import { ImageUploader } from '@/components/admin/ImageUploader'
 import { useUnsavedChanges } from '@/components/admin/UnsavedChanges'
 
@@ -78,6 +79,129 @@ function ColorField({
     </div>
   )
 }
+
+// ── Change password form ──────────────────────────────────────────────────────
+
+function ChangePasswordForm() {
+  const router = useRouter()
+  const [current, setCurrent]     = useState('')
+  const [next, setNext]           = useState('')
+  const [confirm, setConfirm]     = useState('')
+  const [saving, setSaving]       = useState(false)
+  const [error, setError]         = useState<string | null>(null)
+  const [success, setSuccess]     = useState(false)
+  const timerRef                  = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Redirect to login after success banner fades
+  useEffect(() => {
+    if (!success) return
+    timerRef.current = setTimeout(() => {
+      router.push('/dynamite')
+    }, 2500)
+    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
+  }, [success, router])
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
+    setError(null)
+
+    if (next !== confirm) {
+      setError('New passwords do not match.')
+      return
+    }
+    if (next.length < 8) {
+      setError('New password must be at least 8 characters.')
+      return
+    }
+
+    setSaving(true)
+    try {
+      const res = await fetch('/api/admin/auth/password', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword: current, newPassword: next }),
+      })
+      const json = await res.json() as { error?: string }
+      if (!res.ok) {
+        setError(json.error ?? 'Failed to update password.')
+        return
+      }
+      setSuccess(true)
+    } catch {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (success) {
+    return (
+      <div className="flex items-start gap-3 p-4 rounded-xl bg-green-50 border border-green-200">
+        <svg className="w-5 h-5 text-green-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div>
+          <p className="text-[14px] font-semibold text-green-800">Password updated successfully.</p>
+          <p className="text-[13px] text-green-700 mt-0.5">Logging you out — please sign in with your new password.</p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4 max-w-sm">
+      <div>
+        <label className="block text-[13px] font-semibold text-body mb-2">Current Password</label>
+        <input
+          type="password"
+          value={current}
+          onChange={(e) => setCurrent(e.target.value)}
+          autoComplete="current-password"
+          required
+          className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+        />
+      </div>
+
+      <div>
+        <label className="block text-[13px] font-semibold text-body mb-2">New Password</label>
+        <input
+          type="password"
+          value={next}
+          onChange={(e) => setNext(e.target.value)}
+          autoComplete="new-password"
+          minLength={8}
+          required
+          className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+        />
+        <p className="text-[12px] text-muted mt-1.5">Minimum 8 characters.</p>
+      </div>
+
+      <div>
+        <label className="block text-[13px] font-semibold text-body mb-2">Confirm New Password</label>
+        <input
+          type="password"
+          value={confirm}
+          onChange={(e) => setConfirm(e.target.value)}
+          autoComplete="new-password"
+          required
+          className="w-full h-[44px] rounded-lg border border-border px-3 text-[15px] text-body focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+        />
+      </div>
+
+      {error && (
+        <p className="text-[13px] text-red-600 font-medium">{error}</p>
+      )}
+
+      <button
+        type="submit"
+        disabled={saving}
+        className="h-[44px] px-6 rounded-lg bg-dark text-white text-[14px] font-semibold hover:bg-body transition-colors disabled:opacity-50"
+      >
+        {saving ? 'Updating...' : 'Update Password'}
+      </button>
+    </form>
+  )
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function SettingsAdmin() {
   const [data, setData] = useState<Settings | null>(null)
@@ -281,6 +405,17 @@ export default function SettingsAdmin() {
           {error && <span className="text-[14px] text-red-500 font-medium">{error}</span>}
         </div>
       </form>
+
+      {/* Security — separate form so it never triggers the main settings save */}
+      <div className="mt-12 pt-10 border-t border-border max-w-2xl">
+        <div className="mb-6">
+          <h2 className="text-[17px] font-bold text-dark">Security</h2>
+          <p className="text-[13px] text-muted mt-1">
+            Changing your password will immediately log you out of all active sessions.
+          </p>
+        </div>
+        <ChangePasswordForm />
+      </div>
     </div>
   )
 }
